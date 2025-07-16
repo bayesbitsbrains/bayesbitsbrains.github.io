@@ -145,11 +145,14 @@ for some constants $\lambda_1, \dots, \lambda_m$.
 </Block>
 Notice that this general recipe doesn't tell us the exact values of $\lambda_1, \dots, \lambda_m$. Those depend on the specific values of $\alpha_1, \dots, \alpha_m$, while the general shape remains the same regardless of the $\alpha$ values. But don't get too hung up on the $\alpha$s and $\lambda$s. The key takeaway is that __the maximum entropy distribution looks like an exponential, with the "stuff we care about" in the exponent.__
 
+<Expand headline = "Build your own distribution!">
 Try building your own maximum entropy distribution on the interval $[0,1]$ by playing with $\lambda$ values:
 
 <DistributionConstraintBuilder />
 
-### Why? <a id = "intuition"></a>
+</Expand>
+
+<Expand headline = "Why? "><a id = "intuition"></a>
 
 Let's build some intuition for this. Remember from [the previous chapter](04-mle) that the max-entropy principle is essentially about finding a distribution that is as close to uniform as possible, in the sense of minimizing KL divergence.
 
@@ -233,7 +236,7 @@ The same formula also holds when the probability distribution is continuous, exc
 
 Now, this formula isn't the complete solution to our problem because it involves some magical constants $\lambda_1, \dots, \lambda_m$ that we don't know. To find their values, we have to go back to our constraints—remember those $m$ numbers $\alpha_1, \dots, \alpha_m$? We can use the conditions $E[f_j(x)] = \alpha_j$ to work out the precise shape of the distribution.
 </Expand>
-
+</Expand>
 
 ## Catalogue of examples
 
