@@ -4,6 +4,7 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import type { Metadata } from "next";
 import { JetBrains_Mono, Merriweather } from "next/font/google";
 import { StrictMode } from "react";
+import GoatCounter from "@/components/GoatCounter";
 import "./globals.css";
 
 // Define Merriweather font configuration
@@ -48,6 +49,7 @@ export default function RootLayout({
       <StrictMode>
         <body className="antialiased">
           <Page>{children}</Page>
+          <GoatCounter />
         </body>
         {GTM_ID && <GoogleAnalytics gaId={GTM_ID} />}
       </StrictMode>
