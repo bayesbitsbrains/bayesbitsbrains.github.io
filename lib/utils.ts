@@ -8,12 +8,12 @@ export function getAssetPath(path: string): string {
     return path;
   }
   
-  // Get basePath from environment
-  const basePath = process.env.NODE_ENV === 'production' ? '/problens-web' : '';
+  // Get basePath from Next.js config (should be empty for root domain deployment)
+  const basePath = '';
   
   // Ensure path starts with /
   const normalizedPath = path.startsWith('/') ? path : `/${path}`;
   
-  // Add basePath for production
-  return `${basePath}${normalizedPath}`;
+  // Return the normalized path (no basePath needed for root domain)
+  return normalizedPath;
 }

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import * as HoverCard from "@radix-ui/react-hover-card";
 import MiniCompressionChart from "./MiniCompressionChart";
 import KatexMath from "@/components/content/KatexMath";
+import { getAssetPath } from "@/lib/utils";
 
 interface CompressionResult {
   algorithm: string;
@@ -39,14 +40,13 @@ export default function CompressionWidget() {
     const loadData = async () => {
       try {
         // Load text list configuration  
-        const basePath = process.env.NODE_ENV === 'production' ? '/problens-web' : '';
-        const listUrl = `${basePath}/compression_experiments/texts/list.json`;
+        const listUrl = getAssetPath('/compression_experiments/texts/list.json');
         const listResponse = await fetch(listUrl);
         if (!listResponse.ok) throw new Error(`Failed to load text list: ${listResponse.status}`);
         const textConfigs = await listResponse.json();
 
         // Load compression results
-        const resultsUrl = `${basePath}/compression_experiments/compression_results.json`;
+        const resultsUrl = getAssetPath('/compression_experiments/compression_results.json');
         const resultsResponse = await fetch(resultsUrl);
         if (!resultsResponse.ok) throw new Error(`Failed to load compression results: ${resultsResponse.status}`);
         const compressionResults = await resultsResponse.json();
@@ -56,7 +56,7 @@ export default function CompressionWidget() {
         
         for (const config of textConfigs) {
           try {
-            const textUrl = `${basePath}/compression_experiments/texts/${config.filename}`;
+            const textUrl = getAssetPath(`/compression_experiments/texts/${config.filename}`);
             const textResponse = await fetch(textUrl);
             if (!textResponse.ok) continue;
             
@@ -175,7 +175,7 @@ export default function CompressionWidget() {
         
         // Load LLM progression data for tooltips
         try {
-          const llmResponse = await fetch(`${basePath}/compression_experiments/llm_compression_summary.json`);
+          const llmResponse = await fetch(getAssetPath('/compression_experiments/llm_compression_summary.json'));
           if (llmResponse.ok) {
             const llmData = await llmResponse.json();
             setLlmProgressionData(llmData);

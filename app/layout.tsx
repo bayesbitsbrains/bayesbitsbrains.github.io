@@ -34,6 +34,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${merriweather.variable} ${jetbrainsMono.variable}`}>
+      <head>
+        <link
+          rel="icon"
+          href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext x='16' y='24' font-size='24' text-anchor='middle'%3E%F0%9F%93%8E%3C/text%3E%3C/svg%3E"
+        />
+      </head>
       <StrictMode>
         <body className="antialiased">
           <Page>{children}</Page>

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import ZoomButton from "./ZoomButton";
+import { getAssetPath } from "@/lib/utils";
 
 interface VolatilityData {
   histogram: {
@@ -54,15 +55,14 @@ const VolatilityDistributionWidget: React.FC = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const basePath = process.env.NODE_ENV === 'production' ? '/problens-web' : '';
         // Try to load 15-day data first, then fall back to full data, then truncated
-        let response = await fetch(`${basePath}/volatility_data_15day.json`);
+        let response = await fetch(getAssetPath('/volatility_data_15day.json'));
         if (!response.ok) {
           // Fallback to full data
-          response = await fetch(`${basePath}/volatility_data_full.json`);
+          response = await fetch(getAssetPath('/volatility_data_full.json'));
           if (!response.ok) {
             // Final fallback to truncated data
-            response = await fetch(`${basePath}/volatility_data.json`);
+            response = await fetch(getAssetPath('/volatility_data.json'));
             if (!response.ok) {
               throw new Error(`Failed to load data: ${response.status}`);
             }

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import KatexMath from "@/components/content/KatexMath";
+import { getAssetPath } from "@/lib/utils";
 
 // ====================================================================
 // CROSS-ENTROPY WIDGET - SIMPLIFIED VERSION
@@ -404,13 +405,13 @@ export default function CrossEntropyWidget({
             >
               {coin.isHeads ? (
                 <img 
-                  src="/problens-web/images/coin_heads_small.png" 
+                  src={getAssetPath("/images/coin_heads_small.png")} 
                   alt="Heads" 
                   className="w-full h-full object-contain"
                 />
               ) : (
                 <img 
-                  src="/problens-web/images/coin_tail_small.png" 
+                  src={getAssetPath("/images/coin_tail_small.png")} 
                   alt="Tails" 
                   className="w-full h-full object-contain"
                 />
@@ -566,7 +567,7 @@ export default function CrossEntropyWidget({
                 }}
               >
                 <img 
-                  src={coin.isHeads ? "/problens-web/images/coin_heads_small.png" : "/problens-web/images/coin_tail_small.png"}
+                  src={getAssetPath(coin.isHeads ? "/images/coin_heads_small.png" : "/images/coin_tail_small.png")}
                   alt={coin.isHeads ? "Heads" : "Tails"}
                   className="w-full h-full object-contain"
                 />

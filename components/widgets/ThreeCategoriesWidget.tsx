@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import * as d3 from "d3";
+import { getAssetPath } from "@/lib/utils";
 
 interface CategoryNode extends d3.SimulationNodeDatum {
   id: string;
@@ -236,10 +237,10 @@ const ThreeCategoriesWidget: React.FC = () => {
       const referenceTexts: Record<string, string> = {};
       
       // Load all the Wikipedia texts
-      const basePath = process.env.NODE_ENV === 'production' ? '/problens-web' : '';
+      // Load analysis data
       for (const itemId of currentData.languages) {
         try {
-          const textResponse = await fetch(`${basePath}/data/three_categories/${itemId}.txt`);
+          const textResponse = await fetch(getAssetPath(`/data/three_categories/${itemId}.txt`));
           if (textResponse.ok) {
             referenceTexts[itemId] = await textResponse.text();
           }
@@ -400,7 +401,7 @@ const ThreeCategoriesWidget: React.FC = () => {
           throw new Error('Dev path failed');
         }
       } catch {
-        response = await fetch('/problens-web/data/three_categories_analysis.json');
+        response = await fetch(getAssetPath('/data/three_categories_analysis.json'));
         if (!response.ok) {
           throw new Error('Failed to fetch three categories data');
         }

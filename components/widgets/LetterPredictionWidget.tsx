@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { getAssetPath } from "@/lib/utils";
 
 interface Snapshot {
   id: number;
@@ -50,15 +51,14 @@ const LetterPredictionWidget: React.FC = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        // Load snapshots - use appropriate path for dev/prod
-        const basePath = process.env.NODE_ENV === "production" ? "/problens-web" : "";
-        const snapshotResponse = await fetch(`${basePath}/data/prediction_snapshots.json`);
+        // Load snapshots
+        const snapshotResponse = await fetch(getAssetPath('/data/prediction_snapshots.json'));
         const snapshotData = await snapshotResponse.json();
         setSnapshots(snapshotData.snapshots);
 
         // Load LLM intelligence test scores
         try {
-          const llmResponse = await fetch(`${basePath}/data/intelligence_test/letter_eval_results.json`);
+          const llmResponse = await fetch(getAssetPath('/data/intelligence_test/letter_eval_results.json'));
           const llmData = await llmResponse.json();
 
           // Convert the data structure to match our interface
@@ -80,7 +80,7 @@ const LetterPredictionWidget: React.FC = () => {
           for (const modelKey of Object.keys(convertedScores)) {
             try {
               const detailResponse = await fetch(
-                `${basePath}/data/intelligence_test/details_${modelKey.replace("/", "_")}.json`,
+                getAssetPath(`/data/intelligence_test/details_${modelKey.replace("/", "_")}.json`),
               );
               const detailData = await detailResponse.json();
               detailedScores[modelKey] = detailData;
