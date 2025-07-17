@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect, useMemo } from "react";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine, LabelList, DefaultTooltipContent, TooltipProps } from "recharts";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { InlineMath, BlockMath } from "react-katex";
 import { CHART_CONFIG, BUTTON_STYLES, INPUT_STYLES } from "./SimulatorConfig";
 
@@ -198,30 +198,6 @@ const CrossEntropySimulator: React.FC = () => {
     };
   }, [currentFlip, numFlips, entropy, crossentropy, isRunning]);
 
-  // Custom tooltip to show only the 4 main series and follow cursor
-  const CustomTooltip = (props: TooltipProps<number, string>) => {
-    const { active, payload, label } = props;
-    if (!active || !payload) return null;
-
-    // Keep only the four "real" series
-    const mainKeys = [
-      "logP",
-      "logQ", 
-      "entropyRate",
-      "crossentropyRate",
-    ];
-    const filtered = payload.filter((p) => mainKeys.includes(p.dataKey as string));
-
-    // Hand back to the default renderer, but with our slimmed-down payload
-    return (
-      <DefaultTooltipContent
-        {...props}
-        payload={filtered}
-        labelFormatter={(lbl) => `Flip # ${lbl}`}
-        formatter={(value: number) => `${value.toFixed(2)} bits`}
-      />
-    );
-  };
 
   return (
     <div className="mb-6 p-4 bg-gray-50 rounded-lg">
@@ -239,9 +215,14 @@ const CrossEntropySimulator: React.FC = () => {
               max="0.99"
               step="0.01"
               value={trueHeadsProb}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTrueHeadsProb(parseFloat(e.target.value))}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                setTrueHeadsProb(parseFloat(e.target.value));
+                if (isRunning) {
+                  setIsRunning(false);
+                  resetSimulation();
+                }
+              }}
               className={`${INPUT_STYLES.base} ${INPUT_STYLES.rangeColors.trueP}`}
-              disabled={isRunning}
             />
           </div>
 
@@ -255,9 +236,14 @@ const CrossEntropySimulator: React.FC = () => {
               max="0.99"
               step="0.01"
               value={modelHeadsProb}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setModelHeadsProb(parseFloat(e.target.value))}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                setModelHeadsProb(parseFloat(e.target.value));
+                if (isRunning) {
+                  setIsRunning(false);
+                  resetSimulation();
+                }
+              }}
               className={`${INPUT_STYLES.base} ${INPUT_STYLES.rangeColors.modelQ}`}
-              disabled={isRunning}
             />
           </div>
         </div>
@@ -285,9 +271,14 @@ const CrossEntropySimulator: React.FC = () => {
                 max="500"
                 step="10"
                 value={numFlips}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNumFlips(parseInt(e.target.value))}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setNumFlips(parseInt(e.target.value));
+                  if (isRunning) {
+                    setIsRunning(false);
+                    resetSimulation();
+                  }
+                }}
                 className={`${INPUT_STYLES.base} ${INPUT_STYLES.rangeColors.flips}`}
-                disabled={isRunning}
               />
             </div>
 
@@ -366,27 +357,80 @@ const CrossEntropySimulator: React.FC = () => {
                 margin={{ ...CHART_CONFIG.margins, left: 50, right: 60 }}
               >
                 <defs>
+                  {/* Entropy arrow markers (faint blue) */}
                   <marker
-                    id="arrowhead"
+                    id="entropy-arrowhead"
                     viewBox="0 0 10 10"
-                    refX="5"
+                    refX="10"
                     refY="5"
-                    markerWidth="6"
-                    markerHeight="6"
+                    markerWidth="4"
+                    markerHeight="4"
                     orient="auto"
-                    fill="#333"
+                    fill={CHART_CONFIG.colors.entropy}
                   >
                     <path d="M 0 0 L 10 5 L 0 10 z" />
                   </marker>
                   <marker
-                    id="arrowtail"
+                    id="entropy-arrowtail"
                     viewBox="0 0 10 10"
-                    refX="5"
+                    refX="0"
                     refY="5"
-                    markerWidth="6"
-                    markerHeight="6"
+                    markerWidth="4"
+                    markerHeight="4"
                     orient="auto"
-                    fill="#333"
+                    fill={CHART_CONFIG.colors.entropy}
+                  >
+                    <path d="M 10 0 L 0 5 L 10 10 z" />
+                  </marker>
+                  
+                  {/* Cross-entropy arrow markers (faint red) */}
+                  <marker
+                    id="crossentropy-arrowhead"
+                    viewBox="0 0 10 10"
+                    refX="10"
+                    refY="5"
+                    markerWidth="4"
+                    markerHeight="4"
+                    orient="auto"
+                    fill={CHART_CONFIG.colors.crossentropyRate}
+                  >
+                    <path d="M 0 0 L 10 5 L 0 10 z" />
+                  </marker>
+                  <marker
+                    id="crossentropy-arrowtail"
+                    viewBox="0 0 10 10"
+                    refX="0"
+                    refY="5"
+                    markerWidth="4"
+                    markerHeight="4"
+                    orient="auto"
+                    fill={CHART_CONFIG.colors.crossentropyRate}
+                  >
+                    <path d="M 10 0 L 0 5 L 10 10 z" />
+                  </marker>
+                  
+                  {/* KL divergence arrow markers (faint violet) */}
+                  <marker
+                    id="kl-arrowhead"
+                    viewBox="0 0 10 10"
+                    refX="10"
+                    refY="5"
+                    markerWidth="4"
+                    markerHeight="4"
+                    orient="auto"
+                    fill={CHART_CONFIG.colors.klDivergence}
+                  >
+                    <path d="M 0 0 L 10 5 L 0 10 z" />
+                  </marker>
+                  <marker
+                    id="kl-arrowtail"
+                    viewBox="0 0 10 10"
+                    refX="0"
+                    refY="5"
+                    markerWidth="4"
+                    markerHeight="4"
+                    orient="auto"
+                    fill={CHART_CONFIG.colors.klDivergence}
                   >
                     <path d="M 10 0 L 0 5 L 10 10 z" />
                   </marker>
@@ -403,8 +447,41 @@ const CrossEntropySimulator: React.FC = () => {
               domain={yAxisDomain}
               tickFormatter={(value) => Math.round(value).toString()}
             />
-            <Tooltip 
-              content={<CustomTooltip />}
+            <Tooltip
+              content={({ active, payload, label }) => {
+                if (!active || !payload?.length || label == null) return null;
+                const keys = new Set(["logP", "logQ", "entropyRate", "crossentropyRate"]);
+                const rows = payload.filter(
+                  (p) => keys.has(String(p.dataKey)) && typeof p.value === "number"
+                );
+                if (!rows.length) return null;
+                return (
+                  <div className="bg-white border border-gray-300 rounded-lg p-3 shadow-lg text-sm">
+                    <div className="font-semibold text-gray-800 mb-2">
+                      Flip #{Math.round(Number(label))}
+                    </div>
+                    {rows.map((entry) => {
+                      const color =
+                        entry.color ?? entry.stroke ?? entry.payload?.stroke ?? "#666";
+                      return (
+                        <div
+                          key={String(entry.dataKey)}
+                          className="flex items-center justify-between gap-3"
+                        >
+                          <span style={{ color }} className="flex items-center">
+                            <span
+                              className="w-3 h-3 rounded-full mr-2"
+                              style={{ backgroundColor: color }}
+                            />
+                            {entry.name}
+                          </span>
+                          <span className="font-mono">{(+(entry.value || 0)).toFixed(2)} bits</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              }}
             />
             <Legend wrapperStyle={{ fontSize: '12px' }} />
             
@@ -417,6 +494,7 @@ const CrossEntropySimulator: React.FC = () => {
                 stroke={CHART_CONFIG.colors.trueP}
                 strokeWidth={2}
                 dot={false}
+                activeDot={{ r: 6, fill: CHART_CONFIG.colors.trueP }}
                 isAnimationActive={CHART_CONFIG.animation.isAnimationActive}
               />
             )}
@@ -430,6 +508,7 @@ const CrossEntropySimulator: React.FC = () => {
                 stroke={CHART_CONFIG.colors.modelQ}
                 strokeWidth={2}
                 dot={false}
+                activeDot={{ r: 6, fill: CHART_CONFIG.colors.modelQ }}
                 isAnimationActive={CHART_CONFIG.animation.isAnimationActive}
               />
             )}
@@ -443,6 +522,7 @@ const CrossEntropySimulator: React.FC = () => {
               strokeWidth={2}
               strokeDasharray="5 5"
               dot={false}
+              activeDot={{ r: 6, fill: CHART_CONFIG.colors.entropyFull }}
               isAnimationActive={CHART_CONFIG.animation.isAnimationActive}
             />
             
@@ -451,15 +531,16 @@ const CrossEntropySimulator: React.FC = () => {
               type="monotone"
               dataKey="crossentropyRate"
               name="Cross-entropy Rate H(P,Q)"
-              stroke={CHART_CONFIG.colors.klExpected}
+              stroke={CHART_CONFIG.colors.crossentropyRate}
               strokeWidth={2}
               strokeDasharray="5 5"
               dot={false}
+              activeDot={{ r: 6, fill: CHART_CONFIG.colors.crossentropyRateFull }}
               isAnimationActive={CHART_CONFIG.animation.isAnimationActive}
             />
 
             {/* Arrow Lines using Recharts coordinate system */}
-            {/* Entropy arrow (0 to orange line) */}
+            {/* Entropy arrow (0 to blue line) */}
             <Line
               data={arrowData.entropy}
               dataKey="y"
@@ -468,8 +549,8 @@ const CrossEntropySimulator: React.FC = () => {
               dot={false}
               isAnimationActive={false}
               strokeLinecap="round"
-              markerStart="url(#arrowtail)"
-              markerEnd="url(#arrowhead)"
+              markerStart="url(#entropy-arrowtail)"
+              markerEnd="url(#entropy-arrowhead)"
               legendType="none"
               activeDot={false}
               connectNulls={false}
@@ -479,29 +560,28 @@ const CrossEntropySimulator: React.FC = () => {
             <Line
               data={arrowData.crossentropy}
               dataKey="y"
-              stroke={CHART_CONFIG.colors.klExpected}
+              stroke={CHART_CONFIG.colors.crossentropyRate}
               strokeWidth={3}
               dot={false}
               isAnimationActive={false}
               strokeLinecap="round"
-              markerStart="url(#arrowtail)"
-              markerEnd="url(#arrowhead)"
+              markerStart="url(#crossentropy-arrowtail)"
+              markerEnd="url(#crossentropy-arrowhead)"
               legendType="none"
               activeDot={false}
               connectNulls={false}
             />
 
-            {/* KL divergence arrow (orange to red line) */}
+            {/* KL divergence arrow (blue to red line) */}
             <Line
               data={arrowData.kl}
               dataKey="y"
-              stroke="#2563eb"
+              stroke={CHART_CONFIG.colors.klDivergence}
               strokeWidth={3}
               dot={false}
               isAnimationActive={false}
-              strokeDasharray="3 3"
-              markerStart="url(#arrowtail)"
-              markerEnd="url(#arrowhead)"
+              markerStart="url(#kl-arrowtail)"
+              markerEnd="url(#kl-arrowhead)"
               legendType="none"
               activeDot={false}
               connectNulls={false}
@@ -575,7 +655,7 @@ const CrossEntropySimulator: React.FC = () => {
                     <text
                       x={x}
                       y={y}
-                      fill={CHART_CONFIG.colors.klExpected}
+                      fill={CHART_CONFIG.colors.crossentropyRate}
                       textAnchor="middle"
                       alignmentBaseline="middle"
                       style={{ fontSize: 12, fontWeight: 'bold' }}
@@ -615,7 +695,7 @@ const CrossEntropySimulator: React.FC = () => {
                     <text
                       x={x}
                       y={y}
-                      fill="#2563eb"
+                      fill={CHART_CONFIG.colors.klDivergence}
                       textAnchor="middle"
                       alignmentBaseline="middle"
                       style={{ fontSize: 12, fontWeight: 'bold' }}

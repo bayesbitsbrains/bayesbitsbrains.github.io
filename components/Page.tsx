@@ -11,6 +11,7 @@ import { EquationProvider } from "./content/EquationContext";
 import styles from "./Page.module.css";
 import ViewTracker from "./ViewTracker";
 import ChapterNavigation from "./ChapterNavigation";
+import FeedbackButton from "./FeedbackButton";
 
 interface PageProps {
   children: ReactNode;
@@ -29,6 +30,7 @@ export default async function Page({ children }: PageProps) {
         <main className={`${styles.main} max-w-[var(--content-width)] mx-auto px-4 pt-12 pb-8`}>{children}</main>
       </div>
       <Footer />
+      <FeedbackButton />
     </div>
   );
 }
