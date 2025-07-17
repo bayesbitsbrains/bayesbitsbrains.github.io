@@ -457,7 +457,7 @@ const LetterPredictionWidget: React.FC = () => {
                 
                 return (
                   <>
-                    <span className="text-gray-700">{first_sentence.trim()} </span>
+                    <span className="text-gray-700">{first_sentence} </span>
                     <span className="text-gray-700">{before}</span>
                     {!currentGame.completed ? (
                       <span className="bg-yellow-200 px-1 rounded">_</span>
