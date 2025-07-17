@@ -25,9 +25,10 @@ interface Props {
   headline?: string;
   children: React.ReactNode;
   startOpen?: boolean;
+  openByDefault?: boolean;
 }
 
-export default function RiddleStatement({ id, headline, children, startOpen = false }: Props) {
+export default function RiddleStatement({ id, headline, children, startOpen = false, openByDefault = false }: Props) {
   // Get headline from static registry or use provided one
   const resolvedHeadline = headline || RIDDLE_HEADLINES[id] || "Riddle";
   
@@ -41,8 +42,11 @@ export default function RiddleStatement({ id, headline, children, startOpen = fa
     }
   }, [id, resolvedHeadline]);
 
+  // Use openByDefault if provided, otherwise use startOpen
+  const shouldStartOpen = openByDefault || startOpen;
+
   return (
-    <Expand id={id} headline={resolvedHeadline} color="#f5f5f5" headerColor="#d1fae5" startOpen={startOpen}>
+    <Expand id={id} headline={resolvedHeadline} color="#f5f5f5" headerColor="#d1fae5" startOpen={shouldStartOpen}>
       {children}
     </Expand>
   );

@@ -1,11 +1,13 @@
-# A few riddles <a id="introduction"></a>
+# Bayes, bits & brains
 
 This site is about probability, information theory, and how it helps us to understand machine learning in particular, and building models of the world in general. 
 
-Check out [this page](about) for more about the content, assumed background, and logistics. But I hope you get a better feel for what this is by checking out the following riddles. I hope some of them [nerd-snipe](https://xkcd.com/356/) you! 😉 You will understand all of them at the end of this minicourse. 
+## A few riddles <a id="introduction"></a>
+
+More about the content, prerequisities, and logistics later. I hope you get a feel for what this is about by checking out the following riddles. I hope some of them [nerd-snipe](https://xkcd.com/356/) you! 😉 You will understand all of them at the end of this minicourse. 
 
 
-<RiddleStatement id="intelligence">
+<RiddleStatement id="intelligence" openByDefault={true}>
 Test your intelligence with the following widget! You will be given a bunch of text snippets cut from Wikipedia at a random place. Your job: predict the next letter! You can compare your performance with some neural nets - GPT-2 and Llama 4. 
 
 <LetterPredictionWidget/>
@@ -163,19 +165,47 @@ Where the hell are all these, so-called "loss functions", coming from? [We'll se
 </RiddleStatement>
 */}
 
-
-
-
-## What's next? <a id="next-steps"></a>
+### Onboarding
 
 As we go through the mini-course, we'll revisit each puzzle and understand what's going on. But more importantly, we will understand some important pieces of mathematics and get solid theoretical background behind machine learning. 
 
-We will first understand what ideas KL divergence, cross-entropy and entropy stand for. Those are the secret weapons that underlie a good bit of machine learning. We will then develop maximum likelihood and maximum entropy principles and see how to use them to set up loss functions. We will see what all this has to do with coding and gain intuition behind large language models (LLMs). 
+Here's some questions we will explore. 
 
----
+- What's KL divergence, entropy and cross-entropy? What's the intuition behind them? (chapters 1-3)
+- Where do the machine-learning principles of maximum likelihood & maximum entropy come from? (chapters 4-5)
+- Why do we use logits, softmax, and Gaussian all the time? (chapter 5)
+- How to set up loss functions? (chapter 6)
+- How to think about LLMs? (chapters 4 and 7)
 
-This is your last chance. You can go on with your life and believe whatever you want to believe about KL divergence. Or you go to [the first chapter](01-kl_intro) and see how far the rabbit-hole goes. 
+<Expand headline = "Prerequisites"> <a id="what-we-assume"></a>
 
+I assume you have the probability knowledge after taking a typical introductory course at university.  You should be familiar with the basic language of probability theory: probabilities, distributions, random variables, independence, expectations, variance, and standard deviation. 
+
+[Bayes' rule](https://www.lesswrong.com/w/bayes-rule) is going to be especially important.<Footnote>I love reading [Yudkowsky's](https://www.lesswrong.com/w/bayes-rule) [explanations](https://www.lesswrong.com/w/test-2) of The Rule. </Footnote>
+I also assume that you get the gist of [the law of large numbers](https://en.wikipedia.org/wiki/Law_of_large_numbers) <Footnote>If you keep flipping a fair coin $n$ times, you get around $n/2$ heads. Or, more generally & technically, if you keep flipping a biased coin with bias $p$ and $X_i \in \{0,1\}$ is whether the $i$-th outcome is Heads, the sample bias $\hat{p} = 1/n \cdot \sum_{i = 1}^n X_i$ is likely to be very close to the true bias $p$. </Footnote> and maybe even the [central limit theorem](https://en.wikipedia.org/wiki/Central_limit_theorem). <Footnote>If you keep flipping a coin, the number of heads you'll see follows a distribution that looks a bit like a [devoured elephant](https://www.amazon.com/KIUB-Postcard-Little-elephant-10x15cm/dp/B0CKSVVWDL). More generally & technically, if $X_1, \dots, X_n$ follow the same (reasonable) distribution, and $n$ is large enough, the distribution of the sample mean looks like the [Gaussian distribution](https://en.wikipedia.org/wiki/Normal_distribution), with standard deviation of the order of $1/\sqrt{n}$. </Footnote>
+
+Knowing example uses of machine learning, statistics, or information theory helps a good bit to appreciate the context.
+</Expand>
+
+<Expand headline = "How to read this">
+
+Skip stuff you find boring, especially expanding boxes and doubly especially boxes labeled with ⚠️.
+
+<Expand advanced = {true} headline = "Advanced block">
+You were supposed to skip this one. 😏
+</Expand>
+
+Follow links, get nerdsniped, and don't feel the need to read this linearly. 
+
+This mini-course does not contain many formal theorem statements or proofs since the aim is to convey intuition in an accessible way. The downside is that some discussions are necessarily a bit imprecise. To get to the bottom of the topic, check [resources](resources) or just copy-paste the chapter to your favorite LLM and ask for details. 
+
+The total length of the text, if you skip most expand boxes and footnoes, is about 2 chapters of Harry Potter and the Philosopher's stone (until Harry's first experience with magic). It's about 5 chapters if you read all footnotes and expand boxes (Harry learns he's a wizard). In either case, I don't promise you will feel the same as Harry.  
+</Expand>
+
+
+## What's next?
+
+This is your last chance. You can go on with your life and believe whatever you want to believe about KL divergence. Or you go to the [first chapter](/01-kl_intro) and see how far the rabbit-hole goes.
 
 <DualActionImage src="fig/pills.png" alt="pills" width="75%" />
 

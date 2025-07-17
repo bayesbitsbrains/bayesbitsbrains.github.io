@@ -44,6 +44,11 @@ export async function generateStaticParams() {
 export default async function ChapterPage({ params }: PageProps) {
   const path = (await params).path.join("/");
 
+  // Redirect /00-riddles to the root page
+  if (path === "00-riddles" || path === "00-riddles/") {
+    redirect("/");
+  }
+
   // Check if the path looks like a static file and return 404
   const staticFileExtensions = [".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp", ".ico", ".js", ".css", ".map"];
   const hasStaticExtension = staticFileExtensions.some((ext) => path.toLowerCase().endsWith(ext));

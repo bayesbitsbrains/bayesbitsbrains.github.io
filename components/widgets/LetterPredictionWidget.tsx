@@ -1,7 +1,22 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { getAssetPath } from "@/lib/utils";
+
+/* ------------------------------------------------------------------ *
+ *  Excluded snapshot IDs (moved out of component so we don't rebuild)
+ * ------------------------------------------------------------------ */
+const EXCLUDED_IDS: readonly number[] = [
+  506, 422, 476, 280, 487, 838, 835, 720, 546, 827, 789, 308, 153, 163, 399, 590, 875, 856, 79, 218, 201, 57, 112,
+  274, 576, 602, 615, 676, 8, 344, 304, 174,
+  134, 135, 140, 166, 202, 306, 365, 366, 372, 426, 463, 497, 536, 562, 631, 634, 758, 798,
+  14, 35, 36, 37, 56, 67, 73, 90, 178, 180, 223, 281, 292, 293, 296, 332, 350, 361, 368, 373, 397, 453, 554, 568, 575,
+  596, 622, 665, 675, 763, 775, 783, 812, 815, 866,
+  31, 60, 64, 68, 97, 108, 131, 155, 241, 247, 386, 398, 400, 447, 449, 453, 457, 480, 490, 524, 542, 549, 585, 607,
+  618, 648, 693, 700, 711, 725, 881, 883,
+  212,
+  525, 557, 756, 104, 752, 867, 382, 799,
+];
 
 interface Snapshot {
   id: number;
@@ -45,204 +60,187 @@ const LetterPredictionWidget: React.FC = () => {
   const [gameStates, setGameStates] = useState<GameState[]>([]);
   const [currentInput, setCurrentInput] = useState("");
   const [loading, setLoading] = useState(true);
-  const [showResults, setShowResults] = useState(false);
+  const [modelsReady, setModelsReady] = useState(false);
   const [usedSnapshotIds, setUsedSnapshotIds] = useState<Set<number>>(new Set());
 
-  // Load data on component mount
+  /* ------------------------------------------------------------
+   * Phase 1: load snapshots only (fast). We can start a game as
+   * soon as these arrive, without waiting on model data.
+   * ---------------------------------------------------------- */
   useEffect(() => {
-    const loadData = async () => {
+    let cancelled = false;
+    (async () => {
       try {
-        // Load snapshots
-        const snapshotResponse = await fetch(getAssetPath('/data/prediction_snapshots.json'));
+        const snapshotResponse = await fetch(getAssetPath("/data/prediction_snapshots.json"));
         const snapshotData = await snapshotResponse.json();
-        setSnapshots(snapshotData.snapshots);
-
-        // Load LLM intelligence test scores
-        try {
-          const llmResponse = await fetch(getAssetPath('/data/intelligence_test/letter_eval_results.json'));
-          const llmData = await llmResponse.json();
-
-          // Convert the data structure to match our interface
-          const convertedScores: Record<string, LLMScore> = {};
-          Object.entries(llmData.models).forEach(([modelKey, modelData]: [string, any]) => {
-            convertedScores[modelKey] = {
-              model: modelData.model,
-              avg_cross_entropy: 0, // Not used in new data
-              avg_optimistic: modelData.mean_bits,
-              median_cross_entropy: 0, // Not used in new data
-              median_optimistic: modelData.median_bits,
-            };
-          });
-
-          setLlmScores(convertedScores);
-
-          // Load detailed scores for per-snapshot comparisons
-          const detailedScores: Record<string, LLMDetailedScore[]> = {};
-          for (const modelKey of Object.keys(convertedScores)) {
-            try {
-              const detailResponse = await fetch(
-                getAssetPath(`/data/intelligence_test/details_${modelKey.replace("/", "_")}.json`),
-              );
-              const detailData = await detailResponse.json();
-              detailedScores[modelKey] = detailData;
-            } catch (e) {
-              console.error(`Error loading detailed scores for ${modelKey}:`, e);
-            }
-          }
-          setLlmDetailedScores(detailedScores);
-
-          console.log("Loaded LLM scores:", convertedScores);
-          console.log("Loaded detailed scores:", detailedScores);
-        } catch (e) {
-          console.error("Error loading LLM scores:", e);
-          // Fallback data based on your actual results
-          setLlmScores({
-            gpt2: {
-              model: "gpt2",
-              avg_cross_entropy: 0,
-              avg_optimistic: 0.466, // From your data
-              median_cross_entropy: 0,
-              median_optimistic: 0.0,
-            },
-            "meta-llama/Llama-4-Scout-17B-16E": {
-              model: "meta-llama/Llama-4-Scout-17B-16E",
-              avg_cross_entropy: 0,
-              avg_optimistic: 0.343, // From your data
-              median_cross_entropy: 0,
-              median_optimistic: 0.0,
-            },
-          });
+        if (!cancelled) {
+          setSnapshots(snapshotData.snapshots);
+          setLoading(false); // we can render game now
         }
-
-        setLoading(false);
-      } catch (error) {
-        console.error("Error loading data:", error);
-        setLoading(false);
+      } catch (err) {
+        console.error("Failed to load snapshots:", err);
+        if (!cancelled) setLoading(false);
       }
-    };
-
-    loadData();
+    })();
+    return () => { cancelled = true; };
   }, []);
 
-  const isGPT2FirstTry = (snapshotId: number): boolean => {
-    const gpt2Data = llmDetailedScores["gpt2"];
-    if (!gpt2Data) return false;
+  /* ------------------------------------------------------------
+   * Phase 2: load model summary + detail in background.
+   * Kicks off once snapshots are ready (loading=false).
+   * ---------------------------------------------------------- */
+  useEffect(() => {
+    if (loading) return; // wait for snapshots
+    let cancelled = false;
+    (async () => {
+      try {
+        const llmResponse = await fetch(getAssetPath("/data/intelligence_test/letter_eval_results.json"));
+        const llmData = await llmResponse.json();
+        if (cancelled) return;
 
-    const scoreData = gpt2Data.find((score) => score.snapshot_id === snapshotId);
-    if (!scoreData) return false;
+        const convertedScores: Record<string, LLMScore> = {};
+        Object.entries(llmData.models).forEach(([modelKey, modelData]: [string, any]) => {
+          convertedScores[modelKey] = {
+            model: modelData.model,
+            avg_cross_entropy: 0,
+            avg_optimistic: modelData.mean_bits,
+            median_cross_entropy: 0,
+            median_optimistic: modelData.median_bits,
+          };
+        });
+        setLlmScores(convertedScores);
 
-    // First try means target_position is 1 (1-based indexing)
-    return scoreData.target_position === 1;
-  };
+        const detailedScores: Record<string, LLMDetailedScore[]> = {};
+        for (const modelKey of Object.keys(convertedScores)) {
+          try {
+            const detailResponse = await fetch(
+              getAssetPath(`/data/intelligence_test/details_${modelKey.replace("/", "_")}.json`),
+            );
+            const detailData = await detailResponse.json();
+            if (!cancelled) detailedScores[modelKey] = detailData;
+          } catch (e) {
+            console.error(`Error loading detailed scores for ${modelKey}:`, e);
+          }
+        }
+        if (!cancelled) {
+          setLlmDetailedScores(detailedScores);
+          setModelsReady(true);
+        }
+      } catch (err) {
+        console.error("Failed to load LLM model data:", err);
+        if (!cancelled) {
+          // still mark ready so UI doesn't spin forever; no comparisons
+          setModelsReady(false);
+        }
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [loading]);
 
-  const startNewGame = () => {
-    if (snapshots.length === 0) return;
 
-    // Hotfix: Exclude snapshots with IDs 506, 422, 476, 280, 487, 838, 835, 720, 546, 827, 789, 308, 153, 163, 399, 590, 875, 856, 79, 218, 201, 57, 112, 274, 576, 602, 615, 676, 8, 344, 304, 174
-    // Also exclude snapshots containing "sex": 134, 135, 140, 166, 202, 306, 308, 344, 365, 366, 372, 426, 463, 497, 536, 562, 631, 634, 758, 798, 827
-    // Also exclude snapshots containing "Rearden": 14, 35, 36, 37, 56, 67, 73, 90, 135, 178, 180, 223, 281, 292, 293, 296, 306, 332, 350, 361, 365, 368, 373, 397, 453, 554, 562, 568, 575, 596, 622, 665, 675, 758, 763, 775, 783, 812, 815, 827, 866
-    // Also exclude snapshots containing "Dagny": 31, 60, 64, 67, 68, 73, 79, 97, 108, 131, 155, 241, 247, 281, 306, 373, 386, 398, 400, 447, 449, 453, 457, 480, 490, 524, 542, 546, 549, 562, 568, 585, 607, 618, 648, 693, 700, 711, 725, 763, 783, 789, 835, 881, 883
-    // Additional excluded IDs: 525, 557, 756, 104, 752, 867, 382, 799
-    const excludedIds = [
-      506, 422, 476, 280, 487, 838, 835, 720, 546, 827, 789, 308, 153, 163, 399, 590, 875, 856, 79, 218, 201, 57, 112,
-      274, 576, 602, 615, 676, 8, 344, 304, 174,
-      134, 135, 140, 166, 202, 306, 365, 366, 372, 426, 463, 497, 536, 562, 631, 634, 758, 798,
-      14, 35, 36, 37, 56, 67, 73, 90, 178, 180, 223, 281, 292, 293, 296, 332, 350, 361, 368, 373, 397, 453, 554, 568, 575, 596, 622, 665, 675, 763, 775, 783, 812, 815, 866,
-      31, 60, 64, 68, 97, 108, 131, 155, 241, 247, 386, 398, 400, 447, 449, 457, 480, 490, 524, 542, 549, 585, 607, 618, 648, 693, 700, 711, 725, 881, 883,
-      212,
-      525, 557, 756, 104, 752, 867, 382, 799,
-    ];
-    const validSnapshots = snapshots.filter((s) => !excludedIds.includes(s.id) && !usedSnapshotIds.has(s.id));
 
-    // If we've used all valid snapshots, reset the used set
-    if (validSnapshots.length === 0) {
-      setUsedSnapshotIds(new Set());
-      // Try again with reset set
-      const freshValidSnapshots = snapshots.filter((s) => !excludedIds.includes(s.id));
-      if (freshValidSnapshots.length === 0) return;
+  const isLlamaMultipleTries = useCallback(
+    (snapshotId: number): boolean => {
+      const llamaData = llmDetailedScores["meta-llama/Llama-4-Scout-17B-16E"];
+      if (!llamaData) return false;
 
-      const selectedSnapshot = selectWeightedSnapshot(freshValidSnapshots);
-      setUsedSnapshotIds(new Set([selectedSnapshot.id]));
+      const scoreData = llamaData.find((score) => score.snapshot_id === snapshotId);
+      if (!scoreData) return false;
 
-      const newGame: GameState = {
-        snapshot: selectedSnapshot,
-        userGuesses: [],
-        attempts: 0,
-        completed: false,
-        score: 0,
-      };
+      // Multiple tries means target_position > 1
+      return scoreData.target_position !== undefined && scoreData.target_position > 1;
+    },
+    [llmDetailedScores]
+  );
 
-      setGameStates([...gameStates, newGame]);
-      setCurrentInput("");
-      return;
-    }
+  const isGPT2MultipleTries = useCallback(
+    (snapshotId: number): boolean => {
+      const gpt2Data = llmDetailedScores["gpt2"];
+      if (!gpt2Data) return false;
 
-    // Select weighted snapshot from valid ones
-    const selectedSnapshot = selectWeightedSnapshot(validSnapshots);
+      const scoreData = gpt2Data.find((score) => score.snapshot_id === snapshotId);
+      if (!scoreData) return false;
 
-    // Add to used set
-    setUsedSnapshotIds((prev) => new Set([...prev, selectedSnapshot.id]));
+      // Multiple tries means target_position > 1
+      return scoreData.target_position !== undefined && scoreData.target_position > 1;
+    },
+    [llmDetailedScores]
+  );
 
-    const newGame: GameState = {
-      snapshot: selectedSnapshot,
-      userGuesses: [],
-      attempts: 0,
-      completed: false,
-      score: 0,
-    };
+  const selectWeightedSnapshot = useCallback(
+    (snapshots: Snapshot[]): Snapshot => {
+      // Categorize snapshots
+      const llamaHardSnapshots = snapshots.filter((s) => isLlamaMultipleTries(s.id));
+      const gpt2HardSnapshots = snapshots.filter((s) => isGPT2MultipleTries(s.id));
 
-    setGameStates([...gameStates, newGame]);
-    setCurrentInput("");
-  };
-
-  const isLlamaMultipleTries = (snapshotId: number): boolean => {
-    const llamaData = llmDetailedScores["meta-llama/Llama-4-Scout-17B-16E"];
-    if (!llamaData) return false;
-
-    const scoreData = llamaData.find((score) => score.snapshot_id === snapshotId);
-    if (!scoreData) return false;
-
-    // Multiple tries means target_position > 1
-    return scoreData.target_position !== undefined && scoreData.target_position > 1;
-  };
-
-  const isGPT2MultipleTries = (snapshotId: number): boolean => {
-    const gpt2Data = llmDetailedScores["gpt2"];
-    if (!gpt2Data) return false;
-
-    const scoreData = gpt2Data.find((score) => score.snapshot_id === snapshotId);
-    if (!scoreData) return false;
-
-    // Multiple tries means target_position > 1
-    return scoreData.target_position !== undefined && scoreData.target_position > 1;
-  };
-
-  const selectWeightedSnapshot = (snapshots: Snapshot[]): Snapshot => {
-    // Categorize snapshots
-    const llamaHardSnapshots = snapshots.filter((s) => isLlamaMultipleTries(s.id));
-    const gpt2HardSnapshots = snapshots.filter((s) => isGPT2MultipleTries(s.id));
-
-    // New importance sampling: 50% uniform random, 25% llama hard, 25% gpt2 hard
-    const rand = Math.random();
-    
-    if (rand < 0.5) {
-      // 50%: Uniformly random
+      // New importance sampling: 50% uniform random, 25% llama hard, 25% gpt2 hard
+      const rand = Math.random();
+      
+      if (rand < 0.5) {
+        // 50%: Uniformly random
+        return snapshots[Math.floor(Math.random() * snapshots.length)];
+      } else if (rand < 0.75) {
+        // 25%: Llama needs more than one try
+        if (llamaHardSnapshots.length > 0) {
+          return llamaHardSnapshots[Math.floor(Math.random() * llamaHardSnapshots.length)];
+        }
+      } else {
+        // 25%: GPT2 needs more than one try
+        if (gpt2HardSnapshots.length > 0) {
+          return gpt2HardSnapshots[Math.floor(Math.random() * gpt2HardSnapshots.length)];
+        }
+      }
+      
+      // Fallback to uniformly random if the selected category is empty
       return snapshots[Math.floor(Math.random() * snapshots.length)];
-    } else if (rand < 0.75) {
-      // 25%: Llama needs more than one try
-      if (llamaHardSnapshots.length > 0) {
-        return llamaHardSnapshots[Math.floor(Math.random() * llamaHardSnapshots.length)];
-      }
-    } else {
-      // 25%: GPT2 needs more than one try
-      if (gpt2HardSnapshots.length > 0) {
-        return gpt2HardSnapshots[Math.floor(Math.random() * gpt2HardSnapshots.length)];
-      }
+    },
+    [isLlamaMultipleTries, isGPT2MultipleTries]
+  );
+
+  /* ------------------------------------------------------------
+   * Start new game
+   * If models aren't ready yet, sample uniformly; otherwise use
+   * importance weighting.
+   * ---------------------------------------------------------- */
+  const startNewGame = useCallback(
+    (weighted: boolean = modelsReady) => {
+      if (snapshots.length === 0) return;
+
+      const valid = snapshots.filter(
+        (s) => !EXCLUDED_IDS.includes(s.id) && !usedSnapshotIds.has(s.id),
+      );
+
+      const pool = valid.length ? valid : snapshots.filter((s) => !EXCLUDED_IDS.includes(s.id));
+      if (!pool.length) return;
+
+      const pick = weighted ? selectWeightedSnapshot(pool) : pool[Math.floor(Math.random() * pool.length)];
+
+      // update used set
+      setUsedSnapshotIds((prev) => {
+        const next = valid.length ? new Set(prev) : new Set<number>();
+        next.add(pick.id);
+        return next;
+      });
+
+      // append new game
+      setGameStates((prev) => [
+        ...prev,
+        { snapshot: pick, userGuesses: [], attempts: 0, completed: false, score: 0 },
+      ]);
+
+      setCurrentInput("");
+    },
+    [snapshots, usedSnapshotIds, modelsReady, selectWeightedSnapshot],
+  );
+
+  /* ------------------------------------------------------------
+   * Auto-start ONCE when snapshots ready & no games yet
+   * ---------------------------------------------------------- */
+  useEffect(() => {
+    if (!loading && snapshots.length > 0 && gameStates.length === 0) {
+      startNewGame(false); // uniform first round
     }
-    
-    // Fallback to uniformly random if the selected category is empty
-    return snapshots[Math.floor(Math.random() * snapshots.length)];
-  };
+  }, [loading, snapshots.length, gameStates.length, startNewGame]);
 
   const saveGameResult = (game: GameState, gaveUp: boolean = false) => {
     if (!game.snapshot) return;
@@ -324,9 +322,11 @@ const LetterPredictionWidget: React.FC = () => {
       saveGameResult(updatedGame, false);
     }
 
-    const newGameStates = [...gameStates];
-    newGameStates[gameIndex] = updatedGame;
-    setGameStates(newGameStates);
+    setGameStates((prev) => {
+      const next = [...prev];
+      next[gameIndex] = updatedGame;
+      return next;
+    });
     setCurrentInput("");
   };
 
@@ -335,6 +335,15 @@ const LetterPredictionWidget: React.FC = () => {
       makeGuess(gameIndex, currentInput);
     }
   };
+
+  // Build fast lookup index for per-snapshot LLM details
+  const llmDetailIndex = useMemo(() => {
+    const idx: Record<string, Map<number, LLMDetailedScore>> = {};
+    for (const [model, arr] of Object.entries(llmDetailedScores)) {
+      idx[model] = new Map(arr.map(s => [s.snapshot_id, s]));
+    }
+    return idx;
+  }, [llmDetailedScores]);
 
   const calculateUserAverage = () => {
     const completedGames = gameStates.filter((g) => g.completed && !g.gaveUp);
@@ -388,7 +397,7 @@ const LetterPredictionWidget: React.FC = () => {
       averages[model] = calculateLLMAverage(model);
     });
     return averages;
-  }, [llmScores, gameStates]);
+  }, [llmScores, llmDetailedScores, gameStates]);
 
   // ===== Adaptive axis helpers =============================
   // Axis for the "number of guesses in this round" (log-scale)
@@ -403,7 +412,7 @@ const LetterPredictionWidget: React.FC = () => {
   if (loading) {
     return (
       <div className="p-6 bg-gray-50 rounded-lg">
-        <div className="text-center">Loading prediction data...</div>
+        <div className="text-center">Loading first question…</div>
       </div>
     );
   }
@@ -420,18 +429,6 @@ const LetterPredictionWidget: React.FC = () => {
         Predict the next letter (the answer is one of 26 English letters, case-insensitive)
       </p>
 
-      {/* Game Controls */}
-      {gameStates.length === 0 && (
-        <div className="flex justify-center gap-4">
-          <button
-            onClick={startNewGame}
-            disabled={snapshots.length === 0}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-300"
-          >
-            Start Game
-          </button>
-        </div>
-      )}
 
       {/* Current Game */}
       {currentGame && currentGame.snapshot && (
@@ -453,7 +450,7 @@ const LetterPredictionWidget: React.FC = () => {
                     ) : (
                       <span className="bg-green-200 px-1 rounded font-semibold">{target_letter}</span>
                     )}
-                    <span className="text-gray-700">{after}</span>
+                    {currentGame.completed && <span className="text-gray-700">{after}</span>}
                   </>
                 );
               })()}
@@ -493,9 +490,11 @@ const LetterPredictionWidget: React.FC = () => {
                           gaveUp: true,
                         };
 
-                        const newGameStates = [...gameStates];
-                        newGameStates[gameStates.length - 1] = updatedGame;
-                        setGameStates(newGameStates);
+                        setGameStates((prev) => {
+                          const next = [...prev];
+                          next[next.length - 1] = updatedGame;
+                          return next;
+                        });
                         setCurrentInput("");
 
                         // Save the gave up result
@@ -509,7 +508,7 @@ const LetterPredictionWidget: React.FC = () => {
                 </div>
 
                 <div className="text-sm text-gray-600 text-center">
-                  Attempts: {currentGame.attempts}
+                  Attempts: {currentGame.attempts}{currentGame.gaveUp && ` (penalized as max 26)`}
                   {currentGame.userGuesses.length > 0 && (
                     <span className="ml-4">Previous guesses: {[...new Set(currentGame.userGuesses.map(l => l.toLowerCase()))].join(", ")}</span>
                   )}
@@ -544,7 +543,7 @@ const LetterPredictionWidget: React.FC = () => {
       )}
 
       {/* Performance Comparison */}
-      {completedGames.length > 0 && (
+      {completedGames.length > 0 && modelsReady && (
         <div className="bg-white p-4 rounded-lg border space-y-4">
           <h4 className="font-semibold">Performance Comparison</h4>
 
@@ -911,7 +910,12 @@ const LetterPredictionWidget: React.FC = () => {
                         <div className="font-semibold">👤 You</div>
                         <div className="text-yellow-300">{calculateUserAverage().toFixed(3)} bits</div>
                         <div className="text-gray-300 mt-1">
-                          Average of {completedGames.length} game{completedGames.length !== 1 ? "s" : ""}
+                          {(() => {
+                            const scoredGames = gameStates.filter(g => g.completed && !g.gaveUp);
+                            return (
+                              <>Average of {scoredGames.length} game{scoredGames.length !== 1 ? "s" : ""}</>
+                            );
+                          })()}
                         </div>
                         <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
                           <div className="border-4 border-transparent border-t-gray-800"></div>
@@ -964,7 +968,12 @@ const LetterPredictionWidget: React.FC = () => {
                           </div>
                           <div className="text-yellow-300">{llmAvg.toFixed(3)} bits</div>
                           <div className="text-gray-300 mt-1">
-                            On same {completedGames.length} game{completedGames.length !== 1 ? "s" : ""}
+                            {(() => {
+                              const scoredGames = gameStates.filter(g => g.completed && !g.gaveUp);
+                              return (
+                                <>On same {scoredGames.length} game{scoredGames.length !== 1 ? "s" : ""}</>
+                              );
+                            })()}
                           </div>
                           <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
                             <div className="border-4 border-transparent border-t-gray-800"></div>
@@ -1026,6 +1035,13 @@ const LetterPredictionWidget: React.FC = () => {
             <span>Games played: {gameStates.length}</span>
             <span>Hover over emojis for details</span>
           </div>
+        </div>
+      )}
+
+      {/* If we have completed games but models still loading, show light notice */}
+      {completedGames.length > 0 && !modelsReady && (
+        <div className="bg-white p-4 rounded-lg border text-center text-sm text-gray-600">
+          Model comparisons loading…
         </div>
       )}
     </div>
