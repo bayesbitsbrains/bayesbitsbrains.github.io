@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { Line } from "recharts";
+import { getAssetPath } from "@/lib/utils";
 
 interface DistributionData {
   n_samples: number;
@@ -79,7 +80,7 @@ export default function FinancialDistributionWidget({ showBTC = true, showSAP = 
         const promises = [];
         
         if (showBTC) {
-          const btcUrl = `${process.env.NODE_ENV === 'production' ? '/problens-web' : ''}/financial_data/btc_data.json`;
+          const btcUrl = getAssetPath('/financial_data/btc_data.json');
           console.log('Attempting to fetch BTC data from:', btcUrl, '(~8MB)');
           promises.push(
             fetch(btcUrl)
@@ -98,7 +99,7 @@ export default function FinancialDistributionWidget({ showBTC = true, showSAP = 
         }
         
         if (showSAP) {
-          const sapUrl = `${process.env.NODE_ENV === 'production' ? '/problens-web' : ''}/financial_data/sap_data.json`;
+          const sapUrl = getAssetPath('/financial_data/sap_data.json');
           console.log('Attempting to fetch SAP data from:', sapUrl, '(~22MB)');
           promises.push(
             fetch(sapUrl)
