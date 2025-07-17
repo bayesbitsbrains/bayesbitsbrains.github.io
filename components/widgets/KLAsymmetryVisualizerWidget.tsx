@@ -6,14 +6,6 @@ import KatexMath from "@/components/content/KatexMath";
 export default function KLAsymmetryVisualizerWidget() {
   const [showResults, setShowResults] = useState(false);
 
-  // Detect touch / coarse pointer devices
-  const [isTouchDevice, setIsTouchDevice] = useState<boolean>(false);
-  useEffect(() => {
-    const coarse = typeof window !== "undefined" && window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
-    setIsTouchDevice(
-      coarse || (typeof window !== "undefined" && ("ontouchstart" in window || navigator.maxTouchPoints > 0)),
-    );
-  }, []);
 
   // Generate points for uniform distribution (flat line)
   const uniformPoints = Array.from({ length: 100 }, (_, i) => {
@@ -160,19 +152,7 @@ export default function KLAsymmetryVisualizerWidget() {
         one the &quot;model&quot;.
       </div>
 
-      <div
-        className="grid grid-cols-1 lg:grid-cols-2 gap-4"
-        onMouseEnter={() => {
-          if (!isTouchDevice) setShowResults(true);
-        }}
-        onMouseLeave={() => {
-          if (!isTouchDevice) setShowResults(false);
-        }}
-        onClick={() => {
-          if (isTouchDevice) setShowResults((prev) => !prev);
-        }}
-        style={{ cursor: isTouchDevice ? "pointer" : "default" }}
-      >
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <DistributionChart
           pColor="#2563eb" // blue
           qColor="#dc2626" // red
@@ -202,16 +182,14 @@ export default function KLAsymmetryVisualizerWidget() {
         />
       </div>
 
-      {isTouchDevice && (
-        <div className="text-center">
-          <button
-            onClick={() => setShowResults(!showResults)}
-            className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-          >
-            {showResults ? "Hide Explanation" : "Tap to reveal explanation"}
-          </button>
-        </div>
-      )}
+      <div className="text-center">
+        <button
+          onClick={() => setShowResults(!showResults)}
+          className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+        >
+          {showResults ? "Hide" : "Reveal"}
+        </button>
+      </div>
 
       {showResults && (
         <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
