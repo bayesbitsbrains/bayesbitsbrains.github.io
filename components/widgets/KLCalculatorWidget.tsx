@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import KatexMath from "@/components/content/KatexMath";
+import { getAssetPath } from "@/lib/utils";
 
 interface LetterFrequency {
   [letter: string]: number;
@@ -24,11 +25,9 @@ export default function KLCalculatorWidget() {
   useEffect(() => {
     const loadDefaultTexts = async () => {
       try {
-        const basePath = process.env.NODE_ENV === "production" ? "/problens-web" : "";
-
         const [anthemsEnResponse, anthemsResponse] = await Promise.all([
-          fetch(`${basePath}/compression_experiments/texts/anthems-en.txt`),
-          fetch(`${basePath}/compression_experiments/texts/anthems.txt`),
+          fetch(getAssetPath("/compression_experiments/texts/anthems-en.txt")),
+          fetch(getAssetPath("/compression_experiments/texts/anthems.txt")),
         ]);
 
         if (anthemsEnResponse.ok && anthemsResponse.ok) {

@@ -2,6 +2,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { getAssetPath } from "@/lib/utils";
 
 type ImageItem = {
   src: string;
@@ -13,7 +14,7 @@ const generateImagePaths = (prefix: string, start: number, end: number, step: nu
   for (let i = start; i <= end; i += step) {
     const paddedIndex = String(i).padStart(4, "0");
     images.push({
-      src: `/problens-web/financial/${prefix}_plot${paddedIndex}.png`,
+      src: getAssetPath(`/financial/${prefix}_plot${paddedIndex}.png`),
       index: i,
     });
   }
