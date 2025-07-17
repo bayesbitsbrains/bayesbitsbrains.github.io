@@ -51,9 +51,19 @@ export default function ShannonCodeWidget() {
     const sum = Object.values(frequencies).reduce((a, b) => a + b, 0);
     if (sum === 0) return frequencies;
     
+    // Minimum non-zero frequency: 1/2^11 ≈ 0.0488% (smallest representable in tree)
+    const minNonZeroFreq = (1 / Math.pow(2, 11)) * 100;
+    
     const normalized: Record<string, number> = {};
     Object.entries(frequencies).forEach(([letter, freq]) => {
-      normalized[letter] = (freq / sum) * 100;
+      const normalizedFreq = (freq / sum) * 100;
+      
+      // Clamp very small frequencies to zero if below minimum representable value
+      if (normalizedFreq > 0 && normalizedFreq < minNonZeroFreq) {
+        normalized[letter] = 0;
+      } else {
+        normalized[letter] = normalizedFreq;
+      }
     });
     return normalized;
   }, [frequencies]);
@@ -284,6 +294,54 @@ export default function ShannonCodeWidget() {
     }, 800);
   }, [generateCodeAssignments, buildTree, findNodeByCode, hideSubtree]);
 
+  // Helper function to convert frequency to logarithmic display height
+  const getLogHeight = useCallback((freq: number) => {
+    if (freq <= 0) return 15; // Minimum height for zero probability (draggable)
+    
+    // Minimum non-zero frequency: 1/2^11 ≈ 0.0488% (smallest representable in tree)
+    const minNonZeroFreq = (1 / Math.pow(2, 11)) * 100; // Convert to percentage
+    
+    // Logarithmic scaling: calibrated so Z (0.07%) appears at ~20% height
+    const minFreq = 0.05; // Slightly below Z's frequency (0.07%)
+    const maxFreq = 100;   // Allow up to 100%
+    const clampedFreq = Math.max(minFreq, Math.min(maxFreq, freq));
+    
+    // Map to logarithmic scale (more space for lower frequencies)
+    const logValue = Math.log(clampedFreq / minFreq) / Math.log(maxFreq / minFreq);
+    
+    // Convert to height percentage (20% to 95% of container, Z will be ~20%)
+    return Math.max(20, logValue * 75 + 20);
+  }, []);
+
+  // Helper function to convert mouse position to frequency using inverse log scale
+  const getFreqFromHeight = useCallback((heightPercent: number) => {
+    // Minimum non-zero frequency: 1/2^11 ≈ 0.0488% (smallest representable in tree)
+    const minNonZeroFreq = (1 / Math.pow(2, 11)) * 100;
+    const minFreq = 0.05; // Match the scaling parameters
+    const maxFreq = 100;   // Allow up to 100%
+    
+    // If dragged very low (below 18%), snap to zero
+    if (heightPercent < 18) {
+      return 0;
+    }
+    
+    // Clamp height percentage (20% to 95%)
+    const clampedHeight = Math.max(20, Math.min(95, heightPercent));
+    
+    // Convert back from height to log scale
+    const logValue = (clampedHeight - 20) / 75;
+    
+    // Convert from log scale to frequency
+    const freq = minFreq * Math.pow(maxFreq / minFreq, logValue);
+    
+    // Clamp to minimum non-zero frequency if very small
+    if (freq > 0 && freq < minNonZeroFreq) {
+      return minNonZeroFreq;
+    }
+    
+    return Math.max(0, Math.min(100, freq));
+  }, []);
+
   // Dragging logic
   const handleMouseDown = useCallback((letter: string, e: React.MouseEvent) => {
     if (isAnimating) return;
@@ -295,11 +353,12 @@ export default function ShannonCodeWidget() {
     const handleMouseMove = (moveEvent: MouseEvent) => {
       const y = moveEvent.clientY - barRect.top;
       const maxHeight = 128; // Height of the bar container (h-32 = 128px)
-      const percentage = Math.max(0.1, Math.min(30, (1 - y / maxHeight) * 20));
+      const heightPercent = (1 - y / maxHeight) * 100;
+      const frequency = getFreqFromHeight(heightPercent);
       
       setFrequencies(prev => ({
         ...prev,
-        [letter]: percentage
+        [letter]: frequency
       }));
     };
     
@@ -310,7 +369,7 @@ export default function ShannonCodeWidget() {
     
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
-  }, [isAnimating]);
+  }, [isAnimating, getFreqFromHeight]);
 
   // Calculate metrics from current assignments
   const { entropy, averageCodeLength } = useMemo(() => {
@@ -483,25 +542,43 @@ export default function ShannonCodeWidget() {
       {/* Letter frequency bars */}
       <div className="relative select-none frequency-bars-container">
         <div className="grid grid-cols-9 gap-2 mb-8">
-          {Object.entries(normalizedFrequencies).map(([letter, freq]) => (
-            <div key={letter} className="relative">
-              <div className="h-32 bg-gray-100 rounded relative overflow-hidden">
-                <div
-                  className={`absolute bottom-0 left-0 right-0 bg-blue-500 transition-colors ${
-                    isAnimating ? 'cursor-not-allowed' : 'cursor-ns-resize hover:bg-blue-600'
-                  }`}
-                  style={{ height: `${freq * 5}%` }}
-                  onMouseDown={(e) => handleMouseDown(letter, e)}
-                />
-                <div className="absolute inset-x-0 top-2 text-center">
-                  <div className="font-mono font-bold">{letter}</div>
+          {Object.entries(normalizedFrequencies).map(([letter, freq]) => {
+            const logHeight = getLogHeight(freq);
+            const isZeroFreq = freq <= 0;
+            
+            return (
+              <div key={letter} className="relative">
+                <div className="h-32 bg-gray-100 rounded relative overflow-hidden">
+                  {/* Main bar */}
+                  <div
+                    className={`absolute bottom-0 left-0 right-0 transition-colors ${
+                      isAnimating ? 'cursor-not-allowed' : 'cursor-ns-resize hover:bg-blue-600'
+                    } ${isZeroFreq ? 'bg-gray-300' : 'bg-blue-500'}`}
+                    style={{ height: `${logHeight}%` }}
+                    onMouseDown={(e) => handleMouseDown(letter, e)}
+                  />
+                  
+                  {/* Invisible overlay for better draggability when bar is small */}
+                  {logHeight < 30 && (
+                    <div
+                      className={`absolute bottom-0 left-0 right-0 ${
+                        isAnimating ? 'cursor-not-allowed' : 'cursor-ns-resize'
+                      }`}
+                      style={{ height: '30%' }}
+                      onMouseDown={(e) => handleMouseDown(letter, e)}
+                    />
+                  )}
+                  
+                  <div className="absolute inset-x-0 top-2 text-center">
+                    <div className="font-mono font-bold">{letter}</div>
+                  </div>
+                </div>
+                <div className="text-xs text-center mt-1 text-gray-600">
+                  {freq.toFixed(1)}%
                 </div>
               </div>
-              <div className="text-xs text-center mt-1 text-gray-600">
-                {freq.toFixed(1)}%
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
