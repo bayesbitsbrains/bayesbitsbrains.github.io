@@ -106,7 +106,29 @@ const ExpertRatingWidget: React.FC<Props> = ({
   const numQuestions = groundTruth.length;
 
   return (
-    <div className="p-4 bg-gray-50 rounded-lg space-y-4 max-w-6xl mx-auto">
+    <>
+      <style jsx>{`
+        .slider::-webkit-slider-thumb {
+          appearance: none;
+          height: 16px;
+          width: 16px;
+          border-radius: 50%;
+          background: #3b82f6;
+          cursor: pointer;
+          border: 2px solid #ffffff;
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+        .slider::-moz-range-thumb {
+          height: 16px;
+          width: 16px;
+          border-radius: 50%;
+          background: #3b82f6;
+          cursor: pointer;
+          border: 2px solid #ffffff;
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+      `}</style>
+      <div className="p-4 bg-gray-50 rounded-lg space-y-4 max-w-6xl mx-auto">
       {title && (
         <h3 className="text-lg font-semibold text-center text-gray-800">
           {title}
@@ -121,7 +143,7 @@ const ExpertRatingWidget: React.FC<Props> = ({
                 Expert
               </th>
               {Array.from({ length: numQuestions }, (_, i) => (
-                <th key={i} className="border border-gray-300 p-2 text-center font-semibold" style={{ minWidth: '65px' }}>
+                <th key={i} className="border border-gray-300 p-2 text-center font-semibold" style={{ minWidth: '80px' }}>
                   Q{i + 1}
                 </th>
               ))}
@@ -143,16 +165,46 @@ const ExpertRatingWidget: React.FC<Props> = ({
                   <div className="text-xs text-gray-600">{expert.name}</div>
                 </td>
                 {Array.from({ length: numQuestions }, (_, questionIdx) => (
-                  <td key={questionIdx} className="border border-gray-300 p-0" style={{ minWidth: '65px' }}>
-                    <input
-                      type="number"
-                      min="0"
-                      max="1"
-                      step="0.01"
-                      value={predictions[expertIdx][questionIdx].toFixed(2)}
-                      onChange={(e) => updatePrediction(expertIdx, questionIdx, e.target.value)}
-                      className="w-full h-full p-2 text-center border-none text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
+                  <td key={questionIdx} className="border border-gray-300 p-0" style={{ minWidth: '80px' }}>
+                    <div className="flex flex-col h-full">
+                      {/* Number input - smaller on mobile */}
+                      <input
+                        type="number"
+                        min="0"
+                        max="1"
+                        step="0.01"
+                        value={predictions[expertIdx][questionIdx].toFixed(2)}
+                        onChange={(e) => updatePrediction(expertIdx, questionIdx, e.target.value)}
+                        className="w-full p-1 text-center border-none text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[28px] sm:min-h-[36px]"
+                      />
+                      {/* Range slider - visible on mobile */}
+                      <div className="sm:hidden px-1 py-1">
+                        <input
+                          type="range"
+                          min="0"
+                          max="100"
+                          step="1"
+                          value={Math.round(predictions[expertIdx][questionIdx] * 100)}
+                          onChange={(e) => updatePrediction(expertIdx, questionIdx, (parseInt(e.target.value) / 100).toString())}
+                          className="w-full h-1 appearance-none bg-gray-200 rounded-lg cursor-pointer slider"
+                          style={{
+                            background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${predictions[expertIdx][questionIdx] * 100}%, #e5e7eb ${predictions[expertIdx][questionIdx] * 100}%, #e5e7eb 100%)`
+                          }}
+                        />
+                        {/* Quick preset buttons for mobile */}
+                        <div className="flex justify-center space-x-1 mt-1">
+                          {[0, 0.5, 1].map(preset => (
+                            <button
+                              key={preset}
+                              onClick={() => updatePrediction(expertIdx, questionIdx, preset.toString())}
+                              className="text-xs px-1 py-0.5 bg-gray-300 hover:bg-gray-400 rounded text-gray-700 min-w-[20px]"
+                            >
+                              {preset}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
                   </td>
                 ))}
                 <td className="border-l-4 border-blue-500 border-t border-r border-b border-gray-300 p-2 text-center font-mono font-bold text-blue-700">
@@ -212,6 +264,7 @@ const ExpertRatingWidget: React.FC<Props> = ({
         </button>
       </div>
     </div>
+    </>
   );
 };
 

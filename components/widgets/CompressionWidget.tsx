@@ -75,43 +75,43 @@ export default function CompressionWidget() {
               const descriptions: { [key: string]: { [alg: string]: string } } = {
                 "kl_intro_10kb": {
                   "Baseline": "",
-                  "Best code": "Entropy of English letter frequencies is about 4 bits per letter. This text is a bit worse due to math characters",
-                  "ZIP (zlib)": "ZIP can typically do a bit better than pure letter-encoding due to common words like 'the'",
+                  "Best letter encoding": "Entropy of English letter frequencies is about 4 bits per letter. This text is a bit worse due to math characters",
+                  "ZIP": "ZIP can typically do a bit better than pure letter-encoding due to common words like 'the'",
                   "LLM (GPT-2)": "If you can speak English, its entropy is about 1 bit per letter.",
                   "LLM (Llama 4)": "If you can speak English and are very smart at math, you can do better than 1 bit per letter for this text."
                 },
                 "pi_digits_10kb": {
                   "Baseline": "",
-                  "Best code": "All ten digits 0,1,...,9 have the same frequency in $\\pi$. The optimal code for letters thus uses $\\log 10 \\approx 3.3$ bits per character.",
-                  "ZIP (zlib)": "ZIP kind of sucks here, it probably tries very hard to find some order in $\\pi$ that really isn't there; thus 20% overhead over naive encoding of digits.",
+                  "Best letter encoding": "All ten digits 0,1,...,9 have the same frequency in $\\pi$. The optimal code for letters thus uses $\\log 10 \\approx 3.3$ bits per character.",
+                  "ZIP": "ZIP kind of sucks here, it probably tries very hard to find some order in $\\pi$ that really isn't there; thus 20% overhead over naive encoding of digits.",
                   "LLM (GPT-2)": "GPT-2 clearly does not know $\\pi$ (except for the first few digits) so it's stuck with $\\log 10 \\approx 3.3$ bits per letter. In fact, it's a bit worse due to technicalities related to converting between tokens and characters.",
                   "LLM (Llama 4)": "Llama clearly knows the first 10k digits of pi pretty well! It memorized the first 1K digits incredibly well, then it starts stumbling more and more often, but still very impressive!"
                 },
                 "declaration_full": {
                   "Baseline": "",
-                  "Best code": "Entropy of English letter frequencies is about 4 bits per letter.",
-                  "ZIP (zlib)": "ZIP can typically do a bit better than pure letter-encoding due to common words like 'the'",
+                  "Best letter encoding": "Entropy of English letter frequencies is about 4 bits per letter.",
+                  "ZIP": "ZIP can typically do a bit better than pure letter-encoding due to common words like 'the'",
                   "LLM (GPT-2)": "GPT-2 clearly remembers that all men were created equal! Otherwise, it's about as good as any other English text.",
                   "LLM (Llama 4)": "Llama 4 knows the declaration by heart. It is probably not super sure about the order of signatories at the very end."
                 },
                 "human_mitochondrial_dna": {
                   "Baseline": "",
-                  "Best code": "DNA has 4-letter alphabet with quite even base frequencies, leading to 2 bits per letter and 4x speedup over the naive encoding.",
-                  "ZIP (zlib)": "As with pi, ZIP is trying to find some correlations between consecutive letters, but there does not seem to be that much going on; this leads to 20% overhead as with $\\pi$.",
+                  "Best letter encoding": "DNA has 4-letter alphabet with quite even base frequencies, leading to 2 bits per letter and 4x speedup over the naive encoding.",
+                  "ZIP": "As with pi, ZIP is trying to find some correlations between consecutive letters, but there does not seem to be that much going on; this leads to 20% overhead as with $\\pi$.",
                   "LLM (GPT-2)": "GPT-2 just sees random string over four letters. It's a bit worse than 2 bits per letter due to technicalities related to converting between tokens and characters.",
                   "LLM (Llama 4)": "I chose one of the most important parts of human DNA and Llama actually knows the first few hundreds of base pairs. Then it's again just (slightly worse than) 2 bits per letter."
                 },
                 "huffman_code_10kb": {
                   "Baseline": "",
-                  "Best code": "Letter frequencies in code are similar to English texts, so we can get about 4 bits per character",
-                  "ZIP (zlib)": "Code is easier to compress by zip than regular English text as it contains many very frequent words like print, if and so on.",
+                  "Best letter encoding": "Letter frequencies in code are similar to English texts, so we can get about 4 bits per character",
+                  "ZIP": "Code is easier to compress by zip than regular English text as it contains many very frequent words like print, if and so on.",
                   "LLM (GPT-2)": "As with ZIP, GPT-2 achieves a bit better performance than on regular English text.",
                   "LLM (Llama 4)": "Unlike GPT-2, Llama can code. The code snippet is a well-known algorithm and Llama clearly knows it. The second part of the example code is more ad-hoc as it contains some printing of results where there's more wiggle room about what may come next."
                 },
                 "repeated_phrase": {
                   "Baseline": "",
-                  "Best code": "Although the text is repetitive, the entropy of letter frequencies is very similar to that of English. ",
-                  "ZIP (zlib)": "ZIP is smart enough to compress repeating patterns so it's great for files like this one. ",
+                  "Best letter encoding": "Although the text is repetitive, the entropy of letter frequencies is very similar to that of English. ",
+                  "ZIP": "ZIP is smart enough to compress repeating patterns so it's great for files like this one. ",
                   "LLM (GPT-2)": "GPT-2 is basically not surprised at all after the first sentence. Except for a weird bit in the middle that I don't understand. ",
                   "LLM (Llama 4)": "Llama just reads the first sentence and then chills. With some caveats, it can compress the whole file to <100 bits. "
                 }
@@ -135,18 +135,18 @@ export default function CompressionWidget() {
                   specificDescription: getSpecificDescription("Baseline", config.filename, textLength)
                 },
                 {
-                  algorithm: "Best code",
+                  algorithm: "Best letter encoding",
                   bits: result.letterwise_bits || naiveBits,
                   ratio: result.letterwise_ratio ? `${result.letterwise_ratio}x` : "1.00x",
                   generalDescription: "Use optimal codes based on individual character frequencies. We estimate its compression rate by computing the entropy of the frequency distribution. ",
-                  specificDescription: getSpecificDescription("Best code", config.filename, textLength)
+                  specificDescription: getSpecificDescription("Best letter encoding", config.filename, textLength)
                 },
                 {
-                  algorithm: "ZIP (zlib)",
+                  algorithm: "ZIP",
                   bits: result.zip_bits || naiveBits,
                   ratio: result.zip_ratio ? `${result.zip_ratio}x` : "1.00x",
                   generalDescription: "Standard dictionary-based compression algorithm",
-                  specificDescription: getSpecificDescription("ZIP (zlib)", config.filename, textLength)
+                  specificDescription: getSpecificDescription("ZIP", config.filename, textLength)
                 },
                 {
                   algorithm: "LLM (GPT-2)",
@@ -580,7 +580,7 @@ export default function CompressionWidget() {
       const gzipRatio = (text.length * 8) / gzipBits;
       
       results.push({
-        algorithm: "ZIP (gzip)",
+        algorithm: "ZIP",
         bits: gzipBits,
         ratio: `${gzipRatio.toFixed(2)}x`,
         generalDescription: "Standard dictionary-based compression algorithm",
@@ -1011,7 +1011,7 @@ export default function CompressionWidget() {
                                   <div className="mb-2 text-gray-700">
                                     <strong>How it works:</strong> {result.generalDescription}
                                   </div>
-                                  {result.specificDescription && !["Best code", "ZIP (gzip)"].includes(result.algorithm) && (
+                                  {result.specificDescription && !["Best letter encoding", "ZIP"].includes(result.algorithm) && (
                                     <div className="text-gray-700 mb-3">
                                       <strong>For this text:</strong> <RenderMarkdown text={result.specificDescription} />
                                     </div>

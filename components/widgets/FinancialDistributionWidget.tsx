@@ -158,23 +158,39 @@ export default function FinancialDistributionWidget({ showBTC = true, showSAP = 
       xMin + (i / (nPoints - 1)) * (xMax - xMin)
     );
 
-    // Compute PDFs
-    const gaussianPDF = showGaussian ? computePDF(xValues, 'gaussian', distributions.gaussian) : null;
-    const laplacePDF = showLaplace ? computePDF(xValues, 'laplace', distributions.laplace) : null;
+    // Build histogram densities on full support, but only *render* those inside [xMin, xMax]
+    const totalSamples = dayData.n_samples;
+    const histogramData: { x: number; y: number }[] = [];
 
-    // Process histogram data - now using high-resolution bins from source
-    let histogramData = [];
-    const originalBinWidth = histogram.bin_edges[1] - histogram.bin_edges[0];
-    
     for (let i = 0; i < histogram.counts.length; i++) {
-      const binCenter = (histogram.bin_edges[i] + histogram.bin_edges[i + 1]) / 2;
-      if (binCenter >= xMin && binCenter <= xMax) {
-        histogramData.push({
-          x: binCenter,
-          y: histogram.counts[i] / (dayData.n_samples * originalBinWidth)
-        });
+      const left = histogram.bin_edges[i];
+      const right = histogram.bin_edges[i + 1];
+      const binWidth = right - left;
+      const center = 0.5 * (left + right);
+
+      // density estimate (unconditional - same scale as PDFs)
+      const y = histogram.counts[i] / (totalSamples * binWidth);
+
+      // keep if bin intersects the visible window
+      if (right >= xMin && left <= xMax) {
+        histogramData.push({ x: center, y });
       }
     }
+
+    // Compute PDFs (full support densities)
+    const gaussianPDF = computePDF(xValues, 'gaussian', distributions.gaussian);
+    const laplacePDF = computePDF(xValues, 'laplace', distributions.laplace);
+
+    // Shared scales
+    const xRange = xMax - xMin;
+    const xScale = 700 / xRange;
+    const maxY = Math.max(
+      ...histogramData.map(d => d.y),
+      ...gaussianPDF,
+      ...laplacePDF,
+      0.01
+    );
+    const yScale = 300 / maxY;
 
     return {
       xValues,
@@ -183,9 +199,12 @@ export default function FinancialDistributionWidget({ showBTC = true, showSAP = 
       histogramData,
       distributions,
       mean,
-      std
+      std,
+      xMin,
+      xScale,
+      yScale
     };
-  }, [currentData, selectedDays, xAxisRange, showGaussian, showLaplace]);
+  }, [currentData, selectedDays, xAxisRange]);
 
   if (loading) {
     return (
@@ -299,13 +318,27 @@ export default function FinancialDistributionWidget({ showBTC = true, showSAP = 
             
             {/* Histogram */}
             {plotData.histogramData.map((bar, i) => {
-              const xRange = plotData.xValues[plotData.xValues.length - 1] - plotData.xValues[0];
-              const xScale = 700 / xRange;
-              const x = 50 + (bar.x - plotData.xValues[0]) * xScale;
-              const barWidth = Math.max(2, (plotData.histogramData[1]?.x - plotData.histogramData[0]?.x || 0.01) * xScale);
-              const maxY = Math.max(...plotData.histogramData.map(d => d.y), 0.01);
-              const yScale = 300 / maxY;
-              const height = Math.max(1, bar.y * yScale);
+              const x = 50 + (bar.x - plotData.xMin) * plotData.xScale;
+              // Use per-bin width: compute from adjacent bin centers or use uniform spacing
+              const nextBar = plotData.histogramData[i + 1];
+              const prevBar = plotData.histogramData[i - 1];
+              let barWidth;
+              
+              if (nextBar && prevBar) {
+                // Middle bins: half distance to each neighbor
+                barWidth = 0.5 * ((nextBar.x - bar.x) + (bar.x - prevBar.x)) * plotData.xScale;
+              } else if (nextBar) {
+                // First bin: distance to next
+                barWidth = (nextBar.x - bar.x) * plotData.xScale;
+              } else if (prevBar) {
+                // Last bin: distance from prev
+                barWidth = (bar.x - prevBar.x) * plotData.xScale;
+              } else {
+                // Single bin: fallback
+                barWidth = Math.max(2, 0.01 * plotData.xScale);
+              }
+              
+              const height = bar.y * plotData.yScale;
               
               return (
                 <rect
@@ -320,51 +353,33 @@ export default function FinancialDistributionWidget({ showBTC = true, showSAP = 
               );
             })}
             
-            {/* Calculate common scales for curves */}
-            {(() => {
-              const xRange = plotData.xValues[plotData.xValues.length - 1] - plotData.xValues[0];
-              const xScale = 700 / xRange;
-              const allPDFValues = [
-                ...(plotData.gaussianPDF || []),
-                ...(plotData.laplacePDF || []),
-                ...plotData.histogramData.map(d => d.y)
-              ].filter(v => isFinite(v));
-              const maxY = Math.max(...allPDFValues, 0.01);
-              const yScale = 300 / maxY;
-              
-              return (
-                <>
-                  {/* Gaussian curve */}
-                  {plotData.gaussianPDF && showGaussian && (
-                    <path
-                      d={`M ${plotData.xValues.map((x, i) => {
-                        const xPos = 50 + (x - plotData.xValues[0]) * xScale;
-                        const yPos = 350 - plotData.gaussianPDF![i] * yScale;
-                        return `${xPos},${Math.max(50, Math.min(350, yPos))}`;
-                      }).join(' L ')}`}
-                      fill="none"
-                      stroke="#ef4444"
-                      strokeWidth="2"
-                    />
-                  )}
-                  
-                  {/* Laplace curve */}
-                  {plotData.laplacePDF && showLaplace && (
-                    <path
-                      d={`M ${plotData.xValues.map((x, i) => {
-                        const xPos = 50 + (x - plotData.xValues[0]) * xScale;
-                        const yPos = 350 - plotData.laplacePDF![i] * yScale;
-                        return `${xPos},${Math.max(50, Math.min(350, yPos))}`;
-                      }).join(' L ')}`}
-                      fill="none"
-                      stroke="#22c55e"
-                      strokeWidth="2"
-                    />
-                  )}
-                  
-                </>
-              );
-            })()}
+            {/* Gaussian curve */}
+            {showGaussian && (
+              <path
+                d={`M ${plotData.xValues.map((x, i) => {
+                  const xPos = 50 + (x - plotData.xMin) * plotData.xScale;
+                  const yPos = 350 - plotData.gaussianPDF[i] * plotData.yScale;
+                  return `${xPos},${Math.max(50, Math.min(350, yPos))}`;
+                }).join(' L ')}`}
+                fill="none"
+                stroke="#ef4444"
+                strokeWidth="2"
+              />
+            )}
+            
+            {/* Laplace curve */}
+            {showLaplace && (
+              <path
+                d={`M ${plotData.xValues.map((x, i) => {
+                  const xPos = 50 + (x - plotData.xMin) * plotData.xScale;
+                  const yPos = 350 - plotData.laplacePDF[i] * plotData.yScale;
+                  return `${xPos},${Math.max(50, Math.min(350, yPos))}`;
+                }).join(' L ')}`}
+                fill="none"
+                stroke="#22c55e"
+                strokeWidth="2"
+              />
+            )}
             
             {/* Axes */}
             <line x1="50" y1="350" x2="750" y2="350" stroke="#374151" strokeWidth="2" />

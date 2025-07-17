@@ -164,3 +164,77 @@ You can test both rules on the following widget that fits input points with a po
 
 </Expand>
 
+
+
+<Expand advanced={true} headline = "Uncomputability">
+
+Unfortunately, there's no simple way to compute the Kolmogorov complexity of most strings, even after we decide on which programming language we use in the definition. To see why, let's see a fun paradox known as [Berry's paradox](https://en.wikipedia.org/wiki/Berry_paradox). Consider the expression:
+
+<Quote>
+    The smallest positive integer not definable in under sixty letters.
+</Quote>
+
+Presumably, there are only so many numbers you can define with sixty letters, so there should be the smallest 'undefinable' one. But wait a minute, that number is 'definable' by the sentence above! <Footnote>I often hear the following, more cheeky variant of Berry's paradox: I claim that all postive integers are interesting. Why? Well, consider the smallest noninteresting number. But this is a very interesting property! </Footnote>
+
+As all the great ideas, Berry's paradox can be formalized into an intersting math theorem, we just have to find the right language to rephrase the paradox properly. Here, the right language is Kolmogorov complexity. 
+
+Here's the rephrasing. If you write positive integers in binary, you can see that talking about them is the same as talking about all binary strings. To formalize the part 'definable in under sixty letters', let's simply consider all those binary strings such that their Kolmogorov complexity is at most some constant $C$. We can call this set of strings $\textrm{Berry}(C)$. 
+
+Now, let's assume that there is an algorithm $A$ that gets a string $x$ as an input an outputs its Kolmogorov complexity $K(x)$. We can use $A$ to perform the devilous plan of Berry: Imagine an algorithm $A'$ that uses $A$ to iterate over all the strings in lexicographical order. It then outputs the first string $x^*$ that has $K(x^*) > C$. I.e., $A'$ outputs the lexicographically smallest string outside of $\textrm{Berry(C)}$. 
+
+But wait a minute! The algorithm $A'$ is just another algorithm that prints a string $x^*$, so $K(x^*) \le |A'|$. If we choose $C$ to be large enough, the two conditions $K(x^*) > C$ and $K(x^*) \le |A'|$ are in contradiction. 
+
+By turning the paradox into a theorem, we can now see where's the problem. We made just one assumption, the existence of an algorithm $A$ computing Kolmogorov complexity. So, this assumption must be wrong, there is unfortunately no such algorithm. <Footnote>This result is closely related to [halting problem](https://en.wikipedia.org/wiki/Halting_problem) and [Gödel's incompleteness theorems](https://en.wikipedia.org/wiki/G%C3%B6del%27s_incompleteness_theorems), see e.g. [this book](https://users.math.cas.cz/~pudlak/preface_toc.pdf). </Footnote>
+</Expand>
+
+<Expand advanced={true} headline = "Clustering by relative Kolmogorov complexity" >
+
+Here's a fun application of Kolmogorov complexity. First, let's define _relative Kolmogorov complexity_ $K(x | y)$: This is the shortest program to print $x$, if the program can also access a string $y$. For example, there are short codes writing $\pi$, but if we choose $y$ as the Python library `sympy`, the relative complexity of $x = \pi$ becomes even shorter, as we can just run something like `print(sympy.N(sympy.pi, 1000000))`. 
+
+This can be used to measure how much two files $x_1, x_2$ are similar: we measure $K(x_1 \circ x_2)$ versus $K(x_1) + K(x_2)$ ($\circ$ means concatenation). In practice, we use something like ZIP instead, since we can't compute Kolmogorov complexity exactly. 
+
+I was curious to test how it works, the following widget tries to cluster wikipedia pages about three different topics using three algorithms. 
+
+- KL divergence between character frequencies: Remember, this corresponds to looking at one file, and building the best code based on its frequencies and using it for the other file. I compute in both ways and average to make it symmetric. 
+- ZIP divergence: ZIP algorithm builds a dictionary of common words and phrases as it scans through the text. But you can persuade it to build one static dictionary on one text and use it for the other texts. Analogously to KL divergence, ZIP divergence is how many more bits you spend if you use this static dictionary built on another file, versus normal ZIP algorithm. 
+- normalized compression distance: This is defined as $(K(x \circ y) - \min(K(x), K(y)))/ \max (K(x), K(y))$ - it's about comparing $K(x \circ y)$ with $K(x), K(y)$ as we discussed above. 
+
+Unfortunately, the third one did not work well for me, probably because concatenating files actually does not help in compression by ZIP almost at all. Not sure if I am stupid or if this method sucks. 🤷
+
+<ThreeCategoriesWidget />
+
+One thing I would like to point out on this is that relative entropy (=KL divergence) and relative Kolmogorov complexity are different "relativizations". On the one hand, KL divergence and ZIP divergence are about how _worse_ a code is if it expects different data. On the other hand, relative Kolmogorov is about how much _better_ the compression gets, if we can, but do not have to use some additional data. In short, $H(x, y) \ge H(x)$, but $K(x | y) \le K(x)$.  
+
+</Expand>
+
+
+<Expand advanced={true} headline = "What the hell is randomness?"> 
+
+If there is a person who we can call the 'father of probability theory', it would be [Pierre Laplace](https://en.wikipedia.org/wiki/Pierre-Simon_Laplace). Laplace lived around the year 1800. At this point in time, everybody, Laplace included, was amazed by how Newton seemingly solved physics (~1700) by postulating a few simple laws that seemingly described pretty much all there is. In fact, Laplace himself is an author of [Laplace demon](https://en.wikipedia.org/wiki/Laplace%27s_demon) - a thought experiment based on the idea that if you knew all the info about the present-state universe, you could deterministically simulate it and know all there is about the future. 
+
+Yet, Laplace spent a lot of his time developing probability theory <Tooltip tooltip="![chesterton](/fig/chesterton2.jpg)">exactly</Tooltip> because he believed in the deterministic nature of the world. He understood that we can never know all there is to the world anyway. Hence, we need a language - probability - to talk about our epistemic uncertainty.  
+
+When [Solomonoff](https://en.wikipedia.org/wiki/Ray_Solomonoff) and [Kolmogorov](https://en.wikipedia.org/wiki/Andrey_Kolmogorov) devoloped Kolmogorov complexity,<Footnote>Even though 'Kolmogorov complexity' sticked, Solomonoff was first by a couple of years. We are talking ~1960s. </Footnote> they came from similar angle. At the heart of the matter, probability is not about whether our world is governed by deterministic Newton laws, or what's your favorite intepretation of quantum physics. It's about modelling unpredictability. 
+
+This kind of intuition is extremely helpful in computer science. Algorithms frequently want to work with random bits, but how do we get them fast? In practice, we typically use a [_pseudorandom generator_](https://en.wikipedia.org/wiki/Pseudorandom_generator): We ask the operating system for a [_seed_](https://en.wikipedia.org/wiki/Random_seed) of perhaps 64 'truly random' bits, that the system gets by e.g. measuring some hardware sensor. The pseudorandom generator is then a short piece of code that gets the 32 bits as the input and it repeatedly applies obscure mathematical operations to it to generate more randomly looking bits. 
+
+How do we even talk about those pseudorandom bits? As they are a deterministic function of the initial seed, they are not random at all from the perspective of classical probability theory. However, if we understand Kolmogorov complexity, we can generalize the fact 'a string is random if we can't compress it' to say that 'a string looks random to an algorithm $A$ if $A$ can't compress it'. 
+
+A bit more concretely, for a pseudorandom generator, we can test whether it fools certain statistical tests, meaning that the test can't reliably separate whether the input is truly random, or coming from the generator. The string is then _pseudorandom_ for such a fooled test, the test can't find any patterns in it that it could use to compress it.   
+
+You can try this concept in the following widget. It implements four simple $k$-mer statistical tests - those are based on counting frequencies of $k$ consecutive flips for $k \in \{1,2,3,4\}$. Let's see how long you can flip coins, until you flag $k = 4$ - getting 100 flips is not so easy! 
+
+If a test flags your sequence of $n$ flips as nonrandom, it means that some patterns are too rare / too frequent and the statistical tests could in principle compress your $n$ flips to less than $n$ bits. 
+
+<CoinFlipRandomnessWidget />
+
+Here's examples of how pseudorandomness helps to think about all kinds of stuff:
+
+- [Mathematicians believe](https://en.wikipedia.org/wiki/Normal_number) that digits of $\pi$ fool all $k$-mer counting tests. But digits of $\pi$ are not a very good pseudorandom generator: an algorithm that 'tests against $\pi$' is not fooled. 
+- Typical pseudorandom generator fools all kinds of basic statistical tests.<Footnote>See e.g. Chapter 3 in [AoCP](https://en.wikipedia.org/wiki/The_Art_of_Computer_Programming). </Footnote> These sequences thus look random to those tests. But they fail to look random to algorithms that can use exponential amount of time (such algorithms can bruteforce all the seeds). 
+- in cryptography theory, we like to assume that there are cryptographically secure pseudorandom generators that fool all statistical tests running in polynomial time. We don't know whether such an algorithm exists, but we have practical implementations that fool all known reasonably-fast tests. 
+- Classic [overhand shuffle](https://en.wikipedia.org/wiki/Shuffling) sucks and is not used in casinos. But if no player is trying to take advantage of it, the game being played typically looks the same as if the cards were shuffled properly.  
+- Is a coin flip really random or not? If you have precise measuring apparatus, you could predict the result by measuring the coin as it is being flipped. But if you don't have the apparatus, you can't predict it. Thus, the result of the coin flip can be called random (unless you have the apparatus). 
+- In general, whenever it comes to the discussion of 'what is probability', people often end up talking about quantum physics interpretations and physics in general. But I like a more down-to-earth approach: Randomness is a limit of pseudorandomness - we say that a bit sequence is random whenever we believe that we can safely disregard the existence of an algorithm that could predict/compress it. 
+</Expand>
+

@@ -360,7 +360,7 @@ There's still an elephant in the room — the exponential distribution can't be 
 </Expand>
 
 
-### 🔔 Gaussians
+### Gaussians
 
 If we fix both mean and variance, the max-entropy distribution is Gaussian. 
 
@@ -412,7 +412,7 @@ Perhaps we should try a more advanced two-layered model to predict the shape of 
 
 Put differently, while a Gaussian fit implicitly says "I'm pretty sure about each day's volatility and unsure about the fluctuation around the mean," Laplace is saying, "I'm uncertain both about the volatility and the actual fluctuation of the day." This explains why Gaussian fits near-term data reasonably well (volatility of the time period stays roughly the same), while more long-term data starts looking more and more like Laplace. 
 
-## 🤔 Is Laplace a good model?
+## Is Laplace a good model?
 
 Not really. We now understand that by fitting Laplace, we are claiming that daily variance fluctuates according to exponential distribution. Let's see how daily variance of S&P looks like:
 
@@ -478,11 +478,11 @@ The point is that the max-entropy principle gives us a language to talk about di
 
 
 
-### 🔢 Other Examples
+### Independence
 
-A few more advanced examples, skip if they don't ring a bell. 
+One final example I find cute. 
 
-<Expand advanced = {true} headline ="Assuming Independence">
+<Expand headline ="Independence is max entropy">
 An important property of entropy that [we mentioned earlier](03-entropy_properties#additivity) is its _subadditivity_: If you have a joint distribution $r$ with marginals $p,q$, then $H(r) \le H(p) + H(q)$. 
 
 The implication for the max-entropy principle is this: Imagine you're working with a joint distribution and you know its two marginals $p,q$. Then, the maximum entropy principle tells us that the max-entropy joint distribution with these two marginals is the independent, product distribution.
@@ -490,37 +490,6 @@ The implication for the max-entropy principle is this: Imagine you're working wi
 Whenever people model things using probability distributions, they often assume that certain distributions / random variables are independent if they don't know what the dependence between them should look like. We can think of this as a special case of using the maximum entropy principle.
 
 ![independence](05-max_entropy/independence.png)
-
-</Expand>
-
-<Expand advanced={true} headline ="Beta Distribution">
-Our coin-flipping riddle from the [intro](01-kl_intro) was a bit silly - we somehow assumed that our coin was either fair, or 75/25 biased, but nothing else was possible. In reality, any bias $p$ is plausible, so a Bayesian detective would work with a distribution over biases with domain $[0,1]$, and she would update the whole distribution after each flip. 
-
-What distribution over $[0,1]$ should she choose? If she starts with the uniform distribution (max-entropy without any constraints), then the family of the distributions that she may see after a few flips is essentially the [Beta distributions](https://en.wikipedia.org/wiki/Beta_distribution). 
-
-Here's another reason for why this family is natural: We could argue that given some $X \in [0,1]$ representing probability (unknwown coin bias), the more relevant quantity to work with is the logit - $\log X / (1-X)$. So, shouldn't the _right_ distribution to work with be the max-entropy distribution for $f(X) = \log X / (1-X)$? Unfortunately, max-entropy distribution for this does not exist (it blows up on one end of $[0,1]$), but the max-entropy family for $f_1(X) = \log X$ and $f_2(X) = \log (1-X)$ normalize in the relevant scenarios and it's the family of Beta distributions. 
-</Expand>
-<Expand advanced={true} headline ="Exponential Family">
-
-In the case of discrete distributions over, say, $\{1, \dots, K\}$, literally any distribution is a maximum entropy distribution for certain $K$ constraints. For example, for your favorite distribution $p = (p_1, \dots, p_K)$, choose the $j$-th constraint to be $E[\mathbb{1}_j(i)] = p_j$ where $\mathbb{1}_j$ returns 1 for $i=j$ and 0 otherwise; the max entropy distribution for these $K$ constraints is exactly $p$.
-
-However, for distributions over real numbers and finitely many reasonable functions $f_1, \dots, f_m$, only a small proportion of distributions are max-entropy for some family of functions.
-
-The **exponential family** is the elite group of distributions that are maximum entropy distributions for some functions $f_1, \dots, f_m$. <Footnote> More precisely, it's the family of distributions that are "min KL distributions" for some $q$: A distribution from that family minimizes $D(p,q)$ from some not necessarily uniform distribution $q$, given some constraints $E[f_1(X)] = \alpha_1, \dots, E[f_m(X)] = \alpha_m$. As an example, take the domain $\{0, 1, \dots, n\}$ and consider the constraint $f(X) = X$. We have already seen that this leads to the exponential distribution, given we start with uniform $q$. Now, consider $q$ with <Math math = "q_i = {n \choose i} / 2^n"/> instead. The new solution is the distribution $p$ with <Math math = "p_i \propto {n \choose i} \cdot e^{\lambda i}"/>. After we substitute $\lambda = \log p/(1-p)$, we get the formula for the binomial distribution. Thus, binomial distribution belongs to the exponential family using $f(X) = X$, even though it's not a max-entropy distribution for that $f$.</Footnote>
-So, any distribution with a finite domain is in the exponential family. Any distribution we've discussed so far (exponential, geometric, normal, power-law, beta) is in the exponential family. [Wikipedia](https://en.wikipedia.org/wiki/Exponential_family) contains a long list of distributions in that family, many of which I've never heard of.
-
-The importance of this family is that its distributions have a bunch of nice and intuitive properties.
-<Expand advanced={true} headline="A theoretically nice property of exponential-family distributions">
-Here's one of the nice properties that's relevant for the next chapter but perhaps too obscure to fully appreciate on a first read.
-
-Suppose you have some data with mean $\mu$ and variance $\sigma^2$ and you want to fit it with a distribution. There are two ways to approach this:
-
-1.  Use the maximum entropy principle to deduce the right _family_ of distributions: In this case, we would use it to restrict our attention to the class of Gaussian distributions. Then use maximum likelihood to find the best parameters <Math math = "\hat{\mu}, \hat{\sigma^2}" /> among Gaussians. It turns out that <Math math = "\hat\mu_{MLE} = \mu, \hat\sigma^2_{MLE} = \sigma^2"/>.
-
-2.  Use the maximum entropy principle directly without any MLE. The max entropy distribution with mean $\mu$ and variance $\sigma^2$ is the Gaussian $N(\mu, \sigma^2)$.
-
-Both approaches yield the same answer, but it's not clear a priori that this should be the case! Fortunately, distributions in the exponential family have the nice property that both approaches agree. Formally, if your exponential-family distribution is defined by constraints $E[f_1(X)] = \alpha_1, \dots, E[f_m(X)] = \alpha_m$, then <Math math = "\hat\alpha_{1, MLE} = \alpha_1, \dots, \hat\alpha_{m,MLE} = \alpha_m" />.
-</Expand>
 
 </Expand>
 

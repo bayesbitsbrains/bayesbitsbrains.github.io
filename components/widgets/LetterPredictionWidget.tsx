@@ -19,6 +19,7 @@ interface GameState {
   attempts: number;
   completed: boolean;
   score: number;
+  gaveUp?: boolean;
 }
 
 interface LLMScore {
@@ -271,72 +272,96 @@ const LetterPredictionWidget: React.FC = () => {
     }
   };
 
-  const makeGuess = (gameIndex: number, letter: string) => {
+  const makeGuess = (gameIndex: number, letters: string) => {
     const game = gameStates[gameIndex];
     if (!game.snapshot || game.completed) return;
 
-    const normalizedLetter = letter.toLowerCase();
     const normalizedTarget = game.snapshot.target_letter.toLowerCase();
+    const triedSet = new Set(game.userGuesses.map(l => l.toLowerCase()));
+    let newGuesses = [...game.userGuesses];
+    let completed = false;
+    
+    // Try each letter in sequence until we find the correct one
+    for (let i = 0; i < letters.length; i++) {
+      const letter = letters[i].toLowerCase();
+      if (completed) break;
+      
+      // Only process English letters A-Z
+      if (!/^[a-z]$/.test(letter)) {
+        continue; // Skip non-English letters
+      }
+      
+      // Skip if we've already tried this letter
+      if (triedSet.has(letter)) {
+        continue; // Ignore duplicates
+      }
+      
+      // Add this new letter to our tried set and guesses
+      triedSet.add(letter);
+      newGuesses.push(letter);
 
-    const newAttempts = game.attempts + 1;
-    const newGuesses = [...game.userGuesses, normalizedLetter];
-
-    if (normalizedLetter === normalizedTarget) {
-      // Correct guess!
-      const score = Math.log2(newAttempts);
-      const updatedGame = {
-        ...game,
-        userGuesses: newGuesses,
-        attempts: newAttempts,
-        completed: true,
-        score: score,
-      };
-
-      const newGameStates = [...gameStates];
-      newGameStates[gameIndex] = updatedGame;
-      setGameStates(newGameStates);
-
-      // Save the completed game
-      saveGameResult(updatedGame, false);
-    } else {
-      // Wrong guess
-      const updatedGame = {
-        ...game,
-        userGuesses: newGuesses,
-        attempts: newAttempts,
-      };
-
-      const newGameStates = [...gameStates];
-      newGameStates[gameIndex] = updatedGame;
-      setGameStates(newGameStates);
+      if (letter === normalizedTarget) {
+        // Correct guess!
+        completed = true;
+        break; // IMPORTANT: Stop here, don't process remaining letters
+      }
     }
 
+    // Calculate final state
+    const attempts = triedSet.size; // Number of unique letters tried
+    const score = Math.log2(Math.max(attempts, 1)); // Bits based on rank
+    
+    const updatedGame = {
+      ...game,
+      userGuesses: newGuesses,
+      attempts,
+      completed,
+      score: completed ? score : game.score,
+    };
+
+    // Save result if completed
+    if (completed && !game.completed) {
+      saveGameResult(updatedGame, false);
+    }
+
+    const newGameStates = [...gameStates];
+    newGameStates[gameIndex] = updatedGame;
+    setGameStates(newGameStates);
     setCurrentInput("");
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent, gameIndex: number) => {
-    if (e.key === "Enter" && currentInput.length === 1) {
+  const handleKeyDown = (e: React.KeyboardEvent, gameIndex: number) => {
+    if (e.key === "Enter" && currentInput.length > 0) {
       makeGuess(gameIndex, currentInput);
     }
   };
 
   const calculateUserAverage = () => {
-    const completedGames = gameStates.filter((g) => g.completed);
+    const completedGames = gameStates.filter((g) => g.completed && !g.gaveUp);
     if (completedGames.length === 0) return 0;
     return completedGames.reduce((sum, g) => sum + g.score, 0) / completedGames.length;
   };
 
   const calculateLLMAverage = (modelKey: string) => {
-    const completedGames = gameStates.filter((g) => g.completed);
+    const completedGames = gameStates.filter((g) => g.completed && !g.gaveUp);
     if (completedGames.length === 0) return llmScores[modelKey]?.avg_optimistic || 0;
 
     const detailedData = llmDetailedScores[modelKey];
     if (!detailedData) return llmScores[modelKey]?.avg_optimistic || 0;
 
-    // Calculate average of LLM scores for the specific snapshots user has played
+    // Calculate average of LLM rank-based bits for the specific snapshots user has played
     const llmScoresForUserGames = completedGames.map((game) => {
       const snapshotId = game.snapshot?.id;
       const matchingScore = detailedData.find((score) => score.snapshot_id === snapshotId);
+      if (matchingScore && typeof matchingScore.target_position === "number") {
+        // Convert rank to bits (same as user scoring)
+        return Math.log2(Math.max(matchingScore.target_position, 1));
+      }
+      // Fallback: use length of guesses array as worst-case rank
+      if (matchingScore && matchingScore.guesses) {
+        return Math.log2(Math.max(matchingScore.guesses.length, 1));
+      }
+      // Last fallback: use cross-entropy bits
       return matchingScore ? matchingScore.optimistic_bits : llmScores[modelKey]?.avg_optimistic || 0;
     });
 
@@ -355,6 +380,15 @@ const LetterPredictionWidget: React.FC = () => {
 
     return comparisons.sort((a, b) => a.llmOptimistic - b.llmOptimistic);
   };
+
+  // Memoized LLM averages to avoid repeated calculations
+  const llmAverages = useMemo(() => {
+    const averages: Record<string, number> = {};
+    Object.keys(llmScores).forEach(model => {
+      averages[model] = calculateLLMAverage(model);
+    });
+    return averages;
+  }, [llmScores, gameStates]);
 
   // ===== Adaptive axis helpers =============================
   // Axis for the "number of guesses in this round" (log-scale)
@@ -405,20 +439,26 @@ const LetterPredictionWidget: React.FC = () => {
           <div className="space-y-4">
             {/* Context Display */}
             <div className="text-lg">
-              <span className="text-gray-700">
-                {currentGame.snapshot.first_sentence}. {currentGame.snapshot.context}
-              </span>
-              <span className="bg-yellow-200 px-1 rounded">_</span>
-              {currentGame.completed && (
-                <>
-                  <span className="bg-green-200 px-1 rounded font-semibold">{currentGame.snapshot.target_letter}</span>
-                  <span className="text-gray-700">{currentGame.snapshot.remaining}.</span>
-                </>
-              )}
+              {(() => {
+                const { first_sentence, second_sentence, cut_position, target_letter } = currentGame.snapshot;
+                const before = second_sentence.slice(0, cut_position);
+                const after = second_sentence.slice(cut_position + 1);
+                
+                return (
+                  <>
+                    <span className="text-gray-700">{first_sentence.trim()} </span>
+                    <span className="text-gray-700">{before}</span>
+                    {!currentGame.completed ? (
+                      <span className="bg-yellow-200 px-1 rounded">_</span>
+                    ) : (
+                      <span className="bg-green-200 px-1 rounded font-semibold">{target_letter}</span>
+                    )}
+                    <span className="text-gray-700">{after}</span>
+                  </>
+                );
+              })()}
             </div>
 
-            {/* Debug info */}
-            <div className="text-xs text-gray-400">Snapshot ID: {currentGame.snapshot.id}</div>
 
             {/* Game Input */}
             {!currentGame.completed && (
@@ -427,22 +467,21 @@ const LetterPredictionWidget: React.FC = () => {
                   <input
                     type="text"
                     value={currentInput}
-                    onChange={(e) => setCurrentInput(e.target.value.slice(-1))}
-                    onKeyPress={(e) => handleKeyPress(e, gameStates.length - 1)}
-                    placeholder="?"
-                    className="w-16 px-2 py-1 border rounded text-center font-mono text-lg"
-                    maxLength={1}
+                    onChange={(e) => setCurrentInput(e.target.value.toUpperCase())}
+                    onKeyDown={(e) => handleKeyDown(e, gameStates.length - 1)}
+                    placeholder="Type letters..."
+                    className="w-48 px-3 py-2 border rounded text-center font-mono text-lg"
                   />
                   <button
                     onClick={() => makeGuess(gameStates.length - 1, currentInput)}
-                    disabled={currentInput.length !== 1}
+                    disabled={currentInput.length === 0}
                     className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-300"
                   >
                     Guess
                   </button>
                   <button
                     onClick={() => {
-                      // Give up - treat as if they guessed correctly on 26th attempt
+                      // Give up - treat as if they guessed correctly with all 26 letters
                       const game = gameStates[gameStates.length - 1];
                       if (game && !game.completed) {
                         const score = Math.log2(26);
@@ -451,6 +490,7 @@ const LetterPredictionWidget: React.FC = () => {
                           attempts: 26,
                           completed: true,
                           score: score,
+                          gaveUp: true,
                         };
 
                         const newGameStates = [...gameStates];
@@ -469,10 +509,13 @@ const LetterPredictionWidget: React.FC = () => {
                 </div>
 
                 <div className="text-sm text-gray-600 text-center">
-                  Attempts: {new Set(currentGame.userGuesses).size}
+                  Attempts: {currentGame.attempts}
                   {currentGame.userGuesses.length > 0 && (
-                    <span className="ml-4">Previous guesses: {[...new Set(currentGame.userGuesses)].join(", ")}</span>
+                    <span className="ml-4">Previous guesses: {[...new Set(currentGame.userGuesses.map(l => l.toLowerCase()))].join(", ")}</span>
                   )}
+                  <div className="widget-explanation">
+                    If you type more letters, they are tried in order
+                  </div>
                 </div>
               </div>
             )}
@@ -481,12 +524,12 @@ const LetterPredictionWidget: React.FC = () => {
             {currentGame.completed && (
               <div className="space-y-3">
                 <div
-                  className={`p-3 rounded border ${currentGame.attempts === 26 ? "bg-red-50 border-red-200" : "bg-green-50 border-green-200"}`}
+                  className={`p-3 rounded border ${currentGame.gaveUp ? "bg-red-50 border-red-200" : "bg-green-50 border-green-200"}`}
                 >
-                  <div className={currentGame.attempts === 26 ? "text-red-800" : "text-green-800"}>
-                    {currentGame.attempts === 26
+                  <div className={currentGame.gaveUp ? "text-red-800" : "text-green-800"}>
+                    {currentGame.gaveUp
                       ? `✗ You gave up! The letter was '${currentGame.snapshot.target_letter}'.`
-                      : `✓ Correct! You found '${currentGame.snapshot.target_letter}' in ${currentGame.attempts} attempts.`}
+                      : `✓ Correct! You found '${currentGame.snapshot.target_letter}' in ${currentGame.attempts} unique attempts.`}
                   </div>
                 </div>
                 <div className="flex justify-center">
@@ -619,12 +662,7 @@ const LetterPredictionWidget: React.FC = () => {
                           : matchingScore.guesses.length;
                       llmGuesses = matchingScore.guesses;
 
-                      // Debug logging
-                      console.log(`${model} for snapshot ${lastGame.snapshot.id}:`);
-                      console.log(`  target_position: ${matchingScore.target_position}`);
-                      console.log(`  attempts: ${llmAttempts}`);
-                      console.log(`  guesses: [${matchingScore.guesses.join(", ")}]`);
-                      console.log(`  target_letter: ${lastGame.snapshot.target_letter}`);
+                      // Debug logging removed to avoid console spam in renders
                     }
                   }
 
@@ -695,6 +733,7 @@ const LetterPredictionWidget: React.FC = () => {
                               <div className="text-gray-300 mt-1">
                                 Guesses:{" "}
                                 {emoji.guesses
+                                  .slice(0, 10) // Show max 10 guesses
                                   .map((guess: string, idx: number) => {
                                     // For AI: highlight based on target_position
                                     // For user: highlight the correct letter
@@ -704,19 +743,21 @@ const LetterPredictionWidget: React.FC = () => {
                                         : lastGame.snapshot &&
                                           guess.toLowerCase() === lastGame.snapshot.target_letter.toLowerCase();
 
-                                    if (shouldHighlight) {
-                                      return (
-                                        <span key={idx} className="font-bold text-white">
-                                          {guess}
-                                        </span>
-                                      );
-                                    }
-                                    return <span key={idx}>{guess}</span>;
-                                  })
-                                  .reduce((prev: any, curr: any, idx: number) => {
-                                    if (idx === 0) return [curr];
-                                    return [...prev, ", ", curr];
-                                  }, [])}
+                                    const element = shouldHighlight ? (
+                                      <span key={idx} className="font-bold text-white">
+                                        {guess}
+                                      </span>
+                                    ) : (
+                                      <span key={idx}>{guess}</span>
+                                    );
+
+                                    return (
+                                      <React.Fragment key={idx}>
+                                        {idx > 0 && ", "}
+                                        {element}
+                                      </React.Fragment>
+                                    );
+                                  })}
                                 {emoji.guesses.length >= 10 && ", ..."}
                               </div>
                             )}
@@ -777,7 +818,7 @@ const LetterPredictionWidget: React.FC = () => {
 
           {/* Overall Score */}
           <div>
-            <div className="text-sm text-gray-600 mb-2">Overall score thus far (score = ∑ log(number of guesses))</div>
+            <div className="text-sm text-gray-600 mb-2">Average bits per game (lower is better)</div>
             <div className="relative h-8 mr-12 w-full">
               {/* Line */}
               <div className="absolute w-full h-0.5 bg-gray-300 top-1/2 transform -translate-y-1/2"></div>
@@ -793,8 +834,8 @@ const LetterPredictionWidget: React.FC = () => {
 
                 // AI averages
                 Object.entries(llmScores).forEach(([model]) => {
-                  const llmAvg = calculateLLMAverage(model);
-                  if (llmAvg > 0) allScores.push(llmAvg);
+                  const llmAvg = llmAverages[model];
+                  if (llmAvg >= 0) allScores.push(llmAvg); // Include 0 bits (perfect first-try)
                 });
 
                 // Find max score
@@ -842,8 +883,8 @@ const LetterPredictionWidget: React.FC = () => {
                 const userAvg = calculateUserAverage();
                 if (userAvg > 0) allScores.push(userAvg);
                 Object.entries(llmScores).forEach(([model]) => {
-                  const llmAvg = calculateLLMAverage(model);
-                  if (llmAvg > 0) allScores.push(llmAvg);
+                  const llmAvg = llmAverages[model];
+                  if (llmAvg >= 0) allScores.push(llmAvg); // Include 0 bits (perfect first-try)
                 });
                 const maxScore = Math.max(...allScores, 0);
                 
@@ -888,8 +929,8 @@ const LetterPredictionWidget: React.FC = () => {
                 const userAvg = calculateUserAverage();
                 if (userAvg > 0) allScores.push(userAvg);
                 Object.entries(llmScores).forEach(([model]) => {
-                  const llmAvg = calculateLLMAverage(model);
-                  if (llmAvg > 0) allScores.push(llmAvg);
+                  const llmAvg = llmAverages[model];
+                  if (llmAvg >= 0) allScores.push(llmAvg); // Include 0 bits (perfect first-try)
                 });
                 const maxScore = Math.max(...allScores, 0);
                 
@@ -904,7 +945,7 @@ const LetterPredictionWidget: React.FC = () => {
                 }
 
                 return Object.entries(llmScores).map(([model, scores]) => {
-                  const llmAvg = calculateLLMAverage(model);
+                  const llmAvg = llmAverages[model];
                   const emoji = model.includes("gpt") ? "🤖" : "🦙";
                   const displayName = model === "meta-llama/Llama-4-Scout-17B-16E" ? "Llama-4-Scout" : model;
                   return (
@@ -942,8 +983,8 @@ const LetterPredictionWidget: React.FC = () => {
                 const userAvg = calculateUserAverage();
                 if (userAvg > 0) allScores.push(userAvg);
                 Object.entries(llmScores).forEach(([model]) => {
-                  const llmAvg = calculateLLMAverage(model);
-                  if (llmAvg > 0) allScores.push(llmAvg);
+                  const llmAvg = llmAverages[model];
+                  if (llmAvg >= 0) allScores.push(llmAvg); // Include 0 bits (perfect first-try)
                 });
                 const maxScore = Math.max(...allScores, 0);
                 

@@ -31,17 +31,20 @@ For example, let's say that <Math math="A =" /> 'the coin is $\textsf{fair}$' an
 
 <Math id="bayes-formula" displayMode={true} math='P(\textsf{fair} | \textsf{H}) = P(\textsf{H} | \textsf{fair}) \cdot \frac{ P(\textsf{fair})}{P(\textsf{H})}' />
 
+This formula is typically called _Bayes' rule_. 
 {/*
 Whenever I have to write this formula down, I never know what exactly is in the fraction on the right. That's because the point of the formula is $P(\textsf{fair} | \textsf{H})$ on the left-hand side and $P(\textsf{H} | \textsf{fair})$ on the right-hand side -- _the larger the probability of Heads under a hypothesis, the larger the posterior probability of the hypothesis once we flip them._
 */}
 
 ## Divide and conquer
 
-Actually, I don't like the formula <EqRef id="bayes-formula" /> that much, since there's a different way to write it down that I find much more intuitive. 
+There's a different way to write down Bayes' rule that I find much more intuitive. 
 
-To get the message though, we have to get used to think in [odds](https://en.wikipedia.org/wiki/Odds) instead of probabilities. Gamblers love this—instead of "1/3 chance of this, 2/3 chance of that," they say "odds are 1:2." Odds don't need to add to one (1:2 is the same as 2:4), which actually often comes pretty handy - it allows you to focus on the more important parts of the picture. If you have a bunch of nonnegative numbers and you multiply all of them by the same factor so that they sum up to one, it's called _normalization_. So, thinking with odds is like thinking with probabilities except you don't want to worry about normalization too much. 
+To get the message though, we have to get used to think in [odds](https://en.wikipedia.org/wiki/Odds) instead of probabilities. Gamblers love this—instead of "1/3 chance of this, 2/3 chance of that," they say "odds are 1:2." 
 
-With odds, Bayes' formula is super clean! First, let's take the formula <EqRef id="bayes-formula" /> and write it for the biased hypothesis: 
+Odds are like probabilities that don't need to add to one (1:2 is the same as 2:4). This often comes pretty handy - it allows pus to focus on the more important parts of the picture. Multiplying the odds so that they add up to one is called _normalization_. So, thinking with odds is like thinking with probabilities whenever we don't want to worry about normalization. 
+
+With odds, Bayes' formula is super clean! First, let's take the formula <EqRef id="bayes-formula" /> and write it one more time, this time for the biased hypothesis: 
 <Math id="bayes-formula-2" displayMode={true} math='P(\textsf{biased} | \textsf{H}) = P(\textsf{H} | \textsf{biased}) \cdot \frac{ P(\textsf{biased})}{P(\textsf{H})}' />
 
 If we divide <EqRef id="bayes-formula" /> and <EqRef id="bayes-formula-2" />, we get this equation: 
@@ -50,9 +53,9 @@ If we divide <EqRef id="bayes-formula" /> and <EqRef id="bayes-formula-2" />, we
 <Math id="bayes-odds" displayMode={true} math='\underbrace{\frac{P(\textsf{fair} | \textsf{H})}{P(\textsf{biased} | \textsf{H})}}_{\textrm{Posterior odds}} = \underbrace{\frac{P(\textsf{fair})}{P(\textsf{biased})}}_{\textrm{Prior odds}} \cdot \underbrace{\frac{P(\textsf{H} | \textsf{fair})}{P(\textsf{H} | \textsf{biased})}}_{\textrm{Likelihood ratio}}' />
 </div>
 
-This is actually a very relatable formula! <Math math = "\frac{P(\textsf{fair})}{P(\textsf{biased})}"/> is simply the _prior_ probability that our detective has on the two hypotheses, written as odds. I.e., if $P(\textsf{fair}) = 2/3$, this ratio is just $2:1$ or, if you want, $2$. 
+This is actually a very relatable formula! <Math math = "\frac{P(\textsf{fair})}{P(\textsf{biased})}"/> is simply the _prior_ probability that our detective has on the two hypotheses, written as odds. I.e., if $P(\textsf{fair}) = 2/3$, this ratio is just $2/3 : 1/3 = 2:1$. 
 
-The fraction <Math math = "\frac{P(\textsf{fair} | \textsf{H})}{P(\textsf{biased} | \textsf{H})}"/> on the left-hand side is pretty much the same - it is the _posterior_ probability, written as odds. 
+The fraction <Math math = "\frac{P(\textsf{fair} | \textsf{H})}{P(\textsf{biased} | \textsf{H})}"/> on the left-hand side is pretty much the same - it is the _posterior_ probability after we've seen the heads, written as odds. 
 
 Finally, there's the ratio <Math math = "\frac{P(\textsf{H} | \textsf{fair})}{P(\textsf{H} | \textsf{biased})}" />—that's how much more likely heads are under the $\textsf{fair}$ hypothesis. Conditional probabilities <Math math = "P(\textsf{event} | \textsf{hypothesis})" /> are typically called [_likelihoods_](https://en.wikipedia.org/wiki/Likelihood_function), so this ratio is the likelihood ratio.
 
