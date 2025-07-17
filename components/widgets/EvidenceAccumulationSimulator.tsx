@@ -204,24 +204,34 @@ const EvidenceAccumulationSimulator: React.FC<EvidenceAccumulationSimulatorProps
               <div className="flex justify-center mb-4">
                 <div className="inline-flex rounded-lg border border-gray-200 bg-gray-100 p-1">
                   <button
-                    onClick={() => setMode('kl')}
+                    onClick={() => {
+                      setMode('kl');
+                      if (isRunning) {
+                        setIsRunning(false);
+                        resetSimulation();
+                      }
+                    }}
                     className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
                       mode === 'kl' 
                         ? 'bg-white text-gray-900 shadow-sm' 
                         : 'text-gray-500 hover:text-gray-700'
                     }`}
-                    disabled={isRunning}
                   >
                     KL Mode
                   </button>
                   <button
-                    onClick={() => setMode('crossentropy')}
+                    onClick={() => {
+                      setMode('crossentropy');
+                      if (isRunning) {
+                        setIsRunning(false);
+                        resetSimulation();
+                      }
+                    }}
                     className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
                       mode === 'crossentropy' 
                         ? 'bg-white text-gray-900 shadow-sm' 
                         : 'text-gray-500 hover:text-gray-700'
                     }`}
-                    disabled={isRunning}
                   >
                     Crossentropy Mode
                   </button>
@@ -239,9 +249,14 @@ const EvidenceAccumulationSimulator: React.FC<EvidenceAccumulationSimulatorProps
                   max="0.99"
                   step="0.01"
                   value={trueHeadsProb}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTrueHeadsProb(parseFloat(e.target.value))}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setTrueHeadsProb(parseFloat(e.target.value));
+                    if (isRunning) {
+                      setIsRunning(false);
+                      resetSimulation();
+                    }
+                  }}
                   className={`${INPUT_STYLES.base} ${INPUT_STYLES.rangeColors.trueP}`}
-                  disabled={isRunning}
                 />
               </div>
 
@@ -255,9 +270,14 @@ const EvidenceAccumulationSimulator: React.FC<EvidenceAccumulationSimulatorProps
                   max="0.99"
                   step="0.01"
                   value={modelHeadsProb}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setModelHeadsProb(parseFloat(e.target.value))}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setModelHeadsProb(parseFloat(e.target.value));
+                    if (isRunning) {
+                      setIsRunning(false);
+                      resetSimulation();
+                    }
+                  }}
                   className={`${INPUT_STYLES.base} ${INPUT_STYLES.rangeColors.modelQ}`}
-                  disabled={isRunning}
                 />
               </div>
             </div>
@@ -309,9 +329,14 @@ const EvidenceAccumulationSimulator: React.FC<EvidenceAccumulationSimulatorProps
                   max="500"
                   step="10"
                   value={numFlips}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNumFlips(parseInt(e.target.value))}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setNumFlips(parseInt(e.target.value));
+                    if (isRunning) {
+                      setIsRunning(false);
+                      resetSimulation();
+                    }
+                  }}
                   className={`${INPUT_STYLES.base} ${INPUT_STYLES.rangeColors.flips}`}
-                  disabled={isRunning}
                 />
               </div>
 
@@ -420,7 +445,7 @@ const EvidenceAccumulationSimulator: React.FC<EvidenceAccumulationSimulatorProps
                 />
                 <Legend />
                 
-                {/* Main blue line - only in KL mode */}
+                {/* Main violet line - only in KL mode */}
                 {mode === 'kl' && (isRunning || currentFlip > 0) && (
                   <Line
                     type="monotone"
@@ -428,7 +453,7 @@ const EvidenceAccumulationSimulator: React.FC<EvidenceAccumulationSimulatorProps
                     name="Accumulated Evidence"
                     stroke={CHART_CONFIG.colors.evidence}
                     strokeWidth={2}
-                    activeDot={{ r: 6 }}
+                    activeDot={{ r: 6, fill: CHART_CONFIG.colors.evidence }}
                     isAnimationActive={CHART_CONFIG.animation.isAnimationActive}
                   />
                 )}
@@ -443,6 +468,7 @@ const EvidenceAccumulationSimulator: React.FC<EvidenceAccumulationSimulatorProps
                     strokeWidth={2}
                     strokeDasharray="5 5"
                     dot={false}
+                    activeDot={{ r: 6, fill: CHART_CONFIG.colors.klDivergenceFull }}
                     isAnimationActive={CHART_CONFIG.animation.isAnimationActive}
                   />
                 )}
@@ -458,7 +484,7 @@ const EvidenceAccumulationSimulator: React.FC<EvidenceAccumulationSimulatorProps
                         name="Accumulated Surprisal (Model Q)"
                         stroke={CHART_CONFIG.colors.modelQ}
                         strokeWidth={2}
-                        activeDot={{ r: 6 }}
+                        activeDot={{ r: 6, fill: CHART_CONFIG.colors.modelQ }}
                         isAnimationActive={CHART_CONFIG.animation.isAnimationActive}
                       />
                     )}
@@ -469,7 +495,7 @@ const EvidenceAccumulationSimulator: React.FC<EvidenceAccumulationSimulatorProps
                         name="Accumulated Surprisal (True P)"
                         stroke={CHART_CONFIG.colors.trueP}
                         strokeWidth={2}
-                        activeDot={{ r: 6 }}
+                        activeDot={{ r: 6, fill: CHART_CONFIG.colors.trueP }}
                         isAnimationActive={CHART_CONFIG.animation.isAnimationActive}
                       />
                     )}
@@ -482,6 +508,7 @@ const EvidenceAccumulationSimulator: React.FC<EvidenceAccumulationSimulatorProps
                       strokeWidth={2}
                       strokeDasharray="5 5"
                       dot={false}
+                      activeDot={{ r: 6, fill: CHART_CONFIG.colors.crossentropyRateFull }}
                       isAnimationActive={CHART_CONFIG.animation.isAnimationActive}
                     />
                     <Line
@@ -492,6 +519,7 @@ const EvidenceAccumulationSimulator: React.FC<EvidenceAccumulationSimulatorProps
                       strokeWidth={2}
                       strokeDasharray="3 3"
                       dot={false}
+                      activeDot={{ r: 6, fill: CHART_CONFIG.colors.entropyFull }}
                       isAnimationActive={CHART_CONFIG.animation.isAnimationActive}
                     />
                   </>

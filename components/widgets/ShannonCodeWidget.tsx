@@ -309,8 +309,8 @@ export default function ShannonCodeWidget() {
     // Map to logarithmic scale (more space for lower frequencies)
     const logValue = Math.log(clampedFreq / minFreq) / Math.log(maxFreq / minFreq);
     
-    // Convert to height percentage (20% to 95% of container, Z will be ~20%)
-    return Math.max(20, logValue * 75 + 20);
+    // Convert to height percentage (20% to 100% of container, Z will be ~20%)
+    return Math.max(20, logValue * 80 + 20);
   }, []);
 
   // Helper function to convert mouse position to frequency using inverse log scale
@@ -325,11 +325,11 @@ export default function ShannonCodeWidget() {
       return 0;
     }
     
-    // Clamp height percentage (20% to 95%)
-    const clampedHeight = Math.max(20, Math.min(95, heightPercent));
+    // Clamp height percentage (20% to 100%)
+    const clampedHeight = Math.max(20, Math.min(100, heightPercent));
     
     // Convert back from height to log scale
-    const logValue = (clampedHeight - 20) / 75;
+    const logValue = (clampedHeight - 20) / 80;
     
     // Convert from log scale to frequency
     const freq = minFreq * Math.pow(maxFreq / minFreq, logValue);

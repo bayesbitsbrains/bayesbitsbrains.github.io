@@ -6,11 +6,19 @@ export const CHART_CONFIG = {
     zoomed: "h-full",
   },
   colors: {
-    evidence: "#2563eb", // blue
-    trueP: "#2563eb", // blue (truth p)
-    klExpected: "#dc2626", // red
-    entropy: "#f97316", // orange
-    modelQ: "#dc2626", // red (model q)
+    evidence: "#8b5cf6", // violet
+    trueP: "#2563eb", // blue (truth p) - also used for entropy curve (full blue)
+    klExpected: "#c4b5fd", // faint violet - used for evidence expected rate
+    entropy: "#93c5fd", // faint blue - for entropy rate
+    modelQ: "#dc2626", // red (model q) - also used for crossentropy curve (full red)
+    crossentropyRate: "#fca5a5", // faint red - for crossentropy rate
+    klDivergence: "#c4b5fd", // faint violet - for KL divergence line
+    // Full versions for activeDots on faint lines
+    entropyFull: "#2563eb", // full blue - for dots on faint blue entropy rate
+    crossentropyRateFull: "#dc2626", // full red - for dots on faint red crossentropy rate
+    klDivergenceFull: "#8b5cf6", // full violet - for dots on faint violet KL divergence
+    // Gray colors for speed and control elements
+    speed: "#6b7280", // gray for speed controls
   },
   animation: {
     transitionDuration: 300,
@@ -37,13 +45,13 @@ export const BUTTON_STYLES = {
   small: "px-3 py-1 text-xs rounded font-medium text-white",
 };
 
-// Shared input styles
+// Shared input styles  
 export const INPUT_STYLES = {
   rangeColors: {
-    trueP: "bg-blue-200",
-    modelQ: "bg-red-200",
-    flips: "bg-gray-200",
-    speed: "bg-purple-200",
+    trueP: "bg-blue-200 slider-thumb-blue",
+    modelQ: "bg-red-200 slider-thumb-red", 
+    flips: "bg-gray-200 slider-thumb-gray",
+    speed: "bg-gray-200 slider-thumb-gray",
   },
   base: "w-full h-2 rounded-lg appearance-none cursor-pointer",
 };

@@ -154,7 +154,7 @@ Recall the riddle: We asked experts to predict future events—how do we score t
 <ImageGallery images={[{src: "00-introduction/questions.png", alt: "questions"}]} width="75%" />
 
 
-### 🌈 Ideal KL score
+### Ideal KL score
 
 To grade predictions, let $p = (p_1, \dots, p_n)$ be the true probabilities of the events we ask our experts about. Let's also focus on a particular expert and let $q$ be what they predicted. It for sure seems like a good idea to give the expert the score (loss) <Math displayMode={false} math="D(p,q)" />. 
 
@@ -195,7 +195,7 @@ D(\hat{p}, q) = H(\hat{p}, q) =
 
 This is the _cross-entropy score_ used in forecasting tournaments. Forecasting community typically calls it the [Log-score](https://forecasting.wiki/wiki/Log_score), though. 
 
-### 👶 Example
+### Example
 
 Try the log-score on our example! You can see how it really doesn't like the $99\%$-confidence failed prediction. On the other hand, it's too early to compare the second and the third expert. Another popular score is called Brier score and is computed as the mean squared error (i.e., if you predicted 0.8 probability and the event happens, your Brier score is $(1-0.8)^2 = 0.04$). Brier score does not really care whether your failed prediction had probability of $0.9$ or $0.9999$, so it doesn't penalize the first expert for his overconfidence. 
 
@@ -249,7 +249,7 @@ However, this only works _in the long run_. Disentangling $N$ from $N + 0.03\cdo
 </RiddleExplanation>
 
 
-## 🕵️ Maximum likelihood principle <a id="mle"></a>
+## Maximum likelihood principle <a id="mle"></a>
 
 We already understand that there's not much difference between minimizing cross-entropy or KL divergence between $p$ and $q$, whenever $p$ is fixed. There's one more equivalent way to think about this. Let's write the cross-entropy formula once more: 
 

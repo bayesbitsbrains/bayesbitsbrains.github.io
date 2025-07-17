@@ -206,14 +206,14 @@ export default function KLCalculatorWidget() {
           <div className="space-y-4">
             {/* KL Divergences */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
-                <div className="text-sm font-medium text-blue-800 mb-1">
+              <div className="p-3 rounded-lg border" style={{backgroundColor: '#f3f1ff', borderColor: '#e4daff'}}>
+                <div className="text-sm font-medium mb-1" style={{color: '#7c3aed'}}>
                   <KatexMath math="D(p_1, p_2)" />
                 </div>
-                <div className="text-lg font-bold text-blue-900">
+                <div className="text-lg font-bold" style={{color: '#5b21b6'}}>
                   {isFinite(result.kl12) ? `${result.kl12.toFixed(4)} bits` : "infinite"}
                 </div>
-                <div className="text-xs text-blue-700">
+                <div className="text-xs" style={{color: '#7c3aed'}}>
                   KL divergence from Text 1 to Text 2
                   {!isFinite(result.kl12) &&
                     (() => {
@@ -225,14 +225,14 @@ export default function KLCalculatorWidget() {
                 </div>
               </div>
 
-              <div className="p-3 bg-green-50 rounded-lg border border-green-200">
-                <div className="text-sm font-medium text-green-800 mb-1">
+              <div className="p-3 rounded-lg border" style={{backgroundColor: '#f3f1ff', borderColor: '#e4daff'}}>
+                <div className="text-sm font-medium mb-1" style={{color: '#7c3aed'}}>
                   <KatexMath math="D(p_2, p_1)" />
                 </div>
-                <div className="text-lg font-bold text-green-900">
+                <div className="text-lg font-bold" style={{color: '#5b21b6'}}>
                   {isFinite(result.kl21) ? `${result.kl21.toFixed(4)} bits` : "infinite"}
                 </div>
-                <div className="text-xs text-green-700">
+                <div className="text-xs" style={{color: '#7c3aed'}}>
                   KL divergence from Text 2 to Text 1
                   {!isFinite(result.kl21) &&
                     (() => {
@@ -247,20 +247,20 @@ export default function KLCalculatorWidget() {
 
             {/* Entropies */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
-                <div className="text-sm font-medium text-gray-800 mb-1">
+              <div className="p-3 rounded-lg border" style={{backgroundColor: '#f0f9ff', borderColor: '#e0f2fe'}}>
+                <div className="text-sm font-medium mb-1" style={{color: '#0369a1'}}>
                   <KatexMath math="H(p_1)" />
                 </div>
-                <div className="text-lg font-bold text-gray-900">{result.entropy1.toFixed(4)} bits</div>
-                <div className="text-xs text-gray-700">Entropy of Text 1</div>
+                <div className="text-lg font-bold" style={{color: '#1e40af'}}>{result.entropy1.toFixed(4)} bits</div>
+                <div className="text-xs" style={{color: '#0369a1'}}>Entropy of Text 1</div>
               </div>
 
-              <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
-                <div className="text-sm font-medium text-gray-800 mb-1">
+              <div className="p-3 rounded-lg border" style={{backgroundColor: '#f0f9ff', borderColor: '#e0f2fe'}}>
+                <div className="text-sm font-medium mb-1" style={{color: '#0369a1'}}>
                   <KatexMath math="H(p_2)" />
                 </div>
-                <div className="text-lg font-bold text-gray-900">{result.entropy2.toFixed(4)} bits</div>
-                <div className="text-xs text-gray-700">Entropy of Text 2</div>
+                <div className="text-lg font-bold" style={{color: '#1e40af'}}>{result.entropy2.toFixed(4)} bits</div>
+                <div className="text-xs" style={{color: '#0369a1'}}>Entropy of Text 2</div>
               </div>
             </div>
           </div>
@@ -320,8 +320,8 @@ export default function KLCalculatorWidget() {
           </div>
 
           {/* Explanation */}
-          <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-            <h5 className="text-base font-semibold text-blue-800 mb-3">Understanding the Results</h5>
+          <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+            <h5 className="text-base font-semibold text-gray-800 mb-3">Understanding the Results</h5>
             <div className="space-y-3 text-sm text-gray-700">
               <p>
                 First, we can see that the mixed file has larger entropy. This makes sense! Every language uses
