@@ -64,8 +64,8 @@ const LetterPredictionWidget: React.FC = () => {
   const [usedSnapshotIds, setUsedSnapshotIds] = useState<Set<number>>(new Set());
 
   /* ------------------------------------------------------------
-   * Phase 1: load snapshots only (fast). We can start a game as
-   * soon as these arrive, without waiting on model data.
+   * Phase 1: load just 10% of snapshots (instant startup), then
+   * load the rest in background for variety.
    * ---------------------------------------------------------- */
   useEffect(() => {
     let cancelled = false;
@@ -73,10 +73,24 @@ const LetterPredictionWidget: React.FC = () => {
       try {
         const snapshotResponse = await fetch(getAssetPath("/data/prediction_snapshots.json"));
         const snapshotData = await snapshotResponse.json();
-        if (!cancelled) {
-          setSnapshots(snapshotData.snapshots);
-          setLoading(false); // we can render game now
-        }
+        if (cancelled) return;
+
+        const allSnapshots = snapshotData.snapshots;
+        
+        // Phase 1a: Load first 10% immediately for instant startup
+        const initialCount = Math.max(Math.ceil(allSnapshots.length * 0.1), 10);
+        const initialSnapshots = allSnapshots.slice(0, initialCount);
+        
+        setSnapshots(initialSnapshots);
+        setLoading(false); // we can render game now with subset
+        
+        // Phase 1b: Load remaining 90% in background for variety
+        setTimeout(() => {
+          if (!cancelled) {
+            setSnapshots(allSnapshots);
+          }
+        }, 100);
+        
       } catch (err) {
         console.error("Failed to load snapshots:", err);
         if (!cancelled) setLoading(false);
