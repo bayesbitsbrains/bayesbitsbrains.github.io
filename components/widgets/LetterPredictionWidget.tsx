@@ -360,13 +360,13 @@ const LetterPredictionWidget: React.FC = () => {
   }, [llmDetailedScores]);
 
   const calculateUserAverage = () => {
-    const completedGames = gameStates.filter((g) => g.completed && !g.gaveUp);
+    const completedGames = gameStates.filter((g) => g.completed);
     if (completedGames.length === 0) return 0;
     return completedGames.reduce((sum, g) => sum + g.score, 0) / completedGames.length;
   };
 
   const calculateLLMAverage = (modelKey: string) => {
-    const completedGames = gameStates.filter((g) => g.completed && !g.gaveUp);
+    const completedGames = gameStates.filter((g) => g.completed);
     if (completedGames.length === 0) return llmScores[modelKey]?.avg_optimistic || 0;
 
     const detailedData = llmDetailedScores[modelKey];
@@ -925,7 +925,7 @@ const LetterPredictionWidget: React.FC = () => {
                         <div className="text-yellow-300">{calculateUserAverage().toFixed(3)} bits</div>
                         <div className="text-gray-300 mt-1">
                           {(() => {
-                            const scoredGames = gameStates.filter(g => g.completed && !g.gaveUp);
+                            const scoredGames = gameStates.filter(g => g.completed);
                             return (
                               <>Average of {scoredGames.length} game{scoredGames.length !== 1 ? "s" : ""}</>
                             );
@@ -983,7 +983,7 @@ const LetterPredictionWidget: React.FC = () => {
                           <div className="text-yellow-300">{llmAvg.toFixed(3)} bits</div>
                           <div className="text-gray-300 mt-1">
                             {(() => {
-                              const scoredGames = gameStates.filter(g => g.completed && !g.gaveUp);
+                              const scoredGames = gameStates.filter(g => g.completed);
                               return (
                                 <>On same {scoredGames.length} game{scoredGames.length !== 1 ? "s" : ""}</>
                               );
