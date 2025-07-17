@@ -412,7 +412,7 @@ const LetterPredictionWidget: React.FC = () => {
   if (loading) {
     return (
       <div className="p-6 bg-gray-50 rounded-lg">
-        <div className="text-center">Loading first question…</div>
+        <div className="text-center">Loading questions…</div>
       </div>
     );
   }
@@ -532,7 +532,7 @@ const LetterPredictionWidget: React.FC = () => {
                   </div>
                 </div>
                 <div className="flex justify-center">
-                  <button onClick={startNewGame} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                  <button onClick={() => startNewGame()} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
                     Next
                   </button>
                 </div>
