@@ -30,7 +30,6 @@ export const PARTS = [
     name: "Part III: Compression",
     chapters: [
       ["Coding theory", "08-coding_theory"],
-      ["Kolmogorov complexity", "09-kolmogorov"],
     ],
   },
 ];
@@ -53,7 +52,10 @@ export const MAIN_CHAPTERS = [
   ...META_PAGES,
 ];
 
-export const BONUS_CHAPTERS = [...PARTS[3].chapters];
+export const BONUS_CHAPTERS = [
+  ["Kolmogorov complexity", "09-kolmogorov"],
+  ...PARTS[3].chapters,
+];
 
 // Combined chapters for compatibility
 export const CHAPTERS = [

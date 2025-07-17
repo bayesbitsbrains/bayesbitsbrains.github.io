@@ -2,27 +2,30 @@
 
 tldr: This site is about probability and information theory for machine learning. I will assume knowledge from an introductory probability course. 
 
-## 💡 Content
+More concretely, after reading the mini-course, you should get a solid theoretical background behind a lot of tricks used in machine learning. Here's some questions we will explore. 
 
-This mini-course introduces topics in probability and information theory that I believe are important to understand machine learning. 
-
-You should get a solid theoretical background behind several techniques used in machine learning: KL divergence, entropy, cross-entropy, max likelihood & max entropy principles, logits, softmax, and loss functions. We will also get intuitions about neural nets by understanding compression, coding theory, and Kolmogorov complexity. 
-
-## How to read this
-
-Skip stuff you find boring, especially expanding boxes & footnotes. Skip boxes labeled with ⚠️ even more. Follow links, get nerdsniped, and don't feel the need to read this linearly. 
-
-This mini-course does not contain many formal theorem statements or proofs since the aim is to convey intuition in an accessible way. The downside is that some discussions are necessarily a bit imprecise. To get to the bottom of the topic, copy-paste the chapter to your favorite LLM and ask for details. 
-
-The total length of the text, including all footnotes and expand boxes, is about 5 chapters of Harry Potter and the Philosopher's stone. That's until Harry learns he's a wizard (I don't promise you will feel the same).  
+- What's KL divergence, entropy and cross-entropy? What's the intuition behind them? (chapters 1-3)
+- Where do the machine-learning principles of maximum likelihood & maximum entropy come from? (chapters 4-5)
+- Why do we use logits, softmax, and Gaussian all the time? (chapter 5)
+- How to set up loss functions? (chapter 6)
+- How to think about LLMs? (chapters 4 and 7)
 
 
+<Expand headline = "How to read this">
+
+Skip stuff you find boring, especially expanding boxes and doubly especially boxes labeled with ⚠️. Follow links, get nerdsniped, and don't feel the need to read this linearly. 
+
+This mini-course does not contain many formal theorem statements or proofs since the aim is to convey intuition in an accessible way. The downside is that some discussions are necessarily a bit imprecise. To get to the bottom of the topic, check [resources](resources) or just copy-paste the chapter to your favorite LLM and ask for details. 
+
+The total length of the text, if you skip most expand boxes and footnoes, is about 2 chapters of Harry Potter and the Philosopher's stone (until Harry's first experience with magic). It's about 5 chapters if you read all footnotes and expand boxes (Harry learns he's a wizard). In either case, I don't promise you will feel the same as Harry.  
+
+</Expand>
 {/*
 If you want to gain experience and level up your probability stats, you can't take Harry-Potter-reading approach, though. 
 See [resources](resources) for some links. 
 */}
 
-## What is assumed <a id="what-we-assume"></a>
+<Expand headline = "What is assumed"> <a id="what-we-assume"></a>
 
 I assume probability knowledge after taking a typical introductory course at university.  
 You should be familiar with the basic language of probability theory: probabilities, distributions, random variables, independence, expectations, variance, and standard deviation. 
@@ -31,20 +34,21 @@ You should be familiar with the basic language of probability theory: probabilit
 I also assume that you get the gist of [the law of large numbers](https://en.wikipedia.org/wiki/Law_of_large_numbers) <Footnote>If you keep flipping a fair coin $n$ times, you get around $n/2$ heads. Or, more generally & technically, if you keep flipping a biased coin with bias $p$ and $X_i \in \{0,1\}$ is whether the $i$-th outcome is Heads, the sample bias $\hat{p} = 1/n \cdot \sum_{i = 1}^n X_i$ is likely to be very close to the true bias $p$. </Footnote> and maybe even the [central limit theorem](https://en.wikipedia.org/wiki/Central_limit_theorem). <Footnote>If you keep flipping a coin, the number of heads you'll see follows a distribution that looks a bit like a [devoured elephant](https://www.amazon.com/KIUB-Postcard-Little-elephant-10x15cm/dp/B0CKSVVWDL). More generally & technically, if $X_1, \dots, X_n$ follow the same (reasonable) distribution, and $n$ is large enough, the distribution of the sample mean looks like the [Gaussian distribution](https://en.wikipedia.org/wiki/Normal_distribution), with standard deviation of the order of $1/\sqrt{n}$. </Footnote>
 
 Knowing example uses of machine learning, statistics, or information theory helps a good bit to appreciate the context.
+</Expand>
 
-
-## About This Project
+<Expand headline = "About This Project">
 
 This text was written by <a href="https://vaclavrozhon.github.io/">Vašek Rozhoň</a> and arose from a joint project with <a href="https://gavento.cz/">Tom Gavenčiak</a>. 
 
 We were thinking about __open exposition problems__<Footnote>The phrase comes from one of my [favorite exposition papers](https://timothychow.net/forcing.pdf). </Footnote> - Inasmuch as there are open _scientific_ problems where we haven't figure out how the Nature works, there are also open _exposition_ problems where we haven't figure out the best way to convey our knowledge. We had a joint probability seminar at Charles University where we tried to work out how to teach some important, underrated topics. This text tracks some of what we did in that seminar. 
 
-The text is motivated by two open problems:
+More concretely, it's motivated by two open problems:
 
 - How to adapt our teaching of computer science theory to convey more about neural networks? 
 - How can we use the current capabilities of LLM to teach better, in general? 
 
 The first problem motivates the content, the second one the form. 
+</Expand>
 
 {/*
 First, I try to collect various ideas at the intersection of probability, statistics, and information theory that we are typically not teaching in standard undergrad courses, and repackage them. The result hopefully gives some useful intuitions behind current ML in particular, and behind using probability to understand the world around us in general. 
@@ -52,13 +56,15 @@ First, I try to collect various ideas at the intersection of probability, statis
 Second, with current LLM capabilities, some ways of presenting math suddenly got doable. The current text is full of widgets that will hopefully help you learn by playing with them. Let's see how it works! 
 */}
 
-## Thanks
+<Expand headline = "Thanks">
 
 Huge thanks to Tom Gavenčiak (see above), as well as to my coauthors Claude, Gemini, and GPT that helped massively to create this mini-course. 
 
-Thanks to Richard Hladík, Petr Chmel, Vojta Rozhoň, Robert Šámal, Pepa Tkadlec, and others for feedback. 
+Big thanks to Richard Hladík, Petr Chmel, Vojta Rozhoň, Robert Šámal, Pepa Tkadlec, and others for feedback. 
+</Expand>
 
+<Expand headline = "Feedback">
 
-## Feedback
+I'd love to hear your feedback! Paste it [here](https://forms.gle/wXShyQRsGWtb8afd6) or reach out to me directly. 
 
-I'd love to hear your feedback! Paste it [here](https://forms.gle/YourFormID) [todo], write a comment, or reach out to me directly. 
+</Expand>

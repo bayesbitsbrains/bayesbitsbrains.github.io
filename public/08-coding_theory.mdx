@@ -182,14 +182,11 @@ I think that this is a powerful intuition that can help us understand where the 
 
 This is a complementary intuition to our intuition that being good in the text-prediction game requires knowledge. Indeed, prediction and compression are two sides of the same coin! 
 
-## Cracking riddles <a id = "compression"></a>
-
-Let's go back to our Wikipedia compression riddle, the last riddle we haven't discussed yet. 
-
 <RiddleExplanation id="wikipedia">
+Let's go back to our Wikipedia compression riddle, the last riddle we haven't discussed yet. 
 Remember, [our Wikipedia riddle](00-riddles#wikipedia) was about Hutter's compression challenge: How much can we compress a single 1GB file of English Wikipedia. Hutter is an AI researcher and he started his challenge because he understands very well the topic of this chapter - if you can compress text, you can also predict it, and that implies you have to have relevant knowledge /intelligence.  
 
-The honest answer to what's the best way to compress Wikipedia is that we don't know (see the following [Kolmogorov complexity](09-kolmogorov) chapter), but we at least broadly understand how well different algorithms compress English text. 
+The honest answer to what's the best way to compress Wikipedia is that we don't know (see the bonus section on Kolmogorov complexity), but we at least broadly understand how well different algorithms compress English text. 
 
 There are more approaches to compress text files. Let's go through them and you can see in the next widget how they fare for various types of data. 
 
@@ -205,6 +202,54 @@ I encourage you to play with the following widget, especially making GPT-2 compr
 
 <CompressionWidget />
 
-The best algorithms in Hutter's competition have compress by a factor of about 9x. But unfortunately, while the challenge is backed by a very deep understanding of the nature of intelligence, the precise parameters of the challenge make it hard to interpret the leading algorithms as the best algorithms in 'understanding'. Since the file size is only 1GB, the compression-by-LLM approach doesn't easily work. You have to append the LLM to the compressed text and it becomes huge. The winning algorithms are thus used on more 'combinatorial' approaches, like those used in ZIP. 
+The best algorithms in Hutter's competition have compress by a factor of about 9x. But unfortunately, while the challenge is backed by a very deep understanding of the nature of intelligence, the precise parameters of the challenge makes it hard to win it with LLMs. The problem is that the file size is only 1GB. Remember, our LLM-based compression algorithm is only good if we don't count the size of the LLM itself. But in the competition, we naturally have to account for that. 1GB is then too small for our approach to scale. 
 
 </RiddleExplanation>
+
+
+
+
+<Expand headline = "Chinese room">
+
+One of the most important ideas of AI is what's known as [Turing test](https://en.wikipedia.org/wiki/Turing_test):
+Imagine that you can chat for a few minutes with an entity that is either a human, or an AI impersonating a human. If you can't reliably tell the two cases apart, Turing claims that we should concede that the AI is intelligent.  <Footnote> This was considered the holy grail of AI but, somehow, people stopped talking about it after GPT-4-level models. </Footnote>
+
+Turing test motivated various AI chatting systems that tried to pass weak versions of it. One of the famous ones is ELIZA, a simple chatbot that consists of a long list of rules like in the picture below. 
+
+<ImageGallery 
+  images={[
+    { src: "/fig/eliza.png", alt: "ELIZA" },
+  ]}
+  caption={`User: You are too quiet.  \n
+ELIZA: Does it please you to believe I am too quiet?`}
+  fullWidth={true}
+/>
+
+Chatbots like ELIZA are built from lists and lists of common phrases, desperately trying to mimick human conversation for as long as possible. If you keep adding IFs and ELSEs, perhaps you can fool some people in conversations lasting a few minutes. 
+
+But if you look at ELIZA's code, you can't shake off the feeling that something is very off here. Intelligence is not supposed to look like this! 
+
+This was the motivation of a philosopher called [John Searle](https://en.wikipedia.org/wiki/John_Searle) when he proposed a thought experiment called [the Chinese room](https://en.wikipedia.org/wiki/Chinese_room).<Footnote>There are more ways to interpret what his experiment is getting at, I will interpret it as being about intelligence. </Footnote> 
+
+In Searle's thought experiment, he basically imagines a Turing test for speaking Chinese: We have a judge who should judge whether her counterpart (here it's a person) in the conversation knows Chinese. She sends a text message to the other person, who replies back. Unbeknownst to her, the other participant of the conversation does not know any Chinese at all. But he has a great conversation book: This book stores the list of all Chinese conversations, and for each it says what the right reply is - think of the book as ELIZA on steroids. 
+
+The person with the book are successfully fooling our judge, but neither the person, nor the list of phrases seem to be very intelligent! So what's left of Turing test then, asks Searle? 
+
+I think we now good enough understanding and language to talk about what's happening here. 
+First, let's focus on the rule book from the thought experiment. The problem with it is that it has to be incredibly large! Let's say that there are 1000 questions that a typical person can ask you about as the first question. Then, your rule book has to have 1000 items for a conversation long enough for 1 question, $1000^2$ if there's time to ask too questions and so on. In 5 minutes, you can then ask enough questions to make the rulebook collapse to a black hole!<Footnote>See [this book]() by Scott Aaronson for more discussion. </Footnote>
+
+So the rulebook, as Searle defined it, is not in any way close to any real algorithm that'll ever exist. Any actual algorithm that passes the Turing test thus necessarily has to involve compression: It has to be able to compress the enormous possibility space of human conversations into something managable. 
+
+That's exactly what's missing in ELIZA. The program is not able to compress reasonable English text in the same way that LLMs can. If we double the number of rules in the ELIZA program, perhaps our [parrot](https://en.wikipedia.org/wiki/Stochastic_parrot) will be able to fool a few more people in a short Turing test, but we are not going to get better at the important benchmark: compression. Equivalently, the program won't get much better in predicting how the actual human conversations look like. 
+
+This is of course very different for current AIs. As we now understand, they are literally trained to __predict__ human conversations and writings. Or, equivalently, they are trying to __compress__ them. This is the crucial difference from the fakers like ELIZA which forces the systems to gain intelligence / understanding. Ilya Sutskever [said it best](https://www.dwarkesh.com/p/ilya-sutskever):
+
+<Block>
+Predicting the next token well means that you understand the underlying reality that led to the creation of that token.
+</Block>
+
+</Expand>
+
+## What's next? 
+
+You are done, congrats! If you liked the mini-course, continue to the [Graveyard](bonus.md) that contains bonus chapters that I dropped from the main flow. Check out the [resources](resources), too. I will be grateful if you leave feedback [here](https://forms.gle/wXShyQRsGWtb8afd6). 
