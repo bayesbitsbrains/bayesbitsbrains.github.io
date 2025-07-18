@@ -324,27 +324,22 @@ const XKCDCountdownWidget: React.FC = () => {
     );
   };
 
-  // --- View mode slider -------------------------------------------------------
+  // --- View mode buttons ------------------------------------------------------
   const ViewModeSlider: React.FC = () => {
     const options: ViewMode[] = ["prior", "likelihood", "posterior"];
-    const currentIndex = options.indexOf(viewMode);
 
     return (
       <div className="flex items-center justify-center mb-4">
-        <div className="relative w-80 h-12 bg-gray-200 rounded-full p-1">
-          <div className="absolute inset-1 bg-gray-100 rounded-full"></div>
-          <div
-            className="absolute top-1 h-10 w-24 bg-blue-500 rounded-full transition-all duration-300 ease-out shadow-lg"
-            style={{ left: `calc(${currentIndex * 33.33}% + 4px)`, width: "calc(33.33% - 8px)" }}
-          ></div>
-          {options.map((opt, idx) => (
+        <div className="flex bg-gray-200 rounded-lg p-1 gap-1">
+          {options.map((opt) => (
             <button
               key={opt}
               onClick={() => setViewMode(opt)}
-              className={`absolute top-1 h-10 w-24 rounded-full transition-all duration-300 text-sm font-medium ${
-                viewMode === opt ? "text-white z-20" : "text-gray-600 hover:text-gray-800 z-10"
+              className={`px-6 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+                viewMode === opt 
+                  ? "bg-blue-500 text-white shadow-sm" 
+                  : "bg-transparent text-gray-600 hover:text-gray-800 hover:bg-gray-100"
               }`}
-              style={{ left: `calc(${idx * 33.33}% + 4px)`, width: "calc(33.33% - 8px)" }}
             >
               {opt.charAt(0).toUpperCase() + opt.slice(1)}
             </button>
