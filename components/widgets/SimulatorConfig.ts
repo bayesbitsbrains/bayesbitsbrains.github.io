@@ -1,7 +1,7 @@
 // Shared configuration for Evidence Accumulation and Cross-Entropy simulators
 export const CHART_CONFIG = {
   margins: { 
-    mobile: { top: 2, right: 15, left: 20, bottom: 25 },
+    mobile: { top: 1, right: 8, left: 15, bottom: 20 },
     desktop: { top: 5, right: 40, left: 30, bottom: 35 }
   },
   height: {
