@@ -491,8 +491,11 @@ export default function MLProblemExplorer({ showExplanations = true, defaultMode
   // Click handler to add points
   const handleCanvasClick = (e: React.MouseEvent<SVGSVGElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
-    const cx = e.clientX - rect.left;
-    const cy = e.clientY - rect.top;
+    const rawCx = e.clientX - rect.left;
+    const rawCy = e.clientY - rect.top;
+    // Convert from actual SVG size to logical CANVAS_SIZE
+    const cx = (rawCx / rect.width) * CANVAS_SIZE;
+    const cy = (rawCy / rect.height) * CANVAS_SIZE;
     if (mode === "meanVariance") {
       const xVal = (cx / CANVAS_SIZE) * 6 - 3;
       setPoints1D([...points1D, xVal]);
@@ -639,9 +642,9 @@ export default function MLProblemExplorer({ showExplanations = true, defaultMode
   // JSX -------------------------------------------------------
 
   return (
-    <div className="p-4 bg-gray-50 rounded-lg space-y-4">
+    <div className="p-2 sm:p-4 bg-gray-50 rounded-lg space-y-4">
       {/* Mode selector and reset button */}
-      <div className="flex justify-between items-center mx-auto" style={{ width: `${CANVAS_SIZE}px` }}>
+      <div className="flex justify-between items-center mx-auto max-w-md w-full">
         <select value={mode} onChange={(e) => setMode(e.target.value as Mode)} className="border p-1 rounded">
           <option value="meanVariance">Mean & Variance</option>
           <option value="linearRegression">Linear Regression</option>
@@ -687,14 +690,16 @@ export default function MLProblemExplorer({ showExplanations = true, defaultMode
       </div>
 
       {/* Canvas */}
-      <svg width={CANVAS_SIZE} height={CANVAS_SIZE} className="border bg-white mx-auto" onClick={handleCanvasClick}>
+      <div className="flex justify-center">
+        <svg width="100%" height="auto" viewBox={`0 0 ${CANVAS_SIZE} ${CANVAS_SIZE}`} className="border bg-white max-w-md w-full" onClick={handleCanvasClick}>
         {/* Axes */}
         <line x1={0} y1={CANVAS_SIZE / 2} x2={CANVAS_SIZE} y2={CANVAS_SIZE / 2} stroke="#e5e7eb" />
         <line x1={CANVAS_SIZE / 2} y1={0} x2={CANVAS_SIZE / 2} y2={CANVAS_SIZE} stroke="#e5e7eb" />
 
-        {renderPoints()}
-        {renderSolutionOverlay()}
-      </svg>
+          {renderPoints()}
+          {renderSolutionOverlay()}
+        </svg>
+      </div>
 
       {/* Formulas */}
       <div className="space-y-3 text-sm">
@@ -713,7 +718,7 @@ export default function MLProblemExplorer({ showExplanations = true, defaultMode
       </div>
 
       {/* Explanation */}
-      {showExplanations && <div className="prose max-w-none bg-white p-4 rounded">{content[mode].explanation()}</div>}
+      {showExplanations && <div className="prose max-w-none bg-white p-2 sm:p-4 rounded">{content[mode].explanation()}</div>}
     </div>
   );
 }
