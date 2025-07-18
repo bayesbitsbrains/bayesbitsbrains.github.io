@@ -85,45 +85,45 @@ export default function CompressionWidget() {
               const descriptions: { [key: string]: { [alg: string]: string } } = {
                 "kl_intro_10kb": {
                   "Baseline": "",
-                  "Best letter encoding": "Entropy of English letter frequencies is about 4 bits per letter. This text is a bit worse due to math characters",
-                  "ZIP": "ZIP can typically do a bit better than pure letter-encoding due to common words like 'the'",
-                  "LLM (GPT-2)": "If you can speak English, its entropy is about 1 bit per letter.",
-                  "LLM (Llama 4)": "If you can speak English and are very smart at math, you can do better than 1 bit per letter for this text."
+                  "Best letter encoding": "Entropy of English letter frequencies is about 4 bits per letter. This text includes a lot of special characters so the entropy is a bit higher - about 4.7 bits per character. ",
+                  "ZIP": "ZIP can typically do a bit better than pure letter-encoding. ",
+                  "LLM (GPT-2)": "The entropy of English for native speakers (both people and LLMs) is about 1 bit per letter. Or less if you are smart. ",
+                  "LLM (Llama 4)": "The entropy of English for native speakers (both people and LLMs) is about 1 bit per letter. Or less if you are smart. "
                 },
                 "pi_digits_10kb": {
                   "Baseline": "",
                   "Best letter encoding": "All ten digits 0,1,...,9 have the same frequency in $\\pi$. The optimal code for letters thus uses $\\log 10 \\approx 3.3$ bits per character.",
                   "ZIP": "ZIP kind of sucks here, it probably tries very hard to find some order in $\\pi$ that really isn't there; thus 20% overhead over naive encoding of digits.",
-                  "LLM (GPT-2)": "GPT-2 clearly does not know $\\pi$ (except for the first few digits) so it's stuck with $\\log 10 \\approx 3.3$ bits per letter. In fact, it's a bit worse due to technicalities related to converting between tokens and characters.",
-                  "LLM (Llama 4)": "Llama clearly knows the first 10k digits of pi pretty well! It memorized the first 1K digits incredibly well, then it starts stumbling more and more often, but still very impressive!"
+                  "LLM (GPT-2)": "GPT-2 clearly does not know $\\pi$ (except for the first few digits) so it's stuck with $\\log 10 \\approx 3.3$ bits per letter. In fact, it's a bit worse due to some technicalities.",
+                  "LLM (Llama 4)": "Llama clearly knows the first 10k digits of pi pretty well! It memorized the first 1K digits incredibly well, then it starts stumbling more and more often. Still, very impressive!"
                 },
                 "declaration_full": {
                   "Baseline": "",
                   "Best letter encoding": "Entropy of English letter frequencies is about 4 bits per letter.",
-                  "ZIP": "ZIP can typically do a bit better than pure letter-encoding due to common words like 'the'",
-                  "LLM (GPT-2)": "GPT-2 clearly remembers that all men were created equal! Otherwise, it's about as good as any other English text.",
+                  "ZIP": "ZIP can typically do a bit better than pure letter-encoding. ",
+                  "LLM (GPT-2)": "The entropy of English for native speakers (both people and LLMs) is about 1 bit per letter or less. But you can also notice that GPT-2 clearly remembers that all men were created equal! ",
                   "LLM (Llama 4)": "Llama 4 knows the declaration by heart. It is probably not super sure about the order of signatories at the very end."
                 },
                 "human_mitochondrial_dna": {
                   "Baseline": "",
                   "Best letter encoding": "DNA has 4-letter alphabet with quite even base frequencies, leading to 2 bits per letter and 4x speedup over the naive encoding.",
                   "ZIP": "As with pi, ZIP is trying to find some correlations between consecutive letters, but there does not seem to be that much going on; this leads to 20% overhead as with $\\pi$.",
-                  "LLM (GPT-2)": "GPT-2 just sees random string over four letters. It's a bit worse than 2 bits per letter due to technicalities related to converting between tokens and characters.",
-                  "LLM (Llama 4)": "I chose one of the most important parts of human DNA and Llama actually knows the first few hundreds of base pairs. Then it's again just (slightly worse than) 2 bits per letter."
+                  "LLM (GPT-2)": "GPT-2 just sees a random string over four letters. It's a bit worse than 2 bits per letter due to some technicalities.",
+                  "LLM (Llama 4)": "I chose one of the most important parts of human DNA and Llama 4 actually knows the first few hundreds of base pairs. Then it's again just 2 bits per letter (slightly worse due to some technicalities)."
                 },
                 "huffman_code_10kb": {
                   "Baseline": "",
-                  "Best letter encoding": "Letter frequencies in code are similar to English texts, so we can get about 4 bits per character",
-                  "ZIP": "Code is easier to compress by zip than regular English text as it contains many very frequent words like print, if and so on.",
+                  "Best letter encoding": "Entropy of English letter frequencies is about 4 bits per letter. This text includes a lot of special characters so the entropy is a bit higher - about 4.5 bits per character. ",
+                  "ZIP": "Code is easier to compress by zip than regular English text because it contains many very frequent words like 'print', 'if'. ",
                   "LLM (GPT-2)": "As with ZIP, GPT-2 achieves a bit better performance than on regular English text.",
-                  "LLM (Llama 4)": "Unlike GPT-2, Llama can code. The code snippet is a well-known algorithm and Llama clearly knows it. The second part of the example code is more ad-hoc as it contains some printing of results where there's more wiggle room about what may come next."
+                  "LLM (Llama 4)": "Unlike GPT-2, Llama can code very well. The code snippet is a well-known algorithm and Llama clearly knows it. The second part of the example code is more ad-hoc as it contains some printing of results where there's more wiggle room about what may come next; thus larger crossentropy later on. "
                 },
                 "repeated_phrase": {
                   "Baseline": "",
                   "Best letter encoding": "Although the text is repetitive, the entropy of letter frequencies is very similar to that of English. ",
                   "ZIP": "ZIP is smart enough to compress repeating patterns so it's great for files like this one. ",
-                  "LLM (GPT-2)": "GPT-2 is basically not surprised at all after the first sentence. Except for a weird bit in the middle that I don't understand. ",
-                  "LLM (Llama 4)": "Llama just reads the first sentence and then chills. With some caveats, it can compress the whole file to <100 bits. "
+                  "LLM (GPT-2)": "GPT-2 is basically not surprised at all after the first sentence. Except for a weird bit in the middle that may be a context-window bug in my experiment. ",
+                  "LLM (Llama 4)": "Llama just reads the first sentence and then chills. With some caveats, it can compress the whole file to <100 bits! "
                 }
 
               };
@@ -141,35 +141,35 @@ export default function CompressionWidget() {
                   algorithm: "Baseline",
                   bits: result.naive_bits || naiveBits,
                   ratio: "1.00x",
-                  generalDescription: "Just store each character as 8 bits in memory, using ASCII encoding. ",
+                  generalDescription: "Simply store each character as 8 bits in memory, using ASCII encoding. ",
                   specificDescription: getSpecificDescription("Baseline", config.filename, textLength)
                 },
                 {
                   algorithm: "Best letter encoding",
                   bits: result.letterwise_bits || naiveBits,
                   ratio: result.letterwise_ratio ? `${result.letterwise_ratio}x` : "1.00x",
-                  generalDescription: "Use optimal codes based on individual character frequencies. We estimate its compression rate by computing the entropy of the frequency distribution. ",
+                  generalDescription: "Use optimal encoding of each character, based on their frequency in the text. We estimate the compression rate by computing the entropy of the distribution of character frequencies. ",
                   specificDescription: getSpecificDescription("Best letter encoding", config.filename, textLength)
                 },
                 {
                   algorithm: "ZIP",
                   bits: result.zip_bits || naiveBits,
                   ratio: result.zip_ratio ? `${result.zip_ratio}x` : "1.00x",
-                  generalDescription: "Standard dictionary-based compression algorithm",
+                  generalDescription: "Standard dictionary-based compression algorithm - it stores frequent words and phrases in a dictionary and reference them if they come up later. ",
                   specificDescription: getSpecificDescription("ZIP", config.filename, textLength)
                 },
                 {
                   algorithm: "LLM (GPT-2)",
                   bits: result.gpt2_bits || naiveBits,
                   ratio: result.gpt2_ratio ? `${result.gpt2_ratio}x` : "1.00x",
-                  generalDescription: "Use language model for next token prediction. We estimate the compression rate by computing the cross-entropy of the net on the text. GPT-2 = Good old LLM",
+                  generalDescription: "An LLM can be used to compress texts. We estimate the compression rate by computing its cross-entropy on the text. GPT-2 is a famous and old LLM from 2019. ",
                   specificDescription: getSpecificDescription("LLM (GPT-2)", config.filename, textLength)
                 },
                 {
                   algorithm: "LLM (Llama 4)",
                   bits: result.llama_bits || naiveBits,
                   ratio: result.llama_ratio ? `${result.llama_ratio}x` : "1.00x",
-                  generalDescription: "Use language model for next token prediction. We estimate the compression rate by computing the cross-entropy of the net on the text. Llama 4 = not too far behind state-of-the-art as of 2025",
+                  generalDescription: "An LLM can be used to compress texts. We estimate the compression rate by computing its cross-entropy on the text. Llama4 is one of the top open-source LLMs as of mid-2025. ",
                   specificDescription: getSpecificDescription("LLM (Llama 4)", config.filename, textLength)
                 }
               ]
@@ -768,7 +768,7 @@ export default function CompressionWidget() {
           </div>
 
           <div className="mt-6">
-            <h4 className="font-medium mb-2">Compression Results:</h4>
+            <h4 className="font-medium mb-4">Compression Results:</h4>
             
             {(() => {
               const maxBits = Math.max(...selectedSample.results.map(r => r.bits));
@@ -817,7 +817,7 @@ export default function CompressionWidget() {
                   </div>
 
                   {/* Compression bars */}
-                  <div className="space-y-3">
+                  <div className="space-y-3 overflow-visible">
                     {selectedSample.results.map((result, index) => {
                       const ratio = parseFloat(result.ratio.replace('x', ''));
                       const width = getBarWidth(result.bits, minBits, maxBits, ratio, globalMaxRatio);
@@ -914,7 +914,17 @@ export default function CompressionWidget() {
                           
                           {/* Mobile tooltip */}
                           {isTouchDevice && selectedTooltip === tooltipId && (
-                            <div className="absolute left-0 top-full mt-2 z-50 bg-white border border-gray-200 rounded-md shadow-lg p-4 max-w-xl w-screen max-w-sm">
+                            <div className="fixed left-4 right-4 top-4 bottom-4 z-50 bg-white border border-gray-200 rounded-md shadow-lg overflow-y-auto">
+                              <div className="p-4">
+                              <div className="flex justify-end mb-2">
+                                <button
+                                  onClick={() => setSelectedTooltip(null)}
+                                  className="text-gray-400 hover:text-gray-600 text-lg leading-none"
+                                  aria-label="Close"
+                                >
+                                  ×
+                                </button>
+                              </div>
                               <div className="text-sm">
                                 <div className="font-medium mb-2 text-gray-900">{result.algorithm} Algorithm</div>
                                 <div className="mb-2 text-gray-700">
@@ -946,6 +956,7 @@ export default function CompressionWidget() {
                                   ) : null;
                                 })()}
                               </div>
+                              </div>
                             </div>
                           )}
                         </div>
@@ -959,7 +970,7 @@ export default function CompressionWidget() {
 
           <div className="mt-4 p-3 bg-gray-50 rounded-lg">
             <div className="text-sm text-gray-700">
-              <strong>Hover over bars</strong> to see how each algorithm works. 
+              <strong>{isTouchDevice ? 'Tap on bars' : 'Hover over bars'}</strong> to see how each algorithm works. 
               Bar length shows compressed size on a logarithmic scale.
             </div>
           </div>
@@ -999,7 +1010,7 @@ export default function CompressionWidget() {
           {/* User compression results */}
           {userResults && (
             <div className="mt-6">
-              <h4 className="font-medium mb-2">Compression Results:</h4>
+              <h4 className="font-medium mb-4">Compression Results:</h4>
               
               {(() => {
                 const maxBits = Math.max(...userResults.map(r => r.bits));
