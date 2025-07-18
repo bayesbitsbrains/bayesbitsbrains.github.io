@@ -142,59 +142,64 @@ const BayesSequenceWidget: React.FC<Props> = ({
 
       <div className="bg-white rounded-lg p-6 space-y-4">
         {/* Sequence controls */}
-        <div className="flex items-center justify-center space-x-4 mb-6">
-          <span className="text-sm font-medium text-gray-700">Coin sequence:</span>
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-6">
+          {/* Coin sequence section */}
+          <div className="flex items-center justify-center space-x-4">
+            <span className="text-sm font-medium text-gray-700">Coin sequence:</span>
 
-          {isEditing ? (
-            <input
-              type="text"
-              value={editText}
-              onChange={(e) => setEditText(e.target.value)}
-              className="px-3 py-1 border border-gray-300 rounded font-mono text-center"
-              placeholder="HTTHT"
-            />
-          ) : (
-            <div className="flex space-x-1">
-              {sequence.map((flip, index) => (
-                <div
-                  key={index}
-                  className={`w-8 h-8 flex items-center justify-center rounded border-2 font-mono font-bold cursor-pointer ${
-                    index < currentStep
-                      ? logSpace
-                        ? "bg-purple-100 border-purple-300 text-purple-700"
-                        : "bg-blue-100 border-blue-300 text-blue-700"
-                      : "bg-gray-100 border-gray-300 text-gray-500"
-                  }`}
-                  onClick={() => handleCoinClick(index)}
-                >
-                  {flip}
-                </div>
-              ))}
-            </div>
-          )}
+            {isEditing ? (
+              <input
+                type="text"
+                value={editText}
+                onChange={(e) => setEditText(e.target.value)}
+                className="px-3 py-1 border border-gray-300 rounded font-mono text-center"
+                placeholder="HTTHT"
+              />
+            ) : (
+              <div className="flex space-x-1">
+                {sequence.map((flip, index) => (
+                  <div
+                    key={index}
+                    className={`w-8 h-8 flex items-center justify-center rounded border-2 font-mono font-bold cursor-pointer ${
+                      index < currentStep
+                        ? logSpace
+                          ? "bg-purple-100 border-purple-300 text-purple-700"
+                          : "bg-blue-100 border-blue-300 text-blue-700"
+                        : "bg-gray-100 border-gray-300 text-gray-500"
+                    }`}
+                    onClick={() => handleCoinClick(index)}
+                  >
+                    {flip}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
 
-          <button
-            onClick={handleEdit}
-            className="px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm hover:bg-gray-300"
-          >
-            {isEditing ? "Save" : "Edit"}
-          </button>
+          {/* Buttons section */}
+          <div className="flex space-x-2 justify-center">
+            <button
+              onClick={handleEdit}
+              className="w-full sm:w-auto px-3 py-1 bg-gray-200 text-gray-700 rounded text-sm hover:bg-gray-300"
+            >
+              {isEditing ? "Save" : "Edit"}
+            </button>
 
-          {/* Next Step button now placed to the right of Edit */}
-          <button
-            onClick={() => setCurrentStep(Math.min(currentStep + 1, sequence.length))}
-            disabled={currentStep >= sequence.length || isEditing}
-            className="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
-          >
-            Next Step
-          </button>
+            <button
+              onClick={() => setCurrentStep(Math.min(currentStep + 1, sequence.length))}
+              disabled={currentStep >= sequence.length || isEditing}
+              className="w-full sm:w-auto px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
+            >
+              Next Step
+            </button>
+          </div>
         </div>
 
         {/* Prior and flip rows */}
         <div className="bg-white rounded-lg p-4 relative">
           {/* Prior row */}
-          <div className={`relative flex items-center py-3 pl-4 pr-4 ml-44 rounded bg-blue-50 border-blue-200`}>
-            <div className="absolute -left-44 w-40 text-right text-sm font-medium text-gray-700">
+          <div className={`relative flex items-center py-3 pl-4 pr-4 ml-32 sm:ml-44 rounded bg-blue-50 border-blue-200`}>
+            <div className="absolute -left-32 w-28 sm:-left-44 sm:w-40 text-right text-sm font-medium text-gray-700">
               {logSpace ? "Prior log-odds" : "Prior odds"}
             </div>
             <div className="flex-1 flex items-center">
@@ -215,9 +220,9 @@ const BayesSequenceWidget: React.FC<Props> = ({
           {/* Flip rows */}
           {steps.slice(1, currentStep + 1).map((step, index) => (
             <div key={index} className="relative">
-              <div className={`relative flex items-center py-3 pl-4 pr-4 ml-44 rounded bg-orange-50 mt-2`}>
+              <div className={`relative flex items-center py-3 pl-4 pr-4 ml-32 sm:ml-44 rounded bg-orange-50 mt-2`}>
                 {/* H/T label outside the colored row */}
-                <div className="absolute -left-44 top-1/2 transform -translate-y-1/2 w-40 text-right font-mono font-bold text-lg">
+                <div className="absolute -left-32 w-28 sm:-left-44 sm:w-40 top-1/2 transform -translate-y-1/2 text-right font-mono font-bold text-lg">
                   {step.flip}
                 </div>
                 <div className="flex-1 flex items-center">
@@ -255,8 +260,8 @@ const BayesSequenceWidget: React.FC<Props> = ({
           <div className="mt-6 pt-4 border-t border-gray-300">
             {/* Cumulative Surprisals - only show when highlightSurprisals is true */}
             {highlightSurprisals && logSpace && currentStep > 0 && (
-              <div className={`relative flex items-center py-3 pl-4 pr-4 ml-44 rounded bg-orange-50 mb-2`}>
-                <div className="absolute -left-44 w-40 text-right text-sm font-medium text-gray-700">
+              <div className={`relative flex items-center py-3 pl-4 pr-4 ml-32 sm:ml-44 rounded bg-orange-50 mb-2`}>
+                <div className="absolute -left-32 w-28 sm:-left-44 sm:w-40 text-right text-sm font-medium text-gray-700">
                   Total surprisal
                 </div>
                 <div className="flex-1 flex items-center">
@@ -280,8 +285,8 @@ const BayesSequenceWidget: React.FC<Props> = ({
             )}
 
             {logSpace && (
-              <div className={`relative flex items-center py-3 pl-4 pr-4 ml-44 rounded bg-green-50 mb-2`}>
-                <div className="absolute -left-44 w-40 text-right text-sm font-medium text-gray-700">
+              <div className={`relative flex items-center py-3 pl-4 pr-4 ml-32 sm:ml-44 rounded bg-green-50 mb-2`}>
+                <div className="absolute -left-32 w-28 sm:-left-44 sm:w-40 text-right text-sm font-medium text-gray-700">
                   Posterior log odds
                 </div>
                 <div className="flex-1 flex items-center">
@@ -305,8 +310,8 @@ const BayesSequenceWidget: React.FC<Props> = ({
             )}
 
             {/* Posterior odds */}
-            <div className={`relative flex items-center py-3 pl-4 pr-4 ml-44 rounded bg-green-50 mb-2`}>
-              <div className="absolute -left-44 w-40 text-right text-sm font-medium text-gray-700">Posterior odds</div>
+            <div className={`relative flex items-center py-3 pl-4 pr-4 ml-32 sm:ml-44 rounded bg-green-50 mb-2`}>
+              <div className="absolute -left-32 w-28 sm:-left-44 sm:w-40 text-right text-sm font-medium text-gray-700">Posterior odds</div>
               <div className="flex-1 flex items-center">
                 <div className="flex-1 text-right">
                   <span className="font-mono text-sm font-bold text-blue-600">
@@ -325,8 +330,8 @@ const BayesSequenceWidget: React.FC<Props> = ({
             </div>
 
             {/* Probabilities */}
-            <div className={`relative flex items-center py-3 pl-4 pr-4 ml-44 rounded bg-green-50`}>
-              <div className="absolute -left-44 w-40 text-right text-sm font-medium text-gray-700">
+            <div className={`relative flex items-center py-3 pl-4 pr-4 ml-32 sm:ml-44 rounded bg-green-50`}>
+              <div className="absolute -left-32 w-28 sm:-left-44 sm:w-40 text-right text-sm font-medium text-gray-700">
                 Posterior probability
               </div>
               <div className="flex-1 flex items-center">
