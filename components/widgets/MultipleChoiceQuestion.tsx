@@ -29,12 +29,12 @@ const MultipleChoiceQuestion: React.FC<Props> = ({
   };
 
   return (
-    <div className="my-6 p-4 bg-gray-50 rounded-lg border">
+    <div className="my-6 p-2 sm:p-4 bg-gray-50 rounded-lg border">
       {question && <div className="mb-4 text-lg font-medium text-gray-800">{question}</div>}
 
       <div className="space-y-3">
         {options.map((option, index) => {
-          let buttonClass = "w-full p-3 text-left rounded-lg border border-gray-300 transition-all duration-200 ";
+          let buttonClass = "w-full p-2 sm:p-3 text-left rounded-lg border border-gray-300 transition-all duration-200 ";
 
           if (!showResults) {
             // Before selection - simple gray buttons
@@ -82,7 +82,7 @@ const MultipleChoiceQuestion: React.FC<Props> = ({
 
       {showResults && (
         <div className="mt-4 space-y-3">
-          <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+          <div className="p-2 sm:p-4 bg-blue-50 border border-blue-200 rounded-lg">
             <div className="text-sm font-medium text-blue-800 mb-2">Explanation:</div>
             <div className="text-blue-700">
               {typeof explanation === "string" ? <ReactMarkdown>{explanation}</ReactMarkdown> : explanation}

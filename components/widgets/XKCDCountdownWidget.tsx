@@ -307,7 +307,7 @@ const XKCDCountdownWidget: React.FC = () => {
     const inputBgColor = maskInput.length === 0 ? "bg-white" : isValidInput ? "bg-green-50" : "bg-red-50";
 
     return (
-      <div className="bg-white rounded-lg px-4 py-1 mb-3">
+      <div className="bg-white rounded-lg px-2 sm:px-4 py-1 mb-3">
         <h4 className="text-lg font-semibold text-gray-800 mb-2 mt-0">Select evidence:</h4>
         <div className="flex flex-col items-center gap-3">
           <div className="flex items-center gap-2">
@@ -381,11 +381,11 @@ const XKCDCountdownWidget: React.FC = () => {
   // =============================================================================
 
   return (
-    <div className="p-4 sm:p-5 bg-gray-50 rounded-lg space-y-2 sm:space-y-3 max-w-4xl mx-auto">
+    <div className="p-2 sm:p-5 bg-gray-50 rounded-lg space-y-2 sm:space-y-3 max-w-4xl mx-auto">
       <h3 className="text-xl font-semibold text-center text-gray-800">XKCD Countdown Probability Calculator</h3>
 
       {/* Lambda slider */}
-      <div className="bg-white rounded-lg px-4 py-1">
+      <div className="bg-white rounded-lg px-2 sm:px-4 py-1">
         <h4 className="text-lg font-semibold text-gray-800 mb-2 mt-0">Select prior:</h4>
         <div className="space-y-4">
           <div className="flex items-center gap-4">
@@ -417,7 +417,7 @@ const XKCDCountdownWidget: React.FC = () => {
 
       {/* Posterior probability that all wildcards are zero */}
       {wildcardCount > 0 && (
-        <div className="bg-blue-50 rounded-lg p-4">
+        <div className="bg-blue-50 rounded-lg p-2 sm:p-4">
           <p className="widget-explanation text-blue-800">
             <strong>Posterior probability that all hidden digits are 0:</strong>&nbsp;&nbsp;&nbsp;
             {(() => {
@@ -437,7 +437,7 @@ const XKCDCountdownWidget: React.FC = () => {
       )}
 
       {/* Distribution chart (SVG) */}
-      <div className="bg-white rounded-lg p-4">
+      <div className="bg-white rounded-lg p-2 sm:p-4">
         <ViewModeSlider />
         <div className="w-full relative">
           <button
