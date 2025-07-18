@@ -357,7 +357,7 @@ const CrossEntropySimulator: React.FC = () => {
                 data={chartData} 
                 margin={typeof window !== 'undefined' && window.innerWidth < 640 
                   ? { ...CHART_CONFIG.margins.mobile, left: 25, right: 15 }
-                  : { ...CHART_CONFIG.margins.desktop, left: 40, right: 35 }
+                  : { ...CHART_CONFIG.margins.desktop, left: 30, right: 20 }
                 }
               >
                 <defs>

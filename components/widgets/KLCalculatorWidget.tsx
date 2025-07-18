@@ -160,7 +160,7 @@ export default function KLCalculatorWidget() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Text 1 */}
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">Text 1 (distribution p₁)</label>
+          <label className="block text-sm font-medium text-gray-700">Text 1 (distribution p<sub>1</sub>)</label>
           <textarea
             value={text1}
             onChange={(e) => setText1(e.target.value)}
@@ -174,7 +174,7 @@ export default function KLCalculatorWidget() {
 
         {/* Text 2 */}
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">Text 2 (distribution p₂)</label>
+          <label className="block text-sm font-medium text-gray-700">Text 2 (distribution p<sub>2</sub>)</label>
           <textarea
             value={text2}
             onChange={(e) => setText2(e.target.value)}
@@ -278,7 +278,7 @@ export default function KLCalculatorWidget() {
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs mt-3">
                   <div>
-                    <div className="font-medium text-gray-700 mb-2">Text 1 Distribution (p₁)</div>
+                    <div className="font-medium text-gray-700 mb-2">Text 1 Distribution (p<sub>1</sub>)</div>
                     <div className="bg-white p-1 sm:p-2 rounded border max-h-32 overflow-y-auto">
                       <div className="font-mono space-y-1">
                         {(() => {
@@ -297,7 +297,7 @@ export default function KLCalculatorWidget() {
                   </div>
 
                   <div>
-                    <div className="font-medium text-gray-700 mb-2">Text 2 Distribution (p₂)</div>
+                    <div className="font-medium text-gray-700 mb-2">Text 2 Distribution (p<sub>2</sub>)</div>
                     <div className="bg-white p-1 sm:p-2 rounded border max-h-32 overflow-y-auto">
                       <div className="font-mono space-y-1">
                         {(() => {

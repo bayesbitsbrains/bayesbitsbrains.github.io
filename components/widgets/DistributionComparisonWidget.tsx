@@ -236,6 +236,30 @@ const DistributionComparisonWidget: React.FC<Props> = ({ title = "Distribution C
 
             return (
               <g key={i}>
+                {/* Touch overlay for full column height - Blue bar */}
+                {isTouchDevice && (
+                  <rect
+                    x={blueX}
+                    y={margin.top}
+                    width={barWidth}
+                    height={innerHeight}
+                    fill="transparent"
+                    onClick={(e) => handleBarClick(false, i, e)}
+                  />
+                )}
+                
+                {/* Touch overlay for full column height - Red bar */}
+                {isTouchDevice && (
+                  <rect
+                    x={redX}
+                    y={margin.top}
+                    width={barWidth}
+                    height={innerHeight}
+                    fill="transparent"
+                    onClick={(e) => handleBarClick(true, i, e)}
+                  />
+                )}
+
                 {/* Blue bar (truth p)*/}
                 <rect
                   x={blueX}

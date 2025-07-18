@@ -428,7 +428,7 @@ const EvidenceAccumulationSimulator: React.FC<EvidenceAccumulationSimulatorProps
                 data={chartData} 
                 margin={typeof window !== 'undefined' && window.innerWidth < 640 
                   ? { ...CHART_CONFIG.margins.mobile, left: 30 }
-                  : { ...CHART_CONFIG.margins.desktop, left: 50 }
+                  : { ...CHART_CONFIG.margins.desktop, left: 35 }
                 }
               >
                 <CartesianGrid strokeDasharray="3 3" />

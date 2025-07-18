@@ -73,7 +73,7 @@ This is not a proof though, just an argument that the world with possibly negati
 <Expand headline="Proof of nonnegativity">
 We want to prove that <Math math = "\sum_{i = 1}^n p_i \cdot \ln \frac{p_i}{q_i}  \ge 0" /> for any $p,q$. I've used the natural logarithm in the KL divergence definition to keep things short. 
 
-Let's estimate the logarithmic expression $\ln \frac{p_i}{q_i}$ inside the sum. Our estimate should be tight whenever $p_i = q_i$ since we know the inequality is tight for $p = q$. The best linear approximation of logarithm tight at 1 <Tooltip tooltip={<LnVsXGraph width={140} height={90} />}>is this one: $\ln (1+x) \le x$</Tooltip>. We use it like this:
+Let's estimate the logarithmic expression $\ln \frac{p_i}{q_i}$ inside the sum. Our estimate should be tight whenever $p_i = q_i$ since we know the inequality is tight for $p = q$. The best linear approximation of logarithm tight at 1 is this one: $\ln (1+x) \le x$.<Footnote><LnVsXGraph width={140} height={90} /></Footnote> We use it like this:
 
 <Math displayMode={true} math="\begin{aligned}
 -D(p,q)
