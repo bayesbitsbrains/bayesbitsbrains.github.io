@@ -1100,7 +1100,8 @@ const LetterPredictionWidget: React.FC = () => {
 
           <div className="flex justify-between widget-explanation">
             <span>Games played: {gameStates.length}</span>
-            <span>Hover over emojis for details</span>
+            <span className="hidden sm:inline">Hover over emojis for details</span>
+            <span className="sm:hidden">Tap emojis for details</span>
           </div>
         </div>
       )}
