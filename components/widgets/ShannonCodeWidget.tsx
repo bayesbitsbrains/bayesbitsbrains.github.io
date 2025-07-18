@@ -42,9 +42,18 @@ export default function ShannonCodeWidget() {
   const [codeAssignments, setCodeAssignments] = useState<CodeAssignment[]>([]);
   const [tree, setTree] = useState<TreeNode | null>(null);
   const [isZoomed, setIsZoomed] = useState(false);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const treeContainerRef = useRef<HTMLDivElement>(null);
   const zoomedTreeContainerRef = useRef<HTMLDivElement>(null);
+
+  // Detect touch device
+  useEffect(() => {
+    const coarse = typeof window !== "undefined" && window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
+    setIsTouchDevice(
+      coarse || (typeof window !== "undefined" && ("ontouchstart" in window || navigator.maxTouchPoints > 0))
+    );
+  }, []);
 
   // Normalize frequencies to sum to 100
   const normalizedFrequencies = useMemo(() => {
@@ -342,9 +351,26 @@ export default function ShannonCodeWidget() {
     return Math.max(0, Math.min(100, freq));
   }, []);
 
-  // Dragging logic
+  // Mobile click logic for touch devices
+  const handleBarClick = useCallback((letter: string, e: React.MouseEvent) => {
+    if (!isTouchDevice || isAnimating) return;
+    
+    const barContainer = e.currentTarget.parentElement as HTMLElement;
+    const barRect = barContainer.getBoundingClientRect();
+    const y = e.clientY - barRect.top;
+    const maxHeight = 128; // Height of the bar container (h-32 = 128px)
+    const heightPercent = (1 - y / maxHeight) * 100;
+    const frequency = getFreqFromHeight(heightPercent);
+    
+    setFrequencies(prev => ({
+      ...prev,
+      [letter]: frequency
+    }));
+  }, [isTouchDevice, isAnimating, getFreqFromHeight]);
+
+  // Dragging logic for desktop
   const handleMouseDown = useCallback((letter: string, e: React.MouseEvent) => {
-    if (isAnimating) return;
+    if (isAnimating || isTouchDevice) return;
     
     // Get the individual bar container (the one being dragged)
     const barContainer = e.currentTarget.parentElement as HTMLElement;
@@ -369,7 +395,7 @@ export default function ShannonCodeWidget() {
     
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
-  }, [isAnimating, getFreqFromHeight]);
+  }, [isAnimating, isTouchDevice, getFreqFromHeight]);
 
   // Calculate metrics from current assignments
   const { entropy, averageCodeLength } = useMemo(() => {
@@ -549,17 +575,29 @@ export default function ShannonCodeWidget() {
             return (
               <div key={letter} className="relative">
                 <div className="h-32 bg-gray-100 rounded relative overflow-hidden">
+                  {/* Touch overlay for full column height on mobile */}
+                  {isTouchDevice && (
+                    <div
+                      className="absolute inset-0"
+                      onClick={(e) => handleBarClick(letter, e)}
+                    />
+                  )}
+                  
                   {/* Main bar */}
                   <div
                     className={`absolute bottom-0 left-0 right-0 transition-colors ${
-                      isAnimating ? 'cursor-not-allowed' : 'cursor-ns-resize hover:bg-blue-600'
+                      isAnimating 
+                        ? 'cursor-not-allowed' 
+                        : isTouchDevice 
+                          ? 'cursor-pointer' 
+                          : 'cursor-ns-resize hover:bg-blue-600'
                     } ${isZeroFreq ? 'bg-gray-300' : 'bg-blue-500'}`}
                     style={{ height: `${logHeight}%` }}
                     onMouseDown={(e) => handleMouseDown(letter, e)}
                   />
                   
-                  {/* Invisible overlay for better draggability when bar is small */}
-                  {logHeight < 30 && (
+                  {/* Invisible overlay for better draggability when bar is small (desktop only) */}
+                  {!isTouchDevice && logHeight < 30 && (
                     <div
                       className={`absolute bottom-0 left-0 right-0 ${
                         isAnimating ? 'cursor-not-allowed' : 'cursor-ns-resize'
@@ -583,7 +621,10 @@ export default function ShannonCodeWidget() {
       </div>
 
       <p className="text-gray-600 mb-6 text-center">
-        Drag the bars to adjust letter probabilities.
+        {isTouchDevice 
+          ? "Tap above or below the bars to adjust letter probabilities."
+          : "Drag the bars to adjust letter probabilities."
+        }
       </p>
 
       {/* Compute Button */}
