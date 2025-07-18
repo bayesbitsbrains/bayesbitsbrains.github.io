@@ -322,7 +322,7 @@ const MaxEntropyVisualization: React.FC<MaxEntropyVisualizationProps> = () => {
   }, [constraint1_3D, constraint2_3D, lambda1_3D, lambda2_3D]);
 
   return (
-    <div className="mb-6 p-6 bg-gray-50 rounded-lg">
+    <div className="mb-6 p-2 sm:p-6 bg-gray-50 rounded-lg">
       <h4 className="text-center mb-4">Maximum Entropy Distribution Visualization</h4>
       
       {/* Mode selector */}
@@ -356,7 +356,7 @@ const MaxEntropyVisualization: React.FC<MaxEntropyVisualizationProps> = () => {
           {/* 2D Controls */}
           <div className="mb-4 space-y-4">
             <div className="text-center">
-              <div className="text-lg bg-white rounded-lg py-3 px-6 inline-block">
+              <div className="text-lg bg-white rounded-lg py-2 sm:py-3 px-3 sm:px-6 inline-block">
                 <InlineMath math={`p(x_1, x_2) \\propto e^{${lambda2D} \\cdot x_1} \\cdot e^{${lambda2D} \\cdot x_2}`} />
               </div>
             </div>
@@ -395,7 +395,7 @@ const MaxEntropyVisualization: React.FC<MaxEntropyVisualizationProps> = () => {
           </div>
 
           {/* 2D Heatmap */}
-          <div className="bg-white rounded-lg p-4">
+          <div className="bg-white rounded-lg p-2 sm:p-4">
             <div className="flex justify-center">
               <div className="relative inline-block w-full max-w-md">
               <svg width="100%" height="auto" viewBox="0 0 400 400" className="border border-gray-300 w-full h-auto max-w-md mx-auto">
@@ -474,7 +474,7 @@ const MaxEntropyVisualization: React.FC<MaxEntropyVisualizationProps> = () => {
           {/* 3D Controls */}
           <div className="mb-4 space-y-4">
             <div className="text-center">
-              <div className="text-lg bg-white rounded-lg py-3 px-6 inline-block">
+              <div className="text-lg bg-white rounded-lg py-2 sm:py-3 px-3 sm:px-6 inline-block">
                 <InlineMath math={`p(x_1, x_2, x_3) \\propto e^{${lambda1_3D} \\cdot x_1^2 + ${lambda2_3D} \\cdot x_1} \\cdot e^{${lambda1_3D} \\cdot x_2^2 + ${lambda2_3D} \\cdot x_2} \\cdot e^{${lambda1_3D} \\cdot x_3^2 + ${lambda2_3D} \\cdot x_3}`} />
               </div>
             </div>
