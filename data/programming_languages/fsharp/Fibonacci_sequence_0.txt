@@ -1,7 +1,0 @@
-let fibonacci n : bigint =
-let rec f a b n =
-match n with
-| 0 -> a
-| 1 -> b
-f (bigint 0) (bigint 1) n
-val it : bigint = 354224848179261915075I

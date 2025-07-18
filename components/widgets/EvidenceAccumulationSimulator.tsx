@@ -186,7 +186,7 @@ const EvidenceAccumulationSimulator: React.FC<EvidenceAccumulationSimulatorProps
   }, [simulationData, theoreticalData, currentFlip, isRunning]);
 
   return (
-    <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+    <div className="mb-6 p-2 sm:p-4 bg-gray-50 rounded-lg">
       <h4 className="text-center">Evidence Accumulation Simulator</h4>
 
       <div className="">
@@ -391,7 +391,7 @@ const EvidenceAccumulationSimulator: React.FC<EvidenceAccumulationSimulatorProps
         </div>
       </div>
 
-      <div className="bg-gray-50 p-4 rounded-lg mb-6">
+      <div className="bg-gray-50 p-1 sm:p-4 rounded-lg mb-6">
         <div className={isZoomed ? 'fixed inset-0 z-50 bg-white p-8' : 'relative'}>
           <div className={`${isZoomed ? 'h-full' : 'h-64'} transition-all duration-300`}>
             <div className="flex justify-between items-center mb-2">
@@ -426,7 +426,10 @@ const EvidenceAccumulationSimulator: React.FC<EvidenceAccumulationSimulatorProps
             <ResponsiveContainer width="100%" height="100%">
               <LineChart 
                 data={chartData} 
-                margin={{ ...CHART_CONFIG.margins, left: 70 }}
+                margin={typeof window !== 'undefined' && window.innerWidth < 640 
+                  ? { ...CHART_CONFIG.margins.mobile, left: 45 }
+                  : { ...CHART_CONFIG.margins.desktop, left: 70 }
+                }
               >
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis

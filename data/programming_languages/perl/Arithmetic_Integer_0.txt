@@ -1,8 +1,0 @@
-my $a = <>;
-my $b = <>;
-print
-"difference:       ", $a - $b, "\n",
-"integer quotient: ", int($a / $b), "\n",
-"remainder:        ", $a % $b, "\n",
-"exponent:         ", $a ** $b, "\n"
-;

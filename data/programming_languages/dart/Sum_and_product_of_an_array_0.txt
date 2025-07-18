@@ -1,6 +1,0 @@
-(int,int) sumProd (a) =>
-(a.reduce((int a,int b)=>a+b),
-a.reduce((int a,int b)=>a*b));
-void main() {
-print(sumProd([1,2,3,4]));
-}

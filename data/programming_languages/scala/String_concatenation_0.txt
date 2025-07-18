@@ -1,2 +1,0 @@
-val s2 = s + " world"                           //> s2  : String = hello world
-println(s2 + f2())                              //> hello world !

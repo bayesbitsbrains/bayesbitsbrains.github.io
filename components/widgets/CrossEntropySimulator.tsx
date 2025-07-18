@@ -353,7 +353,13 @@ const CrossEntropySimulator: React.FC = () => {
               )}
             </div>
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={chartData} margin={{ ...CHART_CONFIG.margins, left: 50, right: 60 }}>
+              <LineChart 
+                data={chartData} 
+                margin={typeof window !== 'undefined' && window.innerWidth < 640 
+                  ? { ...CHART_CONFIG.margins.mobile, left: 35, right: 25 }
+                  : { ...CHART_CONFIG.margins.desktop, left: 50, right: 60 }
+                }
+              >
                 <defs>
                   {/* Entropy arrow markers (faint blue) */}
                   <marker
@@ -449,31 +455,6 @@ const CrossEntropySimulator: React.FC = () => {
                   }}
                   domain={yAxisDomain}
                   tickFormatter={(value) => Math.round(value).toString()}
-                />
-                <Tooltip
-                  content={({ active, payload, label }) => {
-                    if (!active || !payload?.length || label == null) return null;
-                    const keys = new Set(["logP", "logQ", "entropyRate", "crossentropyRate"]);
-                    const rows = payload.filter((p) => keys.has(String(p.dataKey)) && typeof p.value === "number");
-                    if (!rows.length) return null;
-                    return (
-                      <div className="bg-white border border-gray-300 rounded-lg p-3 shadow-lg text-sm">
-                        <div className="font-semibold text-gray-800 mb-2">Flip #{Math.round(Number(label))}</div>
-                        {rows.map((entry) => {
-                          const color = entry.color ?? entry.stroke ?? entry.payload?.stroke ?? "#666";
-                          return (
-                            <div key={String(entry.dataKey)} className="flex items-center justify-between gap-3">
-                              <span style={{ color }} className="flex items-center">
-                                <span className="w-3 h-3 rounded-full mr-2" style={{ backgroundColor: color }} />
-                                {entry.name}
-                              </span>
-                              <span className="font-mono">{(+(entry.value || 0)).toFixed(2)} bits</span>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    );
-                  }}
                 />
                 <Legend wrapperStyle={{ fontSize: "12px" }} />
 

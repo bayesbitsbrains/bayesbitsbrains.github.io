@@ -3,7 +3,7 @@
 export default function Footer() {
   return (
     <footer className="mt-4">
-      <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-screen-xl mx-auto px-2 sm:px-6 lg:px-8">
         <div className="pt-4 pb-12" style={{ marginLeft: "calc(max((100% - var(--content-width)) / 2 + 1rem, 0rem))" }}>
           <p className="text-base text-neutral-500">
             {/* Contact us at{" "}

@@ -43,7 +43,7 @@ export default function Header() {
           scrolled ? "py-0" : "py-2"
         }`}
       >
-        <div className="max-w-[var(--content-width)] mx-auto px-4 py-6 flex h-16 items-center justify-end">
+        <div className="max-w-[var(--content-width)] mx-auto px-2 sm:px-4 py-6 flex h-16 items-center justify-end">
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="lg:hidden p-2 text-neutral-600 hover:text-neutral-900"

@@ -1,4 +1,0 @@
-gcd(u,v) => (v!=0)?gcd(v,u%v):u;
-void main() {
-print(gcd(2706, 410));
-}

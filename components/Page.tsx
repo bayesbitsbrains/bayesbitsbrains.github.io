@@ -27,7 +27,7 @@ export default async function Page({ children }: PageProps) {
           className="xl:w-60 lg:w-52 hidden lg:block fixed top-16 bottom-0 pt-16 text-base"
           style={{ left: "var(--sidebar-offset)" }}
         />
-        <main className={`${styles.main} max-w-[var(--content-width)] mx-auto px-4 pt-12 pb-8`}>{children}</main>
+        <main className={`${styles.main} max-w-[var(--content-width)] mx-auto px-2 sm:px-4 pt-12 pb-8`}>{children}</main>
       </div>
       <Footer />
       <FeedbackButton />

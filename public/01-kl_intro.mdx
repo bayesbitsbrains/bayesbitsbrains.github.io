@@ -96,7 +96,7 @@ Notice that all the likelihoods (numbers in orange rows) are now negative number
 
 This is a logarithmic viewpoint on how surprised you are when something happens. Getting heads when you thought it was 1% likely? Super surprising ($\log 1/0.01 \approx 6.6 \textrm{bits}$). Getting heads on a fair coin? Meh ($\log 1/0.5 = 1 \textrm{bit}$).
 
-Notice how in the widget, I replaced ":" with "vs". This is because in the logarithmic world, it's no longer the ratio that's important, it's the difference. For example, on heads, $\textsf{fair}$ hypothesis is surprised by $1$ bit, while the $\textsf{biased}$ hypothesis is surprised by $2$ bits. The difference of the two surprises - 1 bit - is the most important takeaway from the flip. This difference is the "_bits of evidence_" that the flipped heads provide. We are essentially adding up this difference in the posterior log odds, and it ultimately translates into the posterior probability. 
+Notice how in the widget, I replaced ':' with 'vs'. This is because in the logarithmic world, it's no longer the ratio that's important, it's the difference. For example, on heads, $\textsf{fair}$ hypothesis is surprised by $1$ bit, while the $\textsf{biased}$ hypothesis is surprised by $2$ bits. The difference of the two surprises - 1 bit - is the most important takeaway from the flip. This difference measures the _bits of evidence_ that the flipped heads provide. We are essentially adding up this difference in the posterior log odds, and it ultimately translates into the posterior probability. 
 
 ## Expected evidence <a id="expected-distinguishing-evidence"></a>
 
@@ -125,7 +125,7 @@ Try it yourself below! I recommend checking edge cases like 50% vs 51% to get in
 
 KL divergence is just the general formula for expected evidence accumulation. Say you've got two distributions $p$ and $q$, where $p$ is what's really happening, but you only know it's either $p$ or $q$. 
 
-You can keep sampling from the unknown distribution and play the Bayesian game: Whenever you sample outcome $i$, compare the likelihoods $p_i$ and $q_i$ and update your beliefs. In classical Bayes' rule, you compare the so-called likelihood ratio $p_i / q_i$, but if there are more updates, it's easier to work with "the bits of evidence", or more technically the log-likelihood ratio $\log p_i / q_i$. 
+You can keep sampling from the unknown distribution and play the Bayesian game: Whenever you sample outcome $i$, compare the likelihoods $p_i$ and $q_i$ and update your beliefs. In classical Bayes' rule, you compare the so-called likelihood ratio $p_i / q_i$, but if there are more updates, it's easier to work with _the bits of evidence_, or more technically the log-likelihood ratio $\log p_i / q_i$. 
 
 On average, each sample from the true distribution $p$ gives you:<Footnote> About notation: Most people write $D_{KL}(p||q)$ instead of $D(p,q)$. The double bars are there to remind you that $D_{KL}(p||q) \not= D_{KL}(q||p)$. We'll keep it simple with $D(p,q)$ since we'll be using this a lot. 🙂 </Footnote>
 

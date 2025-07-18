@@ -1,8 +1,0 @@
-qsort <- function(v) {
-{
-} else v
-}
-N <- 100
-vs <- runif(N)
-system.time(u <- qsort(vs))
-print(u)

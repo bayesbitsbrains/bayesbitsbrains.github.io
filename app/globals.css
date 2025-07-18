@@ -110,7 +110,13 @@ body {
   -moz-osx-font-smoothing: grayscale;
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 0 0.5rem;
+}
+
+@media (min-width: 640px) {
+  body {
+    padding: 0 1rem;
+  }
 }
 
 /* Improved typography */

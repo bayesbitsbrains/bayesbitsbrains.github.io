@@ -1,7 +1,0 @@
-[package]
-name = "prime_decomposition"
-version = "0.1.1"
-edition = "2018"
-[dependencies]
-num-bigint = "0.3.0"
-num-traits = "0.2.12"

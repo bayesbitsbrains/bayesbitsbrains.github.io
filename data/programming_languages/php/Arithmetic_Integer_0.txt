@@ -1,9 +1,0 @@
-<?php
-$a = fgets(STDIN);
-$b = fgets(STDIN);
-echo
-"difference:          ", $a - $b, "\n",
-"truncating quotient: ", (int)($a / $b), "\n",
-"flooring quotient:   ", floor($a / $b), "\n",
-"remainder:           ", $a % $b, "\n",
-?>
