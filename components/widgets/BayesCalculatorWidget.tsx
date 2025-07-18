@@ -128,8 +128,8 @@ const BayesCalculatorWidget: React.FC<{ title?: string }> = ({ title = "Bayes Ca
                     min="0"
                     max="1"
                   />
-                  {/* Multiplication symbol positioned between prior and likelihood rows */}
-                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 -mt-8 z-50 pointer-events-none">
+                  {/* Multiplication symbol positioned between prior and likelihood rows - hidden on mobile */}
+                  <div className="hidden sm:block absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 -mt-8 z-50 pointer-events-none">
                     <div className="bg-white border-2 border-gray-300 rounded-full w-8 h-8 flex items-center justify-center shadow-sm">
                       <span className="text-blue-600 text-lg font-bold">×</span>
                     </div>
