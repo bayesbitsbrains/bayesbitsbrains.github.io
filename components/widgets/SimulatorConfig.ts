@@ -2,7 +2,7 @@
 export const CHART_CONFIG = {
   margins: { 
     mobile: { top: 1, right: 8, left: 15, bottom: 20 },
-    desktop: { top: 5, right: 40, left: 30, bottom: 35 }
+    desktop: { top: 3, right: 25, left: 25, bottom: 30 }
   },
   height: {
     normal: "h-96",
