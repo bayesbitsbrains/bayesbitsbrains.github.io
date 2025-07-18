@@ -56,8 +56,19 @@ export default function MiniCompressionChart({
 
   const handleMouseMove = (e: React.MouseEvent<SVGElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left - margin.left;
-    const y = e.clientY - rect.top - margin.top;
+    const svgX = e.clientX - rect.left;
+    const svgY = e.clientY - rect.top;
+    
+    // Convert from actual SVG coordinates to viewBox coordinates
+    const scaleX = viewBoxWidth / rect.width;
+    const scaleY = height / rect.height;
+    
+    const viewBoxX = svgX * scaleX;
+    const viewBoxY = svgY * scaleY;
+    
+    // Convert to chart coordinates (relative to chart area)
+    const x = viewBoxX - margin.left;
+    const y = viewBoxY - margin.top;
     
     if (x >= 0 && x <= innerWidth && y >= 0 && y <= innerHeight) {
       setHoverPos({ x, y });
@@ -66,15 +77,15 @@ export default function MiniCompressionChart({
     }
   };
 
-  const getValueAtPosition = (x: number) => {
+  const getValueAtPosition = (x: number, y: number) => {
     const progressPercent = (x / innerWidth) * 100;
-    // Find closest data point
-    const closest = data.reduce((prev, curr) => 
-      Math.abs(curr.progressPercent - progressPercent) < Math.abs(prev.progressPercent - progressPercent) 
-        ? curr 
-        : prev
-    );
-    return closest;
+    // Calculate the actual bits/char value at cursor position
+    const bitsPerChar = minBits + ((innerHeight - y) / innerHeight) * (maxBits - minBits);
+    
+    return {
+      progressPercent: Math.max(0, Math.min(100, progressPercent)),
+      bitsPerChar: Math.max(minBits, Math.min(maxBits, bitsPerChar))
+    };
   };
 
   const yTicks = [minBits, (minBits + maxBits) / 2, maxBits];
@@ -218,7 +229,7 @@ export default function MiniCompressionChart({
       {hoverPos && (
         <div className="text-xs text-gray-600 mt-1">
           {(() => {
-            const value = getValueAtPosition(hoverPos.x);
+            const value = getValueAtPosition(hoverPos.x, hoverPos.y);
             return `${value.progressPercent.toFixed(1)}% → ${value.bitsPerChar.toFixed(3)} bits/char`;
           })()}
         </div>

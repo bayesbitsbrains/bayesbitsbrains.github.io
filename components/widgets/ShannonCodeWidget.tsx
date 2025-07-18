@@ -608,7 +608,7 @@ export default function ShannonCodeWidget() {
                           : 'cursor-ns-resize hover:bg-blue-600'
                     } ${isZeroFreq ? 'bg-gray-300' : 'bg-blue-500'}`}
                     style={{ height: `${logHeight}%` }}
-                    onMouseDown={(e) => handleMouseDown(letter, e)}
+                    {...(!isTouchDevice && { onMouseDown: (e) => handleMouseDown(letter, e) })}
                   />
                   
                   {/* Invisible overlay for better draggability when bar is small (desktop only) */}
