@@ -35,6 +35,16 @@ export default function CompressionWidget() {
   const [isCompressing, setIsCompressing] = useState(false);
   const [showUserText, setShowUserText] = useState(false);
   const [gptLoadingMessage, setGptLoadingMessage] = useState('');
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+  const [selectedTooltip, setSelectedTooltip] = useState<string | null>(null);
+
+  // Detect touch device
+  useEffect(() => {
+    const coarse = typeof window !== "undefined" && window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
+    setIsTouchDevice(
+      coarse || (typeof window !== "undefined" && ("ontouchstart" in window || navigator.maxTouchPoints > 0))
+    );
+  }, []);
 
   useEffect(() => {
     const loadData = async () => {
@@ -813,12 +823,17 @@ export default function CompressionWidget() {
                       const width = getBarWidth(result.bits, minBits, maxBits, ratio, globalMaxRatio);
                       const color = getBarColor(width);
                       
+                      const tooltipId = `sample-${index}`;
+                      
                       return (
-                        <HoverCard.Root key={index} openDelay={100} closeDelay={300}>
-                          <HoverCard.Trigger asChild>
-                            <div className="relative cursor-pointer">
+                        <div key={index} className="relative">
+                          {isTouchDevice ? (
+                            <div 
+                              className="relative cursor-pointer"
+                              onClick={() => setSelectedTooltip(selectedTooltip === tooltipId ? null : tooltipId)}
+                            >
                               <div 
-                                className="relative h-12 rounded transition-all hover:opacity-90"
+                                className="relative h-12 rounded transition-all active:opacity-90"
                                 style={{ 
                                   width: `${width}%`,
                                   backgroundColor: color
@@ -834,12 +849,72 @@ export default function CompressionWidget() {
                                 {formatBits(result.bits)} ({result.ratio})
                               </div>
                             </div>
-                          </HoverCard.Trigger>
-                          <HoverCard.Portal>
-                            <HoverCard.Content 
-                              className="z-50 bg-white border border-gray-200 rounded-md shadow-lg p-4 max-w-xl"
-                              sideOffset={5}
-                            >
+                          ) : (
+                            <HoverCard.Root openDelay={100} closeDelay={300}>
+                              <HoverCard.Trigger asChild>
+                                <div className="relative cursor-pointer">
+                                  <div 
+                                    className="relative h-12 rounded transition-all hover:opacity-90"
+                                    style={{ 
+                                      width: `${width}%`,
+                                      backgroundColor: color
+                                    }}
+                                  >
+                                    <div className="absolute inset-0 flex items-center px-3">
+                                      <span className="text-white font-medium text-sm">
+                                        {result.algorithm}
+                                      </span>
+                                    </div>
+                                  </div>
+                                  <div className="text-xs text-gray-500 mt-1">
+                                    {formatBits(result.bits)} ({result.ratio})
+                                  </div>
+                                </div>
+                              </HoverCard.Trigger>
+                              <HoverCard.Portal>
+                                <HoverCard.Content 
+                                  className="z-50 bg-white border border-gray-200 rounded-md shadow-lg p-4 max-w-xl"
+                                  sideOffset={5}
+                                >
+                                  <div className="text-sm">
+                                    <div className="font-medium mb-2 text-gray-900">{result.algorithm} Algorithm</div>
+                                    <div className="mb-2 text-gray-700">
+                                      <strong>How it works:</strong> {result.generalDescription}
+                                    </div>
+                                    {result.specificDescription && (
+                                      <div className="text-gray-700 mb-3">
+                                        <strong>For this text:</strong> <RenderMarkdown text={result.specificDescription} />
+                                      </div>
+                                    )}
+                                    
+                                    {/* Add mini compression chart for LLM algorithms */}
+                                    {result.algorithm.startsWith('LLM') && (() => {
+                                      const chartData = getLLMChartData(result.algorithm, selectedSample?.filename || '');
+                                      return chartData ? (
+                                        <div className="mt-3 pt-3 border-t border-gray-200">
+                                          <div className="text-xs font-medium text-gray-700 mb-2">
+                                            Compression progression through text:
+                                          </div>
+                                          <div className="w-full">
+                                            <MiniCompressionChart 
+                                              data={chartData.data}
+                                              modelName={chartData.modelName}
+                                              experimentName={chartData.experimentName}
+                                              height={160}
+                                            />
+                                          </div>
+                                        </div>
+                                      ) : null;
+                                    })()}
+                                  </div>
+                                </HoverCard.Content>
+                              </HoverCard.Portal>
+                            </HoverCard.Root>
+                          )}
+                          
+                          {/* Mobile tooltip */}
+                          {isTouchDevice && selectedTooltip === tooltipId && (
+                            <div className="absolute left-0 top-full mt-2 z-50 bg-white border border-gray-200 rounded-md shadow-lg p-4 max-w-xl w-screen max-w-sm">
                               <div className="text-sm">
                                 <div className="font-medium mb-2 text-gray-900">{result.algorithm} Algorithm</div>
                                 <div className="mb-2 text-gray-700">
@@ -871,9 +946,9 @@ export default function CompressionWidget() {
                                   ) : null;
                                 })()}
                               </div>
-                            </HoverCard.Content>
-                          </HoverCard.Portal>
-                        </HoverCard.Root>
+                            </div>
+                          )}
+                        </div>
                       );
                     })}
                   </div>
