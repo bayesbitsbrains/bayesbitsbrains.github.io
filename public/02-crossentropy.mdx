@@ -19,7 +19,7 @@ Quick refresher: In the [previous chapter](01-kl_intro), we saw how KL divergenc
 Each step adds surprisals ($\log 1/p$) to track evidence.
 Last time, we focused on the differences between surprisals to see how much evidence we got for each hypothesis. Our Bayesian detective just keeps adding up these differences.
 
-But the detective could also add up the total surprisal for each hypothesis (green and orange numbers in the above widget), and then compare overall _Total surprisal_  values. This corresponds to writing KL divergence like this:
+Alternatively, the detective could add up the total surprisal for each hypothesis (green and orange numbers in the above widget), and then compare overall _Total surprisal_  values. This corresponds to writing KL divergence like this:
 
 <Math id="cross-entropy-decomp" displayMode={true} math='
 \underbrace{\sum_{i = 1}^n p_i \log \frac{p_i}{q_i}}_{D(p,q)}
@@ -32,9 +32,9 @@ But the detective could also add up the total surprisal for each hypothesis (gre
 These two pieces on the right are super important: $H(p,q)$ is called cross-entropy and $H(p)$ is entropy. Let's build intuition for what they mean. 
 
 ##  Cross-entropy <a id = "cross"></a>
-Think of cross-entropy as: __how surprised you are on average when seeing data from $p$ while modeling it as $q$?__ 
+Think of cross-entropy this way: __how surprised you are on average when seeing data from $p$ while modeling it as $q$?__ 
 
-Explore this in the widget below. The widget shows what happens when our Bayesian detective from the previous chapter keeps flipping her coin. The red dashed line is showing cross-entropy - the expected surprisal of the model $q$ as we keep flipping the coin with bias $p$. The orange line shows the entropy—this is the expected surprisal when both the model and actual bias are $p$. 
+Explore this in the widget below. The widget shows what happens when our Bayesian detective from the previous chapter keeps flipping her coin. The red dashed line shows cross-entropy—the expected surprisal of the model $q$ as we keep flipping the coin with bias $p$. The orange line shows the entropy, which is the expected surprisal when both the model and actual bias are $p$. 
 KL divergence is the difference between cross-entropy and entropy. Notice that the cross-entropy line is always above the entropy line (equivalently, KL divergence is always positive). 
 
 

@@ -2,7 +2,7 @@ import LnVsXGraph from "@/components/widgets/LnVsXGraph";
 
 # Entropy properties
 
-In this chapter, we'll go over the fundamental properties of KL-divergence, entropy, and cross-entropy. We have already encountered most of the properties before, but it's good to understand them in more depth. 
+In this chapter, we'll go over the fundamental properties of KL-divergence, entropy, and cross-entropy. We've already seen most of these properties, but let's dive deeper to understand them better. 
 
 This chapter contains a few exercises. I encourage you to try them to check your understanding. 
 
@@ -15,11 +15,11 @@ KL divergence $D(p,q)$ is always nonnegative. Equivalently, $H(p, q) \ge H(p)$.
 ## KL divergence can blow up
 
 
-Recall, KL divergence is algebraically defined like this:
+Recall that KL divergence is algebraically defined like this:
 
 <Math id="kl-definition" displayMode={true} math="D(p,q) = \sum_{i = 1}^n p_i \log \frac{p_i}{q_i}" />
 
-Here's the biggest difference between KL and some more standard, geometrical ways of measuring distance like $\ell_1$ norm ($\sum |p_i - q_i|$) or $\ell_2$ norm (<Math math = "\sqrt{\sum (p_i - q_i)^2}" />). Consider these two possibilities: 
+Here's the key difference between KL and more standard geometric distance measures like $\ell_1$ norm ($\sum |p_i - q_i|$) or $\ell_2$ norm (<Math math = "\sqrt{\sum (p_i - q_i)^2}" />). Consider these two possibilities: 
 
 1. $p_i = 0.5, q_i = 0.49$
 2. $p_i = 0.01, q_i = 0.0$
@@ -33,9 +33,9 @@ Try making KL divergence infinite in the widget below. Next level: Try to make i
 
 
 
-## KL divergence is asymmetrical<a id = "asymmetry"></a>
+## KL divergence is asymmetrical <a id = "asymmetry"></a>
 
-The KL formula isn't symmetrical—in general, $D(p,q) \neq D(q,p)$. Some describe this as a disadvantage, especially when comparing KL to simple symmetric distance functions like $\ell_1$ or $\ell_2$. But I want to stress that the asymmetry is a feature, not a bug! KL measures how well a model $q$ fits the true distribution $p$. That's inherently asymmetrical, so we need an asymmetrical formula—and that's perfectly fine.
+The KL formula isn't symmetrical—in general, $D(p,q) \neq D(q,p)$. Sometimes this is described as a disadvantage, especially when comparing KL to simple symmetric distance functions like $\ell_1$ or $\ell_2$. But I want to stress that the asymmetry is a feature, not a bug! KL measures how well a model $q$ fits the true distribution $p$. That's inherently asymmetrical, so we need an asymmetrical formula—and that's perfectly fine.
 
 In fact, that's why people call it a [_divergence_](https://en.wikipedia.org/wiki/Bregman_divergence) instead of a distance. Divergences are kind of wonky distance measures that are not necessarily symmetric.
 
@@ -64,7 +64,7 @@ If you plug in the same distribution into KL twice, you get:
 <Math displayMode={true} math="D(p, p) = \sum_{i = 1}^n p_i \cdot \log \frac{p_i}{p_i} = 0" />
 
 because $\log 1 = 0$.
-Makes sense—you can't tell the truth apart from the truth. 🤷
+This makes sense—you can't distinguish the truth from itself. 🤷
 
 This is the only occasion on which KL can be equal to zero. Otherwise, KL divergence is always positive. This fact is sometimes called [Gibbs inequality](https://en.wikipedia.org/wiki/Gibbs%27_inequality). I think we built up a pretty good intuition for this in [the first chapter](01-kl_intro). Imagine sampling from $p$ while Bayes' rule increasingly convinces you that you're sampling from some other distribution $q$. That would be really messed up! 
 
@@ -100,13 +100,13 @@ More formally: Say you've got a distribution pair $p$ and $q$ - think $q$ is a m
 <Math displayMode={true} math="H(p \otimes p', q \otimes q') = H(p, q) + H(p', q')" />
 <Math displayMode={true} math="H(p \otimes p') = H(p) + H(p')" />
 
-Entropy has an even stronger property called _subadditivity_: Imagine any distribution $r$ with marginals $p, q$. Then, 
+Entropy also has an even stronger property called _subadditivity_: Imagine any distribution $r$ with marginals $p, q$. Then, 
 <Math displayMode={true} math="H(r) \le H(p) + H(p')" />
 For example, imagine you flip a coin and record the same outcome twice. Then, the entropy of each record is 1 bit and subadditivity says that the total entropy is at most $2$ bits. In this case, it's actually still just 1 bit. 
 
 ## Anthem battle
 
-I collected the national anthems of the USA, UK, and Australia, and put them into one file. The other text file contains anthems of a bunch of random-ish countries. For both text files, I compute the frequencies of 26 letters 'a' to 'z'. So there are two distributions $p_1$ (English-speaking) and $p_2$ (others). The question is: which one has larger entropy? And which of the two KL divergences $D(p_1, p_2), D(p_2, p_1)$ is larger? 
+I collected the national anthems of the USA, UK, and Australia, and put them into one file. The other text file contains anthems of various other countries. For both text files, I compute the frequencies of 26 letters 'a' to 'z'. So there are two distributions $p_1$ (English-speaking) and $p_2$ (others). The question is: which one has larger entropy? And which of the two KL divergences $D(p_1, p_2), D(p_2, p_1)$ is larger? 
 
 Make your guess before revealing the answer. 
 

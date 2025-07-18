@@ -12,22 +12,22 @@ KL divergence measures how well a distribution $p$ is fitted by a model distribu
 Let's review Bayes' rule—it's how you update your beliefs when you get new information. Here's a setup that we will try to understand very deeply in the next few chapters:
 
 <Block headline = "Bayesian detective">
-A detective holds a coin that might, or might not be rigged. To keep it simple, let's say there are only two options: it's either fair (50/50 for heads/tails) or it's biased toward tails (25/75 for heads/tails). 
+A detective has a coin that might, or might not be rigged. To keep it simple, let's say there are only two options: it's either fair (50/50 for heads/tails) or it's biased toward tails (25/75 for heads/tails). 
 
 A detective keeps flipping this coin hoping to learn the truth. 
 </Block>
 
-Let's see how Bayes' rule helps our detective. To use the rule, she needs a starting guess—a _prior_—for the probability of each hypothesis. Let's say that the detective think there's a 2/3 chance the coin is fair and 1/3 chance it's biased.
+Let's see how Bayes' rule helps our detective. To use the rule, she needs a starting guess—a _prior_—for the probability of each hypothesis. Let's say that the detective thinks there's a 2/3 chance the coin is fair and 1/3 chance it's biased.
 
 She flips the coin: $\textsf{H}$eads! This is evidence for the $\textsf{fair}$ hypothesis, since heads are more likely with a fair coin. 
 
-Our detective can use Bayes' rule to calculate the new probability -- the _posterior_ -- that the coin is fair. At this point, let's have a quick refresher on how Bayes' rule works. 
+Our detective can use Bayes' rule to calculate the new probability—the _posterior_—that the coin is fair. At this point, let's have a quick refresher on how Bayes' rule works. 
 
 The point of the rule is that if you have two events $A, B$, then you can write down the probability that _both_ $A$ and $B$ happens in two ways, using conditional probabilities: 
 <Math displayMode={true} id = "simple-bayes" math = "P(A) P(B | A) = P(A \textrm{ and } B) = P(B) P(A | B)." />
 
 
-For example, let's say that <Math math="A =" /> 'the coin is $\textsf{fair}$' and <Math math="B =" /> 'we flipped $\textsf{H}$eads'. Then, our detective is especially interested in the value of <Math math="P(\textsf{fair} | \textsf{H})" />: That's her posterior probability that the coin is fair, after she flipped heads. She can rearrange <EqRef id="simple-bayes" /> a bit to get:
+For example, let's say that <Math math="A =" /> 'the coin is fair' and <Math math="B =" /> 'we flipped heads'. Then, our detective is especially interested in the value of <Math math="P(\textsf{fair} | \textsf{H})" />: That's her posterior probability that the coin is fair, after she flipped heads. She can rearrange <EqRef id="simple-bayes" /> a bit to get:
 
 <Math id="bayes-formula" displayMode={true} math='P(\textsf{fair} | \textsf{H}) = P(\textsf{H} | \textsf{fair}) \cdot \frac{ P(\textsf{fair})}{P(\textsf{H})}' />
 
@@ -40,9 +40,9 @@ Whenever I have to write this formula down, I never know what exactly is in the 
 
 There's a different way to write down Bayes' rule that I find much more intuitive. 
 
-To get the message though, we have to get used to think in [odds](https://en.wikipedia.org/wiki/Odds) instead of probabilities. Gamblers love this—instead of "1/3 chance of this, 2/3 chance of that," they say "odds are 1:2." 
+To get the message, though, we have to get used to think in [odds](https://en.wikipedia.org/wiki/Odds) instead of probabilities. Gamblers love this—instead of "1/3 chance of this, 2/3 chance of that," they say "odds are 1:2." 
 
-Odds are like probabilities that don't need to add to one (1:2 is the same as 2:4). This often comes pretty handy - it allows pus to focus on the more important parts of the picture. Multiplying the odds so that they add up to one is called _normalization_. So, thinking with odds is like thinking with probabilities whenever we don't want to worry about normalization. 
+Odds are like probabilities that don't need to sum to one (1:2 is the same as 2:4). This often comes pretty handy - it allows us to focus on the more important parts of the picture. Multiplying the odds so that they add up to one is called _normalization_. So, thinking with odds is like thinking with probabilities whenever we don't want to worry about normalization. 
 
 With odds, Bayes' formula is super clean! First, let's take the formula <EqRef id="bayes-formula" /> and write it one more time, this time for the biased hypothesis: 
 <Math id="bayes-formula-2" displayMode={true} math='P(\textsf{biased} | \textsf{H}) = P(\textsf{H} | \textsf{biased}) \cdot \frac{ P(\textsf{biased})}{P(\textsf{H})}' />
@@ -53,7 +53,7 @@ If we divide <EqRef id="bayes-formula" /> and <EqRef id="bayes-formula-2" />, we
 <Math id="bayes-odds" displayMode={true} math='\underbrace{\frac{P(\textsf{fair} | \textsf{H})}{P(\textsf{biased} | \textsf{H})}}_{\textrm{Posterior odds}} = \underbrace{\frac{P(\textsf{fair})}{P(\textsf{biased})}}_{\textrm{Prior odds}} \cdot \underbrace{\frac{P(\textsf{H} | \textsf{fair})}{P(\textsf{H} | \textsf{biased})}}_{\textrm{Likelihood ratio}}' />
 </div>
 
-This is actually a very relatable formula! <Math math = "\frac{P(\textsf{fair})}{P(\textsf{biased})}"/> is simply the _prior_ probability that our detective has on the two hypotheses, written as odds. I.e., if $P(\textsf{fair}) = 2/3$, this ratio is just $2/3 : 1/3 = 2:1$. 
+This is actually a very relatable formula! <Math math = "\frac{P(\textsf{fair})}{P(\textsf{biased})}"/> is simply the _prior_ probability that our detective has on the two hypotheses, written as odds. For example, if $P(\textsf{fair}) = 2/3$, this ratio is just $2/3 : 1/3 = 2:1$. 
 
 The fraction <Math math = "\frac{P(\textsf{fair} | \textsf{H})}{P(\textsf{biased} | \textsf{H})}"/> on the left-hand side is pretty much the same - it is the _posterior_ probability after we've seen the heads, written as odds. 
 
@@ -70,7 +70,7 @@ You can also test in the following widget that it works the same for more than t
 
 <BayesCalculatorWidget />
 
-In the concrete case of our detective, she increased her probability of fair coin from $66.7\%$ to $80\%$. Her suspicion that the coin is fair got boosted a bit. But it could also be a fluke. She has to flip the coin a few more times. 
+In our detective's case, she increased her probability of fair coin from $66.7\%$ to $80\%$. Her suspicion that the coin is fair got boosted a bit. But it could also be a fluke. She has to flip the coin a few more times. 
 
 {/*Bayes' theorem simply says we should do the simplest thing possible with the two relevant ratios -- multiply them -- to arrive at the posterior odds $P(\textsf{fair} | \textsf{H}) : P(\textsf{biased} | \textsf{H})$ .*/}
 
@@ -83,24 +83,24 @@ For example, if she gets $\{H, T, T, H, T\}$, here's what's happening:
 
 With every flip, she multiplies her odds by a likelihood ratio: $2/1$ for heads, $2/3$ for tails.
 
-In this example, three tails out of five slightly favor the fair-coin hypothesis. After converting back to probabilities, her initial 66.7% belief in fairness increased to about 70%. Gonna need way more flips to know for sure!
+In this example, three tails out of five slightly favor the fair-coin hypothesis. After converting back to probabilities, her initial 66.7% belief in fairness increased to about 70%. Going to need way more flips to know for sure!
 
-Before we start pondering about what's gonna happen long-term, let's simplify our calculator a bit. We'll get more clarity if we take logarithms of everything. Instead of multiplying odds and likelihood, we will be adding so-called _log-odds_. 
+Before we start pondering about what's gonna happen long-term, let's simplify our calculator a bit. Things get clearer if we take logarithms of everything. Instead of multiplying odds and likelihood, we will be adding so-called _log-odds_. 
 
 Here's the same step-by-step calculator after taking logarithms. For example, "prior 1:0" in the calculator means that the prior is $2^1 : 2^0$. <Footnote>As a computer scientist, I always use $\log_2$, so I mostly drop the subscript and just write $\log$. </Footnote> 
 
 
 <BayesSequenceLogWidget />
 
-Notice that all the likelihoods (numbers in orange-ish rows) are now negative numbers. That makes sense - probabilities are smaller than one, so after taking the log, they become negative numbers. It's often useful to talk about absolute values of those numbers, which is why people define a quantity called _[surprisal](https://en.wikipedia.org/wiki/Information_content)_: Whenever you have something happening with probability $p$, the expression $\log 1/p$ can be called a surprisal and its units are bits (because we use binary logarithm). 
+Notice that all the likelihoods (numbers in orange rows) are now negative numbers. That makes sense - probabilities are smaller than one, so after taking the log, they become negative numbers. It's often useful to talk about absolute values of those numbers, which is why people define a quantity called _[surprisal](https://en.wikipedia.org/wiki/Information_content)_: Whenever you have something happening with probability $p$, the expression $\log 1/p$ can be called a surprisal and its units are bits (because we use binary logarithm). 
 
 This is a logarithmic viewpoint on how surprised you are when something happens. Getting heads when you thought it was 1% likely? Super surprising ($\log 1/0.01 \approx 6.6 \textrm{bits}$). Getting heads on a fair coin? Meh ($\log 1/0.5 = 1 \textrm{bit}$).
 
-Notice how in the widget, I replaced ":" with "vs". This is because in the logarithmic world, it's no longer the ratio that's important, it's the difference. For example, on heads, $\textsf{fair}$ hypothesis is surprised by $1$ bit, while the $\textsf{biased}$ hypothesis is surprised by $2$ bits. The difference of the two suprises - 1 bit - is the most important takeaway from the flip. This difference is the "_bits of evidence_" that the flipped heads provide. This difference is what we are essentially adding up in the posterior log odds, and it ultimately translates into the posterior probability. 
+Notice how in the widget, I replaced ":" with "vs". This is because in the logarithmic world, it's no longer the ratio that's important, it's the difference. For example, on heads, $\textsf{fair}$ hypothesis is surprised by $1$ bit, while the $\textsf{biased}$ hypothesis is surprised by $2$ bits. The difference of the two surprises - 1 bit - is the most important takeaway from the flip. This difference is the "_bits of evidence_" that the flipped heads provide. We are essentially adding up this difference in the posterior log odds, and it ultimately translates into the posterior probability. 
 
 ## Expected evidence <a id="expected-distinguishing-evidence"></a>
 
-Remember, whenever our detective flip heads, she is getting $2 - 1 = 1$ bit of evidence that the coin is fair. Whenever she flips tails, she's getting $1 - 0.58 = 0.42$ bits of evidence that the coin is biased. 
+Remember, whenever our detective flips heads, she is getting $2 - 1 = 1$ bit of evidence that the coin is fair. Whenever she flips tails, she's getting $1 - 0.58 = 0.42$ bits of evidence that the coin is biased. 
 
 This holds regardless of which one of the two hypothesis is true. Now, let's say the coin actually is biased. How fast will our Bayesian detective figure this out? 
 
@@ -138,7 +138,7 @@ bits of evidence toward the truth.
 __When this number is small, the distribution $q$ is a pretty good probabilistic model of $p$__ - it takes many samples before our detective figures out that she's indeed sampling from $p$, and not from the imposter $q$. 
 You can also think of $1/D(p,q)$ as "how many samples until I get one bit of evidence." (assuming $D(p,q) < 1$) One bit of evidence means that the odds for the true hypothesis doubled. <Footnote>This isn't the same as doubling the probability. Going from 1:1 to 2:1 odds changes the probability from 50% to 66.7%. But with lopsided odds like 1:1000, gaining a bit toward the underdog (making it 2:1000) almost doubles its probability. And gaining a bit the other way (1:2000) almost halves the underdog's probability. If you keep getting bits of evidence toward the truth, the truth's probability shoots up exponentially until it's comparable to the alternative, then the alternative's probability tanks exponentially. </Footnote>
 
-Notice KL divergence is about the evidence, not your starting beliefs. It tells you how fast beliefs change, no matter whether the detective started with $1:2$ or $1000:1$. 
+Notice that KL divergence is about the evidence, not your starting beliefs. It tells you how fast beliefs change, no matter whether the detective started with $1:2$ or $1000:1$. 
 
 
 

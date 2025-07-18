@@ -202,7 +202,9 @@ const BayesSequenceWidget: React.FC<Props> = ({
                 <span className="font-mono text-sm font-bold">{priorFair}</span>
               </div>
               <div className="w-8 flex justify-center">
-                <span className="text-gray-500 font-bold">{logSpace ? <span className="text-xs font-normal text-gray-400">vs</span> : ":"}</span>
+                <span className="text-gray-500 font-bold">
+                  {logSpace ? <span className="text-xs font-normal text-gray-400">vs</span> : ":"}
+                </span>
               </div>
               <div className="flex-1 text-left">
                 <span className="font-mono text-sm font-bold">{priorBiased}</span>
@@ -227,7 +229,9 @@ const BayesSequenceWidget: React.FC<Props> = ({
                     </span>
                   </div>
                   <div className="w-8 flex justify-center relative">
-                    <span className="text-gray-500 font-bold">{logSpace ? <span className="text-xs font-normal text-gray-400">vs</span> : ":"}</span>
+                    <span className="text-gray-500 font-bold">
+                      {logSpace ? <span className="text-xs font-normal text-gray-400">vs</span> : ":"}
+                    </span>
                     {/* Overlapping operator positioned perfectly between boxes */}
                     <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 -mt-7 z-10">
                       <div className="bg-white border-2 border-gray-300 rounded-full w-8 h-8 flex items-center justify-center shadow-sm">
@@ -262,7 +266,9 @@ const BayesSequenceWidget: React.FC<Props> = ({
                     </span>
                   </div>
                   <div className="w-8 flex justify-center">
-                    <span className="text-gray-500 font-bold">{logSpace ? <span className="text-xs font-normal text-gray-400">vs</span> : ":"}</span>
+                    <span className="text-gray-500 font-bold">
+                      {logSpace ? <span className="text-xs font-normal text-gray-400">vs</span> : ":"}
+                    </span>
                   </div>
                   <div className="flex-1 text-left">
                     <span className="font-mono text-sm font-bold text-orange-600">
@@ -285,7 +291,9 @@ const BayesSequenceWidget: React.FC<Props> = ({
                     </span>
                   </div>
                   <div className="w-8 flex justify-center">
-                    <span className="text-gray-500 font-bold">{logSpace ? <span className="text-xs font-normal text-gray-400">vs</span> : ":"}</span>
+                    <span className="text-gray-500 font-bold">
+                      {logSpace ? <span className="text-xs font-normal text-gray-400">vs</span> : ":"}
+                    </span>
                   </div>
                   <div className="flex-1 text-left">
                     <span className="font-mono text-sm font-bold text-blue-600">
@@ -327,9 +335,7 @@ const BayesSequenceWidget: React.FC<Props> = ({
                     {steps[currentStep]?.probFair.toFixed(1)}%
                   </span>
                 </div>
-                <div className="w-8 flex justify-center">
-                  {/* No separator between final probabilities */}
-                </div>
+                <div className="w-8 flex justify-center">{/* No separator between final probabilities */}</div>
                 <div className="flex-1 text-left">
                   <span className="font-mono text-sm font-bold text-blue-600">
                     {steps[currentStep]?.probBiased.toFixed(1)}%

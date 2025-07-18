@@ -2,17 +2,7 @@
 
 import React, { useEffect, useState, useCallback } from "react";
 import Expand from "./Expand";
-
-// Static registry of riddle headlines
-const RIDDLE_HEADLINES: Record<string, string> = {
-  intelligence: "🧠 Intelligence test",
-  predictions: "🔮 Who's less wrong?",
-  "financial-mathematics": "📈 Modelling returns",
-  wikipedia: "🌐 How large is Wikipedia?",
-  statistics: "🦶 Average foot",
-  xkcd: "🤓 Explaining XKCD jokes",
-  "machine-learning": "🤯 At a loss",
-};
+import RIDDLE_HEADLINES from "./riddleHeadlines";
 
 interface Props {
   id: string;

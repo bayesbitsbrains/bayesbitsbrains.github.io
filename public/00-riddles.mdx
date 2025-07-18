@@ -4,11 +4,11 @@ This site is about probability, information theory, and how it helps us to under
 
 ## A few riddles <a id="introduction"></a>
 
-More about the content, prerequisities, and logistics later. I hope you get a feel for what this is about by checking out the following riddles. I hope some of them [nerd-snipe](https://xkcd.com/356/) you! 😉 You will understand all of them at the end of this minicourse. 
+More about the content, prerequisites, and logistics later. I hope you get a feel for what this is about by checking out the following riddles. I hope some of them [nerd-snipe](https://xkcd.com/356/) you! 😉 You will understand all of them at the end of this minicourse. 
 
 
 <RiddleStatement id="intelligence" openByDefault={true}>
-Test your intelligence with the following widget! You will be given a bunch of text snippets cut from Wikipedia at a random place. Your job: predict the next letter! You can compare your performance with some neural nets - GPT-2 and Llama 4. 
+Test your intelligence with the following widget! You will be given a bunch of text snippets cut from Wikipedia at a random place. Your job: predict the next letter! Try at least five snippets and compare your performance with some neural nets (GPT-2 and Llama 4). 
 
 <LetterPredictionWidget/>
 
@@ -24,7 +24,7 @@ Don't feel bad if a machine beats you; they've been studying for this test their
 
 Every day, the S&P index price jumps around a bit. <Footnote>If you don't know what the S&P is, just think Bitcoin, Apple stock, or how many euros you can buy with a dollar</Footnote>
 
-I grabbed some historical data, calculated the daily price changes, and normalized them <Footnote>I.e., I am plotting the so-called log-return <Math math = "\ln P_t/P_{t-1} \approx 1 + \frac{P_t - P_{t-1}}{P_{t-1}}" /> for each consecutive daily prices $P_{t-1}, P_t$. </Footnote> and threw them in a histogram. The x-axis shows how big the change was (positive about half the time, negative the other half) and the y-axis shows how often that size change happens. Before I show you the plot, take a guess—what's it gonna look like? 
+I grabbed some historical data, calculated the daily price changes, and normalized them. <Footnote>I.e., I am plotting the so-called log-return <Math math = "\ln P_t/P_{t-1} \approx 1 + \frac{P_t - P_{t-1}}{P_{t-1}}" /> for each consecutive daily prices $P_{t-1}, P_t$. </Footnote> I threw them in a histogram. The x-axis shows how big the change was (positive about half the time, negative the other half) and the y-axis shows how often that size change happens. Before I show you the plot, take a guess—what's it gonna look like? 
 
 <ImageGallery images={[{src: "00-introduction/shapes.png", alt: "shapes"}]} fullWidth={true} />
 
@@ -43,41 +43,13 @@ I grabbed some historical data, calculated the daily price changes, and normaliz
 
 
 
-
-<RiddleStatement id="predictions">
-
-It'd be awesome to know the future—or at least know someone who does. So you've gathered some experts and come up with five questions (Q1 to Q5). You ask the experts to give you probabilities for all 5 questions.
-A year later, you know what actually happened. Time to find the best expert!  
-
-<ImageGallery images={[{src: "00-introduction/questions.png", alt: "questions"}]} width="75%" />
-
-The question is: who's the best here?
-
-<MultipleChoiceQuestion
-  options={["🧑 Expert 1", "👵🏿 Expert 2", "👶 Expert 3"]}
-  correctIndices={[0, 1, 2]}
-  feedbackType="all-show"
-  explanation={<><p>This is actually hard to tell with just 5 questions, we would need many more of them. Expert 🧑 looks pretty impressive, but I am worried about his failed 99%-confidence prediction! Later, we'll see derive the log-score that forecasting tournaments use; this score penalizes failed 99%-confidence predictions quite heavily and we'll get some intuition for why. </p>
-  <p>  In the following widget, you can confirm that if Expert 🧑 gave only 80% or 90% probabilities instead of 99%, he would be doing great!</p> 
-  <ExpertRatingWidget
-    title="Comparing expert predictions"
-    showBrierScore={false}
-  />  </> }
-  />
-</RiddleStatement>
-
-
-
-
-
-
 <RiddleStatement id="wikipedia">
-Marcus Hutter, an AI researcher, started <a href="http://prize.hutter1.net/">this challenge</a>: Take a 1GB file of Wikipedia text. How small can you compress it? <a href="https://en.wikipedia.org/wiki/ZIP_(file_format)">Zipping it</a> gets you about 300MB. But we can do way better. What's the current record? 
+Marcus Hutter, an AI researcher, started <a href="http://prize.hutter1.net/">this challenge</a>: Take a 1GB file of Wikipedia text—how small can you compress it? <a href="https://en.wikipedia.org/wiki/ZIP_(file_format)">Zipping it</a> gets you about 300MB. But we can do way better. What's the current record? 
 
 <MultipleChoiceQuestion
   options={["around 1MB", "around 10MB", "around 100MB"]}
   correctIndices={[2]}
-  explanation={<>It's around 100MB. But wait—why does an <em>AI</em> researcher care about compression? We'll see the connection with <a href="02-crossentropy#coding">entropy</a>, <a href = "02-crossentropy#hutter">next token prediction</a>, and <a href="#">Kolmogorov complexity</a>. In the meantime, you can try to guess how well can various other texts be compressed by various algorithms. 
+  explanation={<>It's around 100MB. But wait—why does an <em>AI</em> researcher care about compression? We'll see the connection with <a href="02-crossentropy#coding">entropy</a>, <a href = "02-crossentropy#hutter">next token prediction</a>, and compression. In the meantime, you can try to guess how well can various other texts be compressed by various algorithms. 
   <CompressionWidget />
 </>}
 /> 
@@ -87,10 +59,10 @@ Marcus Hutter, an AI researcher, started <a href="http://prize.hutter1.net/">thi
 
 <ImageGallery images={[{src: "00-introduction/rod.png", alt: "rod"}]} fullWidth={true} caption="Determining the length of the foot in [1522 Frankfurt](https://commons.wikimedia.org/wiki/File:Determination_of_the_rute_and_the_feet_in_Frankfurt.png)." />
 
-Back in the day, people measured stuff in feet. Sure, we all kinda know how long a foot is, but eventually you need to nail it down precisely. One way is to grab 16 random people and average their foot lengths:
+Back in the day, people measured lengths in feet. Sure, we all kinda know how long a foot is, but eventually you need to nail it down precisely. One way is to grab 16 random people and average their foot lengths:
 <Math displayMode={true} math="\hat{\mu} = \frac{1}{16} (X_1 + \dots + X_{16})" />
 
-This gives you a pretty stable number that shouldn't change much if you do it again. To measure how good your estimate is, you'd usually calculate the standard deviation. Remember the formula? Which one's right:
+This gives you a fairly stable estimate that shouldn't change much if you do it again. To measure how good your estimate is, you'd usually calculate the standard deviation. Remember the formula? Which one's right:
 
 <MultipleChoiceQuestion
   options={[
@@ -103,6 +75,34 @@ This gives you a pretty stable number that shouldn't change much if you do it ag
   explanation={<>In a sense, they're all correct! Well, more like they're all defensible options from the viewpoint of frequentist statistics. Using <Math math="1/(n-1)" /> gives you the <a href="https://en.wikipedia.org/wiki/Bias_of_an_estimator">unbiased estimate</a>, <Math math="1/n" /> gives the <a href="https://en.wikipedia.org/wiki/Maximum_likelihood_estimation">maximum likelihood estimate</a>, and <Math math="1/(n+1)" /> minimizes <a href="https://en.wikipedia.org/wiki/Mean_squared_error">the mean squared error</a> between your guess and the truth.<br/><br/>But here's the thing: out of all these ways to estimate stuff, only maximum likelihood became the rockstar of machine learning. Using KL divergence, <a href="04-minimizing#mle">we'll see</a> why maximum likelihood is so special and what makes it tick.</>}
 />
 </RiddleStatement>
+
+
+
+<RiddleStatement id="predictions">
+
+It would be great to know the future—or at least know someone who does. So you've gathered some experts and come up with five questions (Q1 to Q5). You ask the experts to give you probabilities for all 5 questions.
+A year later, you know what actually happened. Time to find the best expert!  
+
+<ImageGallery images={[{src: "00-introduction/questions.png", alt: "questions"}]} width="75%" />
+
+The question is: who's the best here?
+
+<MultipleChoiceQuestion
+  options={["🧑 Expert 1", "👵🏿 Expert 2", "👶 Expert 3"]}
+  correctIndices={[0, 1, 2]}
+  feedbackType="all-show"
+  explanation={<><p>This is actually hard to tell with just 5 questions, we would need many more of them. Expert 🧑 looks pretty impressive, but I am worried about his failed 99%-confidence prediction! Later, we'll derive the log-score that forecasting tournaments use; this score penalizes failed 99%-confidence predictions quite heavily and we'll get some intuition for why. </p>
+  <p>  In the following widget, you can confirm that if Expert 🧑 gave only 80% or 90% probabilities instead of 99%, he would be doing great!</p> 
+  <ExpertRatingWidget
+    title="Comparing expert predictions"
+    showBrierScore={false}
+  />  </> }
+  />
+</RiddleStatement>
+
+
+
+
 
 
 {/*
@@ -142,7 +142,7 @@ So... are the odds in our favor?
   explanation={<>
   <p>The guy in the hat seems to be confident that at least one digit behind the picture is not zero. If those digits are uniformly random, it's a safe assumption. However, we will use the maximum entropy principle to justify a different probabilistic model and confirm our gut feeling: Given all the zeros we can see, it's actually very plausible that all other hidden digits are zeros too.</p>
 
-  <p>More on that <a href="05-max_entropy#xkcd">later</a>; We will use the widget below to confirm that there's a huge difference between seing "00002382" and just "2382".</p>
+  <p>More on that <a href="05-max_entropy#xkcd">later</a>; We will use the widget below to confirm that there's a huge difference between seeing "00002382" and just "2382".</p>
 
   <XKCDCountdownWidget />
   </>}
@@ -169,13 +169,13 @@ Where the hell are all these, so-called "loss functions", coming from? [We'll se
 
 As we go through the mini-course, we'll revisit each puzzle and understand what's going on. But more importantly, we will understand some important pieces of mathematics and get solid theoretical background behind machine learning. 
 
-Here's some questions we will explore. 
+Here are some questions we will explore. 
 
 - What's KL divergence, entropy and cross-entropy? What's the intuition behind them? (chapters 1-3)
 - Where do the machine-learning principles of maximum likelihood & maximum entropy come from? (chapters 4-5)
 - Why do we use logits, softmax, and Gaussian all the time? (chapter 5)
 - How to set up loss functions? (chapter 6)
-- How to think about LLMs? (chapters 4 and 7)
+- How compression works and what intuitions it gives about LLMs? (chapter 7)
 
 <Expand headline = "Prerequisites"> <a id="what-we-assume"></a>
 
@@ -199,7 +199,7 @@ Follow links, get nerdsniped, and don't feel the need to read this linearly.
 
 This mini-course does not contain many formal theorem statements or proofs since the aim is to convey intuition in an accessible way. The downside is that some discussions are necessarily a bit imprecise. To get to the bottom of the topic, check [resources](resources) or just copy-paste the chapter to your favorite LLM and ask for details. 
 
-The total length of the text, if you skip most expand boxes and footnoes, is about 2 chapters of Harry Potter and the Philosopher's stone (until Harry's first experience with magic). It's about 5 chapters if you read all footnotes and expand boxes (Harry learns he's a wizard). In either case, I don't promise you will feel the same as Harry.  
+The total length of the text, if you skip most expand boxes and footnotes, is about 2 chapters of Harry Potter and the Philosopher's stone (until Harry's first experience with magic). It's about 5 chapters if you read all footnotes, bonus, and advanced expand boxes (Harry learns he's a wizard). In either case, I don't promise you will feel the same as Harry.  
 </Expand>
 
 
