@@ -355,7 +355,10 @@ export default function ShannonCodeWidget() {
   const handleBarClick = useCallback((letter: string, e: React.MouseEvent) => {
     if (!isTouchDevice || isAnimating) return;
     
-    const barContainer = e.currentTarget.parentElement as HTMLElement;
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const barContainer = e.currentTarget as HTMLElement;
     const barRect = barContainer.getBoundingClientRect();
     const y = e.clientY - barRect.top;
     const maxHeight = 128; // Height of the bar container (h-32 = 128px)
@@ -578,8 +581,20 @@ export default function ShannonCodeWidget() {
                   {/* Touch overlay for full column height on mobile */}
                   {isTouchDevice && (
                     <div
-                      className="absolute inset-0"
+                      className="absolute inset-0 cursor-pointer"
                       onClick={(e) => handleBarClick(letter, e)}
+                      onTouchStart={(e) => {
+                        e.preventDefault();
+                        const touch = e.touches[0];
+                        const syntheticEvent = {
+                          ...e,
+                          clientY: touch.clientY,
+                          currentTarget: e.currentTarget,
+                          preventDefault: () => e.preventDefault(),
+                          stopPropagation: () => e.stopPropagation()
+                        } as any;
+                        handleBarClick(letter, syntheticEvent);
+                      }}
                     />
                   )}
                   

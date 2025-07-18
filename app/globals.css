@@ -372,6 +372,13 @@ div.widget-explanation {
   font-style: normal;
 }
 
+/* Table responsive styles */
+@media (max-width: 640px) {
+  .table-responsive-first-col th:first-child {
+    min-width: 4rem !important;
+  }
+}
+
 /* Custom slider thumb colors */
 .slider-thumb-blue::-webkit-slider-thumb {
   appearance: none;
