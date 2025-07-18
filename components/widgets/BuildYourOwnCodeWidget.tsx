@@ -52,6 +52,16 @@ const BuildYourOwnCodeWidget: React.FC = () => {
   const [hoveredBitIndices, setHoveredBitIndices] = useState<Set<number>>(new Set());
   const [letterToCodeMapping, setLetterToCodeMapping] = useState<Array<{start: number, end: number, letterIndex: number}>>([]);
   const [codeError, setCodeError] = useState<string | null>(null);
+  const [selectedLetter, setSelectedLetter] = useState<string | null>(null);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+
+  // Detect touch device
+  useEffect(() => {
+    const coarse = typeof window !== "undefined" && window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
+    setIsTouchDevice(
+      coarse || (typeof window !== "undefined" && ("ontouchstart" in window || navigator.maxTouchPoints > 0))
+    );
+  }, []);
 
   // Get unique letters from input text
   const uniqueLetters = useMemo(() => {
@@ -157,6 +167,12 @@ const BuildYourOwnCodeWidget: React.FC = () => {
     e.preventDefault();
     if (!draggedLetter) return;
 
+    assignLetterToNode(draggedLetter, nodeId);
+    setDraggedLetter(null);
+  };
+
+  // Shared function to assign letter to node (used by both drag and click interactions)
+  const assignLetterToNode = (letter: string, nodeId: string) => {
     const targetNode = treeNodes.find(node => node.id === nodeId);
     if (!targetNode) return;
 
@@ -165,7 +181,7 @@ const BuildYourOwnCodeWidget: React.FC = () => {
       
       // Remove any existing assignment of this letter
       newNodes.forEach(node => {
-        if (node.letter === draggedLetter) {
+        if (node.letter === letter) {
           node.letter = undefined;
         }
       });
@@ -173,7 +189,7 @@ const BuildYourOwnCodeWidget: React.FC = () => {
       // Assign letter to target node
       const targetIndex = newNodes.findIndex(node => node.id === nodeId);
       if (targetIndex !== -1) {
-        newNodes[targetIndex] = { ...newNodes[targetIndex], letter: draggedLetter };
+        newNodes[targetIndex] = { ...newNodes[targetIndex], letter: letter };
         
         // Grey out children nodes
         const targetLevel = newNodes[targetIndex].level;
@@ -195,8 +211,23 @@ const BuildYourOwnCodeWidget: React.FC = () => {
       
       return newNodes;
     });
+  };
 
-    setDraggedLetter(null);
+  // Mobile interaction handlers
+  const handleLetterClick = (letter: string) => {
+    if (isTouchDevice) {
+      setSelectedLetter(selectedLetter === letter ? null : letter);
+    }
+  };
+
+  const handleNodeClick = (nodeId: string) => {
+    if (isTouchDevice && selectedLetter) {
+      const targetNode = treeNodes.find(node => node.id === nodeId);
+      if (targetNode && !isNodeGreyedOut(targetNode)) {
+        assignLetterToNode(selectedLetter, nodeId);
+        setSelectedLetter(null);
+      }
+    }
   };
 
   const isAllLettersPlaced = useMemo(() => {
@@ -340,7 +371,7 @@ const BuildYourOwnCodeWidget: React.FC = () => {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto p-6 bg-white border rounded-lg">
+    <div className="w-full max-w-4xl mx-auto p-2 sm:p-6 bg-white border rounded-lg">
       <div className="mb-6">
         <div className="flex items-center gap-3 mb-4">
           <span className="font-medium">Text:</span>
@@ -391,8 +422,9 @@ const BuildYourOwnCodeWidget: React.FC = () => {
           </div>
         </div>
 
-        <div className="border border-gray-300 rounded-lg p-4">
-          <svg width="600" height="400" className="w-full">
+        <div className="border border-gray-300 rounded-lg p-2 sm:p-4">
+          <div className="flex justify-center">
+            <svg width="100%" height="auto" viewBox="0 0 600 400" className="w-full max-w-2xl">
             {/* Draw tree connections */}
             {treeNodes.map(node => {
               if (node.level === 0) return null;
@@ -450,8 +482,9 @@ const BuildYourOwnCodeWidget: React.FC = () => {
                     stroke={node.letter ? '#059669' : isGreyed ? '#9CA3AF' : '#6B7280'}
                     strokeWidth="2"
                     className={!isGreyed && !node.letter ? 'cursor-pointer hover:fill-blue-100' : ''}
-                    onDragOver={(e) => !isGreyed && handleDragOver(e, node.id)}
-                    onDrop={(e) => !isGreyed && handleDrop(e, node.id)}
+                    onDragOver={(e) => !isGreyed && !isTouchDevice && handleDragOver(e, node.id)}
+                    onDrop={(e) => !isGreyed && !isTouchDevice && handleDrop(e, node.id)}
+                    onClick={() => !isGreyed && handleNodeClick(node.id)}
                   />
                   {node.letter && (
                     <>
@@ -483,6 +516,7 @@ const BuildYourOwnCodeWidget: React.FC = () => {
               {availableLetters.map((letter, index) => {
                 const x = 20 + (index * 45);
                 const y = 45;
+                const isSelected = isTouchDevice && selectedLetter === letter;
                 return (
                   <g key={letter}>
                     <rect
@@ -491,13 +525,15 @@ const BuildYourOwnCodeWidget: React.FC = () => {
                       width="35"
                       height="35"
                       rx="4"
-                      fill="#dbeafe"
+                      fill={isSelected ? "#3b82f6" : "#dbeafe"}
                       stroke="#3b82f6"
                       strokeWidth="2"
-                      className={`cursor-move hover:fill-blue-200 transition-colors ${
+                      className={`${isTouchDevice ? 'cursor-pointer' : 'cursor-move'} hover:fill-blue-200 transition-colors ${
                         draggedLetter === letter ? 'opacity-50' : ''
                       }`}
+                      onClick={() => handleLetterClick(letter)}
                       onMouseDown={(e) => {
+                        if (isTouchDevice) return;
                         e.preventDefault();
                         setDraggedLetter(letter);
                         
@@ -586,7 +622,9 @@ const BuildYourOwnCodeWidget: React.FC = () => {
                       x={x + 17.5}
                       y={y + 23}
                       textAnchor="middle"
-                      className="font-mono font-bold text-lg fill-blue-800 pointer-events-none select-none"
+                      className={`font-mono font-bold text-lg pointer-events-none select-none ${
+                        isSelected ? 'fill-white' : 'fill-blue-800'
+                      }`}
                     >
                       {letter}
                     </text>
@@ -621,9 +659,13 @@ const BuildYourOwnCodeWidget: React.FC = () => {
                 </text>
               </g>
             )}
-          </svg>
+            </svg>
+          </div>
           <div className="text-center mt-2 text-sm text-gray-500 italic">
-            Drag and drop letters to the nodes of the tree
+            {isTouchDevice 
+              ? "Tap a letter above, then tap a node in the tree"
+              : "Drag and drop letters to the nodes of the tree"
+            }
           </div>
         </div>
       </div>
@@ -660,7 +702,7 @@ const BuildYourOwnCodeWidget: React.FC = () => {
           </div>
 
           {(codedText || isTestingCode) && (
-            <div className="border border-gray-300 rounded-lg p-4 bg-gray-50">
+            <div className="border border-gray-300 rounded-lg p-2 sm:p-4 bg-gray-50">
               <div className="space-y-3">
                 <div>
                   <label className="block text-sm font-medium mb-1">Original Text:</label>
