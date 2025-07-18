@@ -474,7 +474,8 @@ const LetterPredictionWidget: React.FC = () => {
             {/* Game Input */}
             {!currentGame.completed && (
               <div className="space-y-2">
-                <div className="flex gap-2 items-center justify-center">
+                {/* Desktop layout - all buttons in one row */}
+                <div className="hidden sm:flex gap-2 items-center justify-center">
                   <input
                     type="text"
                     value={currentInput}
@@ -519,6 +520,58 @@ const LetterPredictionWidget: React.FC = () => {
                   >
                     Give up
                   </button>
+                </div>
+
+                {/* Mobile layout - Give up button below */}
+                <div className="sm:hidden space-y-2">
+                  <div className="flex gap-2 items-center justify-center">
+                    <input
+                      type="text"
+                      value={currentInput}
+                      onChange={(e) => setCurrentInput(e.target.value.toUpperCase())}
+                      onKeyDown={(e) => handleKeyDown(e, gameStates.length - 1)}
+                      placeholder="Type letters..."
+                      className="w-48 px-3 py-2 border rounded text-center font-mono text-lg"
+                    />
+                    <button
+                      onClick={() => makeGuess(gameStates.length - 1, currentInput)}
+                      disabled={currentInput.length === 0}
+                      className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-300"
+                    >
+                      Guess
+                    </button>
+                  </div>
+                  <div className="flex justify-center">
+                    <button
+                      onClick={() => {
+                        // Give up - treat as if they guessed correctly with all 26 letters
+                        const game = gameStates[gameStates.length - 1];
+                        if (game && !game.completed) {
+                          const score = Math.log2(26);
+                          const updatedGame = {
+                            ...game,
+                            attempts: 26,
+                            completed: true,
+                            score: score,
+                            gaveUp: true,
+                          };
+
+                          setGameStates((prev) => {
+                            const next = [...prev];
+                            next[next.length - 1] = updatedGame;
+                            return next;
+                          });
+                          setCurrentInput("");
+
+                          // Save the gave up result
+                          saveGameResult(updatedGame, true);
+                        }
+                      }}
+                      className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                    >
+                      Give up
+                    </button>
+                  </div>
                 </div>
 
                 <div className="text-sm text-gray-600 text-center">
