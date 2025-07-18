@@ -189,7 +189,7 @@ const content = {
         </p>
         <p>
           What I want to emphasize is how our only initial assumption about the data was simply, &quot;we have a bunch
-          of numbers, and we care about their mean and variance.&quot; The KL divergence that reduced the rest to
+          of numbers, and we care about their mean and variance.&quot; The KL divergence framework that reduced the rest of the problem to
           running the math autopilot.
         </p>
       </div>
@@ -215,7 +215,7 @@ const content = {
 
         <p>
           The noise is generated from a real-valued distribution. How do we choose it? The uniform distribution
-          doesn&apos;t normalize over real numbers, making it unsuitable; the same applies to the exponential
+          doesn&apos;t normalize over the real numbers, making it unsuitable; the same applies to the exponential
           distribution. The next choice on the menu is the <strong>Gaussian distribution</strong>{" "}
           <NumberedMath math="N(\mu, \sigma^2)" />, so let&apos;s go with that. This introduces a slight complication as
           we now have two new parameters
@@ -410,8 +410,8 @@ const content = {
         </div>
         <p>
           where <NumberedMath math="\sigma" /> is the logistic function{" "}
-          <NumberedMath math="\sigma(x) = e^x / (1+e^x)" /> and $<NumberedMath math="\lambda" /> is a new parameter that
-          we have to optimize alongside $\theta$ and $\delta$. Naturally, we also have{" "}
+          <NumberedMath math="\sigma(x) = e^x / (1+e^x)" /> and <NumberedMath math="\lambda" /> is a new parameter that
+          we have to optimize alongside <NumberedMath math="\theta" /> and <NumberedMath math="\delta" />. Naturally, we also have{" "}
           <NumberedMath math="p(\textrm{blue} | (x, y)) = 1 - p(\textrm{red} | (x, y))" />.
         </p>
 

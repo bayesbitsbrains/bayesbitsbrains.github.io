@@ -3,7 +3,7 @@
 In this final chapter, we will see how entropy connects to compression and what that tells us about large language models. 
 
 
-<Expand headline = "A story time">
+<Expand headline = "Story time">
 
 <ImageGallery 
   images={[
@@ -15,7 +15,7 @@ In this final chapter, we will see how entropy connects to compression and what 
   caption={"Norbert Wiener (left), Robert Fano (middle), Claude Shannon (right)"}
 />
 
-Here's one of my favorite science stories. Norbert Wiener was a professor at MIT, known for roaming the corridors and stopping in offices of other researchers. Once, he stopped in the office of Robert Fano, said: "You know, information is entropy", and walked out. Fano started to think about what that meant and a few months later, on a train ride to a meeting, he finally worked it out. At that meeting, a guy named Claude Shannon presented an early version of what later became one of the most cited papers, ever - [The mathematical theory of communication](https://en.wikipedia.org/wiki/A_Mathematical_Theory_of_Communication). The topic of the paper was pretty much the same as what Fano worked out: What does the formula for entropy has to do with storing data on a computer. Shannon and Fano hitted it off the next day and information theory was born. 
+Here's one of my favorite science stories. Norbert Wiener was a professor at MIT, known for roaming the corridors and stopping in offices of other researchers. Once, he stopped in the office of Robert Fano, said: "You know, information is entropy", and walked out. Fano started to think about what that meant and a few months later, on a train ride to a meeting, he finally worked it out. At that meeting, a guy named Claude Shannon presented an early version of what later became one of the most cited papers, ever - [The mathematical theory of communication](https://en.wikipedia.org/wiki/A_Mathematical_Theory_of_Communication). The topic of the paper was pretty much the same as what Fano worked out: What does the formula for entropy had to do with storing data on a computer. Shannon and Fano hit it off the next day and information theory was born. 
 </Expand>
 
 
@@ -26,13 +26,13 @@ Entropy is the unbeatable lower bound for lossless compression, if we treat lett
 
 
 ## Code intro
-Say we've got a long DNA string built from letters $\{\mathsf{A},\mathsf{C},\mathsf{G},\mathsf{T}\}$. We want to store it using as little disk space as possible. Here's a simple plan: We assign a binary code for each letter and encode the string using that code. 
+Say we have a long DNA string built from letters $\{\mathsf{A},\mathsf{C},\mathsf{G},\mathsf{T}\}$. We want to store it using as little disk space as possible. Here's a simple plan: We assign a binary code for each letter and encode the string using that code. 
 
 For example, we can use <Math math = "\mathsf{A} \rightarrow \textsf{00}, \mathsf{C} \rightarrow \textsf{01}, \mathsf{G} \rightarrow \textsf{10}, \mathsf{T} \rightarrow \textsf{11} " />. The string gets stored using just 2 bits per letter. Done! 
 
 Can we do better? Sometimes, yes! Here's a riddle: In the following widget, try to build a code that encodes the following string <Math math = "\mathsf{AACATACG}" /> with just 1.75 bits per letter on average. 
 
-While playing, notice that whenever you use a short code name to a letter, e.g. $\mathsf{A} \rightarrow \textsf{0}$, no other letter can get a code name starting with the same code name $\textsf{0}$. The reason is that otherwise, the resulting code wouldn't sometimes be decodable. E.g., if you use code names <Math  math = "\mathsf{A} \rightarrow \textsf{0}" /> and <Math  math = "\mathsf{C} \rightarrow \textsf{00}" />, the message "<Math  math = "\textsf{00}" />" has two meanings. 
+While playing, notice that whenever you use a short code name to a letter, e.g. $\mathsf{A} \rightarrow \textsf{0}$, no other letter can get a code name starting with the same code name $\textsf{0}$. The reason is that otherwise, the resulting code sometimes wouldn't be decodable. E.g., if you use code names <Math  math = "\mathsf{A} \rightarrow \textsf{0}" /> and <Math  math = "\mathsf{C} \rightarrow \textsf{00}" />, the message "<Math  math = "\textsf{00}" />" has two meanings. 
 
 <BuildYourOwnCodeWidget /> 
 
@@ -54,7 +54,7 @@ Since the letter frequencies in the text are <Math math = "\frac12, \frac14, \fr
 <Math displayMode={true} id = "code-example" math = "\frac12 \cdot 1 + \frac14 \cdot 2 + \frac18 \cdot 3 + \frac18 \cdot 3 = 1.75" />
 bits per letter.  
 
-OK, using shorter codes for more frequent letters makes sense, but what's the best way to do this? Coding theory knows the answer. Roughly speaking, it tells us to __try to give a letter with frequency $p_i$ a code-name of length $\log 1/p_i$__. 
+OK, using shorter codes for more frequent letters makes sense, but what's the best way to do this? Coding theory has the answer. Roughly speaking, it tells us to __try to give a letter with frequency $p_i$ a code-name of length $\log 1/p_i$__. 
 
 For example, looking at <EqRef id = "code-example"/>, you can rewrite the left-hand side as: 
 <Math displayMode={true} id = "code-example2" math = " \frac12 \cdot \log \frac{1}{1/2} + \frac14 \cdot \log \frac{1}{1/4} + \frac18 \cdot \log \frac{1}{1/8} + \frac18 \cdot \log\frac{1}{1/8}. " />
@@ -68,7 +68,7 @@ If we implement our $p \rightarrow \log 1/p$-rule-of-thumb with the most direct 
 
 You can notice that the number of bits per letter (also called _rate_) is a bit north of the entropy of the underlying distribution. This is because of the rounding $\log 1/p \rightarrow \lceil \log 1/p \rceil$. For example, if there is a letter with frequency $p = 0.49$, we would like to give it a code name of length $\log \frac{1}{0.49} \approx 1.03$. Too bad that code names have to be integers and Shannon's code assigns it a code name of length $2$. As a general rule, Shannon's code can use up to 1 bit per letter more than what's the entropy. <Footnote>Try to work out the details of what's happening in Shannon's code. Especially: Why does Shannon's algorithm of assigning letters never runs out of available code names? </Footnote>
 
-Unfortunately, there are situations where Shannon's code is really almost 1 bit worse than the entropy. Take a string that uses just two characters $\mathsf{A}, \mathsf{B}$, but the frequency of $\mathsf{B}$ is close to zero. Then, the entropy is close to zero, but Shannon can't do better than 1 bit per letter. 
+Unfortunately, there are situations where Shannon's code really is almost 1 bit worse than the entropy. Take a string that uses just two characters $\mathsf{A}, \mathsf{B}$, but the frequency of $\mathsf{B}$ is close to zero. Then, the entropy is close to zero, but Shannon can't do better than 1 bit per letter. 
 
 
 ### The source coding theorem <a id="source-coding"></a>
@@ -77,15 +77,15 @@ The [source coding theorem](https://en.wikipedia.org/wiki/Shannon%27s_source_cod
 
 Here's the setup of the theorem more precisely. We model texts like this: There is a source that has a distribution over letters. This source keeps sampling letters independently, and sends them to us. This goes on for a long time, say $n$ steps; our goal is to save some binary string to the memory so that later on, we can recover from that string what $n$ letters the source sent. 
 
-This setup with the source sampling independent letters models that we only want to think about the problem of giving code names to letters based on frequencies. We are not trying to use the _correlations_ like '$\mathsf{th}$ often follows by $\mathsf{e}$' to get better compression.  
+This setup, with the source sampling independent letters, models that we only want to think about the problem of giving code names to letters based on frequencies. We are not trying to use the _correlations_ like '$\mathsf{th}$ often follows by $\mathsf{e}$' to get better compression.  
 
-The source coding theorem says that first, there's a way to store the emitted string, using close to $H(p)$ bits per letter. We have come close to that bound above - Shannon's code is only 1 bit worse than entropy. But with more complicated codes, we can even get rid of this 1-bit slack (at the expense that the code is no longer as simple as mapping single letters to code names). 
+The source coding theorem says that first, there's a way to store the emitted string using close to $H(p)$ bits per letter. We have come close to that bound above - Shannon's code is only 1 bit worse than entropy. But with more complicated codes, we can even get rid of this 1-bit slack (at the expense that the code is no longer as simple as mapping single letters to code names). 
 
 <Expand advanced={true} headline="More on better codes"><a id = "better"></a>
 
 Think of constructing Shannon's code not for every letter, but for every _pair of letters_ (i.e., the alphabet grows from $26$ to $26^2$). If Shannon's code loses 1 bit per encoded letter-pair, it means it loses $1/2$ bits per actual letter! Doing this trick not for a pair of letters but a tuple of several letters can bring us arbitrarily close to a code that spends $H(p)$ bits per letter. 
 
-Doing this is not very practical, since the alphabet gets very larger pretty soon ($26^2$ for pairs, $26^3$ for triples, ...). Check out [arithmetic coding](https://en.wikipedia.org/wiki/Arithmetic_coding) for a practical code approaching the entropy limit. 
+Doing this is not very practical, since the alphabet gets very large pretty soon ($26^2$ for pairs, $26^3$ for triples, ...). Check out [arithmetic coding](https://en.wikipedia.org/wiki/Arithmetic_coding) for a practical code approaching the entropy limit. 
 
 </Expand>
 
@@ -102,7 +102,7 @@ A bit more formally, imagine continuing the full binary tree up to some very lar
 <Math displayMode={true} math="\sum_{i = 1}^k 2^{N - \ell_i} \le 2^N" />
 Divide by $2^N$ and you get Kraft's inequality <EqRef id = "kraft"/>. 
 
-I actually like to think about Kraft's inequality as equality. Why? Well, if your code is such that the left-hand side is really smaller than $1$, then you are stupid. <Footnote>You can notice that Shannon's code above is 'stupid' since for English, it leaves some space at the right of the binary tree. In fact, Shannon's code is useful mostly for didactical reasons and in practice you would construct the code by [Huffman's algorithm](https://en.wikipedia.org/wiki/Huffman_coding). </Footnote> In the widget below, you can see how codes can be iteratively improved to get equality. 
+I actually like to think about Kraft's inequality as equality. Why? Well, if your code is such that the left-hand side is really smaller than $1$, then you're being inefficient. <Footnote>You can notice that Shannon's code above is 'stupid' since for English, it leaves some space at the right of the binary tree. In fact, Shannon's code is useful mostly for didactical reasons and in practice you would construct the code by [Huffman's algorithm](https://en.wikipedia.org/wiki/Huffman_coding). </Footnote> In the widget below, you can see how codes can be iteratively improved to get equality. 
 
 <KraftInequalityWidget />
 
@@ -171,7 +171,7 @@ Here it is again, more concisely in a table:
 
 ## LLM compression
 
-So far, all our discussion was about encoding each letter independently of its context. The real fun starts when we want to compress a given text as much as possible, period. Now we definitely want to use the fact that $\textsf{th}$ usually follows by $\textsf{e}$ as much as possible. 
+So far, all our discussion was about encoding each letter independently of its context. The real fun begins when we want to compress a given text as much as possible, period. Now we definitely want to use the fact that $\textsf{th}$ usually follows by $\textsf{e}$ as much as possible. 
 
 I want to explain a hypothetical compression algorithm based on an LLM. 
 
@@ -185,15 +185,15 @@ The overall length of the encoded text is <Math math = "\sum_{i = 1}^n \lceil \l
 
 <GPT2CompressionWidget />
 
-Our compression algorithm is not very practical, it's very slow. More importantly, both parties also have to have GPT-2 stored on their computer, so we are getting some compression only if the text is much larger than the size of GPT-2, which is in gigabytes. 
+Our compression algorithm isn't very practical—it's very slow. More importantly, both parties also have to have GPT-2 stored on their computer, so we are getting some compression only if the text is much larger than the size of GPT-2, which is in gigabytes. 
 
 But here's the punchline. [Using more complicated codes](08-coding_theory#better), we can get rid of the annoying $\lceil \rceil$ and encode the input text with length very close to 
 
 <Math displayMode={true} math = "\sum_{i = 1}^n \log \frac{1}{q_{LLM}(t_i)}. "/> 
 
-This is exactly the cross-entropy loss used to train neural nets, as [we discussed earlier](04-mle#cross-loss). We are now getting an equivalent definition of what neural nets are being trained for! __LLMs are trained to compress the Internet as much as possible__!  
+This is exactly the cross-entropy loss used to train neural nets, as [we discussed earlier](04-mle#cross-loss). We are now getting an equivalent definition of what neural nets are being trained for! __LLMs are trained to compress the internet as much as possible__!  
 
-I think that this is a powerful intuition that can help us understand where the knowledge / intelligence of LLMs is coming from. If you want to compress text efficiently, you have to learn the patterns in it so that you can recreate the same text just by storing a few hints about what it was about. To be good in compression, you have to learn that $\textsf{th}$ often follows by $\textsf{e}$, texts about $\textsf{Paris}$ often involve $\textsf{France}$, and what kinds of talking points might a virtue-ethicist use to critique conseqentialist ethics. 
+I think this is a powerful intuition that can help us understand where the knowledge / intelligence of LLMs is coming from. If you want to compress text efficiently, you have to learn the patterns in it so that you can recreate the same text just by storing a few hints about what it was about. To be good in compression, you have to learn that $\textsf{th}$ often follows by $\textsf{e}$, texts about $\textsf{Paris}$ often involve $\textsf{France}$, and what kinds of talking points might a virtue-ethicist use to critique consequentialist ethics. 
 
 This is a complementary intuition to our intuition that being good in the text-prediction game requires knowledge. Indeed, prediction and compression are two sides of the same coin! 
 
@@ -205,7 +205,7 @@ The honest answer to what's the best way to compress Wikipedia is that we don't 
 
 There are more approaches to compress text files. Let's go through them and you can see in the next widget how they fare for various types of data. 
 
-- _Baseline_: The stadard way to store text files is UTF-8. Simplifying a bit, this format store each letter using 8 bits. <Footnote>Why is it lying? [UTF-8](https://en.wikipedia.org/wiki/UTF-8) itself is a beautiful example of good engineering inspired by coding theory. There are around 100 characters (English letters, digits) that are stored using 8 bits, fancier letters from reasonable alphabets are stored using 16 bits, and emojis like 😀 or hieroglyphs like 𓀀 take 32 bits. Classic coding theory—rare stuff gets longer codes. But English Wiki is mostly standard English letters, so 8 bits per character it is. </Footnote>
+- _Baseline_: The standard way to store text files is UTF-8. Simplifying a bit, this format store each letter using 8 bits. <Footnote>Why is it lying? [UTF-8](https://en.wikipedia.org/wiki/UTF-8) itself is a beautiful example of good engineering inspired by coding theory. There are around 100 characters (English letters, digits) that are stored using 8 bits, fancier letters from reasonable alphabets are stored using 16 bits, and emojis like 😀 or hieroglyphs like 𓀀 take 32 bits. Classic coding theory—rare stuff gets longer codes. But English Wiki is mostly standard English letters, so 8 bits per character it is. </Footnote>
 
 - _Optimal letter code_: Treat letters as independent, we can encode them using $H(p)$ bits per letter on average, where $p$ is the distribution of English letter frequencies. [In the Shannon's coding widget above](../02-crossentropy#construction), we saw that the entropy is around 4.2 bits. So, we can shrink the file by almost __2x__ just by using that different letters have different frequencies. 
 
@@ -217,7 +217,7 @@ I encourage you to play with the following widget, especially making GPT-2 compr
 
 <CompressionWidget />
 
-The best algorithms in Hutter's competition have compress by a factor of about 9x. But unfortunately, while the challenge is backed by a very deep understanding of the nature of intelligence, the precise parameters of the challenge makes it hard to win it with LLMs. The problem is that the file size is only 1GB. Remember, our LLM-based compression algorithm is only good if we don't count the size of the LLM itself. But in the competition, we naturally have to account for that. 1GB is then too small for our approach to scale. 
+The best algorithms in Hutter's competition have compressed by a factor of about 9x. But unfortunately, while the challenge is backed by a very deep understanding of the nature of intelligence, the precise parameters of the challenge makes it hard to win it with LLMs. The problem is that the file size is only 1GB. Remember, our LLM-based compression algorithm is only good if we don't count the size of the LLM itself. But in the competition, we naturally have to account for that. 1GB is then too small for our approach to scale. 
 
 </RiddleExplanation>
 
@@ -240,7 +240,7 @@ ELIZA: Does it please you to believe I am too quiet?`}
   width="80%" captionAlignLeft={true}
 />
 
-Chatbots like ELIZA are built from lists and lists of common phrases, desperately trying to mimick human conversation for as long as possible. If you keep adding IFs and ELSEs, perhaps you can fool some people in conversations lasting a few minutes. 
+Chatbots like ELIZA are built from long lists of common phrases, desperately trying to mimick human conversation for as long as possible. If you keep adding IFs and ELSEs, perhaps you can fool some people in conversations lasting a few minutes. 
 
 But if you look at ELIZA's code, you can't shake off the feeling that something is very off here. Intelligence is not supposed to look like this! 
 
@@ -250,14 +250,14 @@ In Searle's thought experiment, he basically imagines a Turing test for speaking
 
 The person with the book are successfully fooling our judge, but neither the person, nor the list of phrases seem to be very intelligent! So what's left of Turing test then, asks Searle? 
 
-I think we now good enough understanding and language to talk about what's happening here. 
-First, let's focus on the rule book from the thought experiment. The problem with it is that it has to be incredibly large! Let's say that there are 1000 questions that a typical person can ask you about as the first question. Then, your rule book has to have 1000 items for a conversation long enough for 1 question, $1000^2$ if there's time to ask too questions and so on. In 5 minutes, you can then ask enough questions to make the rulebook collapse to a black hole!<Footnote>See [this book]() by Scott Aaronson for more discussion. </Footnote>
+I think we now have good enough understanding and language to talk about what's happening here. 
+First, let's focus on the rule book from the thought experiment. The problem with it is that it has to be incredibly large! Let's say that there are 1000 questions that a typical person can ask you about as the first question. Then, your rule book has to have 1000 items for a conversation long enough for 1 question, $1000^2$ if there's time to ask two questions and so on. In 5 minutes, you can then ask enough questions to make the rulebook collapse to a black hole!<Footnote>See [this book]() by Scott Aaronson for more discussion. </Footnote>
 
-So the rulebook, as Searle defined it, is not in any way close to any real algorithm that'll ever exist. Any actual algorithm that passes the Turing test thus necessarily has to involve compression: It has to be able to compress the enormous possibility space of human conversations into something managable. 
+So the rulebook, as Searle defined it, is not in any way close to any real algorithm that'll ever exist. Any actual algorithm that passes the Turing test thus necessarily has to involve compression: It has to be able to compress the enormous possibility space of human conversations into something manageable. 
 
 That's exactly what's missing in ELIZA. The program is not able to compress reasonable English text in the same way that LLMs can. If we double the number of rules in the ELIZA program, perhaps our [parrot](https://en.wikipedia.org/wiki/Stochastic_parrot) will be able to fool a few more people in a short Turing test, but we are not going to get better at the important benchmark: compression. Equivalently, the program won't get much better in predicting how the actual human conversations look like. 
 
-This is of course very different for current AIs. As we now understand, they are literally trained to __predict__ human conversations and writings. Or, equivalently, they are trying to __compress__ them. This is the crucial difference from the fakers like ELIZA which forces the systems to gain intelligence / understanding. Ilya Sutskever [said it best](https://www.dwarkesh.com/p/ilya-sutskever):
+This is of course very different for current AIs. As we now understand, they are literally trained to __predict__ human conversations and writings. Or, equivalently, they are trying to __compress__ them. This is the crucial difference from the fakers like ELIZA which forces these systems to gain intelligence / understanding. Ilya Sutskever [said it best](https://www.dwarkesh.com/p/ilya-sutskever):
 
 <Block>
 _Predicting the next token well means that you understand the underlying reality that led to the creation of that token._

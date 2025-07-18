@@ -2,10 +2,10 @@
 
 In the [previous chapter](04-mle), we saw what happens when we minimize $q$ in the KL divergence $D(p, q)$. We used this to find the best model of data $p$. 
 
-In this chapter, we will ponder the second question - what happens if we minimize $p$ in $D(p, q)$? This way, we will build the so-called _maximum entropy principle_ that guides us whenever we want to choose a good model distribuiton. 
+In this chapter, we will ponder the second question - what happens if we minimize $p$ in $D(p, q)$? This way, we will build the so-called _maximum entropy principle_ that guides us whenever we want to choose a good model distribution. 
 
 <KeyTakeaway>
-A new model $p$ improve an old one $p$ should have small $D(p, q)$. This leads to the maximum entropy principle explaining where many useful distributions are coming from. 
+A new model $p$ to improve an old one $q$ should have small $D(p, q)$. This leads to the maximum entropy principle explaining where many useful distributions are coming from. 
 </KeyTakeaway>
 
 ## Conditioning on steroids <a id="finding-better-model"></a>
@@ -14,7 +14,7 @@ Suppose I want to determine a probability distribution modelling the random vari
 
 Starting with this model, I can try to get some new information and condition on it to get a better model $p$. 
 
-For example, let's say that after eating many lunches, I observe that I always finish after at most 30 minutes. I can turn this to a new information that $X \le 30$. I can condition on this information and get a better model:
+For example, let's say that after eating many lunches, I observe that I always finish after at most 30 minutes. I can turn this into new information that $X \le 30$. I can condition on this information and get a better model:
 
 ![conditioning](05-max_entropy/condition.png)
 
@@ -22,7 +22,7 @@ Let's try again. I eat many more lunches, but this time I keep recording the ave
 
 ![syntax-error](05-max_entropy/syntax_error.png)
 
-We simply can't do this. In probability theory, we can condition on events like $X \le 30$, i.e., facts that are true for some values that $X$ can attend, but not others. But now we would like to condition on $E[X] = 15$ which is not an event, just a fact that's true for some _distributions_ over $X$, but not others. 
+We simply can't do this. In probability theory, we can condition on events like $X \le 30$, i.e., facts that are true for some values that $X$ can attain, but not others. But now we would like to condition on $E[X] = 15$ which is not an event, just a fact that's true for some _distributions_ over $X$, but not others. 
 
 The fun part is that we can use KL divergence to 'condition' on $E[X] = 15$. It turns out that the most reasonable way to account for the new information is to choose <Math math = "p_{\textrm{new}}" /> as the model minimizing KL divergence to $q$. That is, for the set $P$ of distributions $p$ with $E_p[X] = 15$, choose
 <Math id="min-relative-entropy" displayMode={true} math = "p_{\textrm{new}} = \argmin_{p\in P} D(p, q)" />
@@ -31,14 +31,14 @@ In the example, <Math math = "p_{\textrm{new}}" /> happens to look like exponent
 
 ![max-ent](05-max_entropy/max_ent_example.png)
 
-This is sometimes called [the minimum relative entropy principle](resources#intermediate-resources). Why does this make sense? Intuitively, I want to find a distribution <Math math="p \in P" /> that would serve as the new best guess for what the truth is, while the old model distribution <Math math="q" /> remains as good a model of $p$ as possible. This is what we achieve by minimizing KL divergence $D(p, q)$.
+This is sometimes called [the minimum relative entropy principle](resources#intermediate-resources). Why does this make sense? Intuitively, I want to find a distribution <Math math="p \in P" /> that would serve as the new best guess for what the truth is, while keeping the old model distribution <Math math="q" /> as good a model of $p$ as possible. This is what we achieve by minimizing KL divergence $D(p, q)$.
 
 
 Admittedly, this intuition may feel a bit shaky, as we typically prefer $p$ to represent the "true" distribution when using KL divergence, whereas here it's simply a new, improved, model. There's a more technical argument called [Wallis derivation](https://en.wikipedia.org/wiki/Principle_of_maximum_entropy#The_Wallis_derivation) that explains why we can derive minimum relative entropy as "conditioning on steroids" from the first principles.
 
-<Expand headline="Detailed discussion of Wallis derivaiton" advanced={true}>
+<Expand headline="Detailed discussion of Wallis derivation" advanced={true}>
 The following argument is a version of the so-called [Wallis derivation](https://en.wikipedia.org/wiki/Principle_of_maximum_entropy#The_Wallis_derivation). 
-We will reformulate our setup slighlty to sidestep the "syntax-error" issue and to be able to condition on facts of the type "our model distribution should come from the set $P$". 
+We will reformulate our setup slightly to sidestep the "syntax-error" issue and to be able to condition on facts of the type "our model distribution should come from the set $P$". 
 
 Imagine we start with some distribution $q$ and sample from it $n$ times. We'll use $\hat{q}$ to denote the empirical distribution of these samples. The Wallis trick is to realize that $\hat{q}$ is no longer a simple distribution, it's a distribution over distribution (also called a mixture distribution). For $\hat{q}$, it now makes sense to ask questions such as whether $\hat{q}$ belongs to some family of distributions $P$ (e.g., all distributions with an average of 15). 
 
@@ -60,7 +60,7 @@ We now need to understand the distribution of $\hat{q}$, i.e., we want to unders
 Now, with a bit of hand-waving, we can observe that the probability distribution of <Math math="\hat{q}" /> will be concentrated around the value of $q$ as $N$ approaches infinity, even though there's a nonzero probability that $\hat{q} \in P$. If that happens, we similarly find that the posterior distribution is concentrated around the value <Math math="\tilde{p} = \argmin_{p \in P} D(p,q)"/>. We conclude that in the limit of $N$ going to infinity, working with mixture distributions and conditioning on it being from $P$ is equivalent to simply replacing $q$ with <Math math="\argmin_{p \in P} D(p,q)"/>.
 
 
-As a final note (unrelated to Wallis derivation), to justify the inuition that minimum relative entropy principle extends conditioning, we have to check carefully that conditioning is really a special case of minimizing KL. The fact that you have to prove (and it's a good exercise!) is this: If you have a joint distribution $p$ over two random variables $X,Y$ and learn that $Y = y$, there are two things you could do. 1) Define distribution $p_1$ by conditioning $p$ on $Y = y$. 2) Define distribution $p_2$ as <Math math = "\argmin_{p'} D(p', p)" />. You should prove that $p_1 = p_2$. 
+As a final note (unrelated to Wallis derivation), to justify the intuition that minimum relative entropy principle extends conditioning, we have to check carefully that conditioning is really a special case of minimizing KL. The fact that you have to prove (and it's a good exercise!) is this: If you have a joint distribution $p$ over two random variables $X,Y$ and learn that $Y = y$, there are two things you could do. 1) Define distribution $p_1$ by conditioning $p$ on $Y = y$. 2) Define distribution $p_2$ as <Math math = "\argmin_{p'} D(p', p)" />. You should prove that $p_1 = p_2$. 
 
 </Expand>
 
@@ -79,7 +79,7 @@ The observation we can now make is that <Math math="p_{new} = \argmin_{p \in P} 
 
 ### The maximum entropy principle <a id="maximum-entropy-principle"></a>
 
-Let's delve deeper into the minimum relative entropy principle. A conceptual issue with it is that it only allows us to refine an existing model $q$ into a better model $p$. But how did we choose the initial model $q$ in the first place? It feels a bit like a chicken-and-egg dilemma.
+Let's delve deeper into the minimum relative entropy principle. One conceptual issue with it is that it only allows us to refine an existing model $q$ into a better model $p$. But how did we choose the initial model $q$ in the first place? It feels a bit like a chicken-and-egg dilemma.
 
 Fortunately, there's usually a very natural choice for the simplest possible model $q$: the uniform distribution. This is the unique most 'even' distribution that assigns the same probability to every possible outcome. There's also a fancy name for using the uniform distribution as the safe-haven model in the absence of any relevant evidence: [the principle of indifference](https://en.wikipedia.org/wiki/Principle_of_indifference).
 
@@ -87,7 +87,7 @@ It would be highly interesting to understand what happens when we combine both p
 
 <Math displayMode={true} math="p_{\textrm{new}} = \argmin_{p \in P} D(p,q_{\textrm{uniform}}) = \argmin_{p \in P}  \sum_{i = 1}^k p_i \log \frac{p_i}{ 1/k}" />
 
-I am a one-trick pony, whenever I see KL divergence, I split it into cross-entropy and entropy:
+I'm a one-trick pony—whenever I see KL divergence, I split it into cross-entropy and entropy:
 
 <Math displayMode={true} math="D(p,q_\text{uniform}) = \underbrace{\sum_{i = 1}^k p_i\log \frac{1}{1/k}}_{\textrm{cross-entropy}} - \underbrace{\sum_{i = 1}^k p_i\log \frac{1}{p_i}}_{\textrm{entropy}}" />
 
@@ -127,7 +127,7 @@ But make no mistake: entropy is not differential entropy! The fact that we can u
 
 Let's now dive a bit deeper into maximum entropy. We'll try to understand what maximum entropy distributions actually look like. For example, we will see soon how does the maximum entropy distribution with $E[X] = 15$ looks like. 
 
-Here's what I want you to focus on, though. Let's not worry about concrete numbers like 15 too much. To get the most out of the max-entropy principle, we have to think about the questions a bit more abstractly, more like: _If I fix the value of $E[X]$, what shape will the max-entropy distribution have? 
+Here's what I want you to focus on, though. Let's not worry about concrete numbers like 15 too much. To get the most out of the max-entropy principle, we have to think about the questions a bit more abstractly, more like: _If I fix the value of $E[X]$, what shape will the max-entropy distribution have?_ 
 
 
 For such a broad question, the answer turns out to be surprisingly straightforward! Before telling you the general answer, let's see a couple of examples. 
@@ -143,7 +143,7 @@ Suppose we have a set of constraints $E[f_1(X)] = \alpha_1, \dots, E[f_m(X)] = \
 <Math id="max-entropy-form" displayMode = {true} math = "p(x) \propto e^{\lambda_1 f_1(X) + \dots + \lambda_m f_m(X)}"/>
 for some constants $\lambda_1, \dots, \lambda_m$.
 </Block>
-Notice that this general recipe doesn't tell us the exact values of $\lambda_1, \dots, \lambda_m$. Those depend on the specific values of $\alpha_1, \dots, \alpha_m$, while the general shape remains the same regardless of the $\alpha$ values. But don't get too hung up on the $\alpha$s and $\lambda$s. The key takeaway is that __the maximum entropy distribution looks like an exponential, with the "stuff we care about" in the exponent.__
+Note that this general recipe doesn't tell us the exact values of $\lambda_1, \dots, \lambda_m$. Those depend on the specific values of $\alpha_1, \dots, \alpha_m$, while the general shape remains the same regardless of the $\alpha$ values. But don't get too hung up on the $\alpha$s and $\lambda$s. The key takeaway is that __the maximum entropy distribution looks like an exponential, with the "stuff we care about" in the exponent.__
 
 <Expand headline = "Build your own distribution!">
 Try building your own maximum entropy distribution on the interval $[0,1]$ by playing with $\lambda$ values:
@@ -249,7 +249,7 @@ Let's go through the examples with this in mind. Please, do skip whatever doesn'
 Let's start with what happens if we don't have any constraints. 
 
 <Expand headline = "No Constraints">
-In the absence of any constraints, we have $p(x) \propto e^{0}$, which means the max entropy distribution is *uniform*. In other words, the maximum entropy principle is truly an extension of [the principle of indifference](04-mle#maximum-entropy-principle) that we discussed in the previous chapter.
+In the absence of any constraints, we have $p(x) \propto e^{0}$, which means the max-entropy distribution is *uniform*. In other words, the maximum entropy principle is truly an extension of [the principle of indifference](04-mle#maximum-entropy-principle) that we discussed in the previous chapter.
 
 One painful fact to keep in mind is that the uniform distribution doesn't always exist. Concretely, there's no uniform distribution over all real numbers.
 </Expand>
@@ -356,7 +356,7 @@ How should I sample $\mu$ in the first step? Applying max-entropy principle agai
 This discussion is mostly meant to show what I love on the max entropy principle -- it enables us to rapidly operationalize and concretize our thought processes. Modelling real life is hard, but now we have a powerful tool that automatically builds concrete probabilistic models from vague thoughts like "there's two types of randomness, first in the average lunch time, and second in the variation around that average".
 </Footnote>*/}
 
-There's still an elephant in the room — the exponential distribution can't be normalized if the domain are _unbounded_ real numbers (i.e., both positive and negative). For that, we will need to use the Gaussian distribution. 
+There's still an elephant in the room—the exponential distribution can't be normalized if the domain is _unbounded_ real numbers (i.e., both positive and negative). For that, we will need to use the Gaussian distribution. 
 </Expand>
 
 
@@ -418,7 +418,7 @@ Not really. We now understand that by fitting Laplace, we are claiming that dail
 
 <VolatilityDistributionWidget />
 
-Exponential is a good fit most of the time, but struggles to predict extreme events. As far as I know, people used distributions such as log-normal, or inverse-gamma to fit this kind of data.<Footnote> I am not sure if this is still relevant - nowadays they may just train a network. </Footnote> These distributions are more complicated and using max-entropy principle, we could map them to more complicated stories about how the data behaves. Most importantly, they are basically power-law fits (see below) that are less surprised by stock crashes / world wars / etc. 
+Exponential is a good fit most of the time, but struggles to predict extreme events. As far as I know, people used distributions such as log-normal, or inverse-gamma to fit this kind of data.<Footnote> I am not sure if this is still relevant - nowadays they may just train a network. </Footnote> These distributions are more complicated and using max-entropy principle, we could map them to more complicated stories about how the data behaves. Most importantly, they are basically power-law fits (see below) that are less surprised by stock crashes, world wars, etc. 
 
 {/*<Footnote>As far as I know, one standard way of modeling financial data is the Student-t distribution. I won't bore you with its formula, but I'll tell you it's the distribution you get from a similar process to how we arrived at Laplace; but instead of sampling $\sigma^2$ from the exponential distribution, you sample it from the so-called inverse gamma distribution. The Gamma distribution is itself a max-entropy distribution for fixing $E[X]$ and $E[\log X]$ (and inverse gamma distribution means we measure volatility by $1/\sigma^2$ instead of $\sigma^2$).
 That is, the Student-t distribution takes our model a bit further and adds uncertainty about the _scale_ of the volatility. For example, maybe if you look far enough into the past, you start seeing some extreme events like world wars/the Great Depression/industrial revolution, so perhaps we should be open to power-law fits instead of exponential ones.</Footnote>*/}
@@ -438,7 +438,7 @@ Sometimes we care about random variables that span a large range of values. For 
 
 These situations are typically modeled by *power-law distributions*, where $p(x) \propto 1/x^C$ for some constant $C$. In the picture above, such a distribution would correspond to a straight line, so it would fit city populations quite well. From the perspective of maximum entropy, these distributions are simply max-entropy distributions when we fix $E[\log X]$. I.e., a power-law distribution is an exponential distribution into which we plug $\log X$ instead of $X$.
 
-Whenever you use a power-law distribution, you're implicitly saying, "__The important thing to look at is not $X$, but $\log X$.__" In the case of cities, for example, it feels more sensible to classify them on a log-scale ($10^4$ – small, $10^5$ – medium, $10^6$ – large, $10^7$ – huge) instead of a normal scale ($10^5$ – small, $2 \cdot 10^5$ – medium, $3 \cdot 10^5$ – large, $4 \cdot 10^5$ – huge). 
+Whenever you use a power-law distribution, you're implicitly saying, "__The important thing to look at is not $X$, but $\log X$.__" In the case of cities, for example, it feels more sensible to classify them on a log-scale ($10^4$ – small, $10^5$ – medium, $10^6$ – large, $10^7$ – huge). This is much more natural than a normal scale ($10^5$ – small, $2 \cdot 10^5$ – medium, $3 \cdot 10^5$ – large, $4 \cdot 10^5$ – huge). 
 </Expand>
 
 And here's an application to our [XKCD riddle](00-riddles#xkcd):
@@ -455,7 +455,7 @@ Uniform prior over $[0, 10^{14}]$ kind of sucks, though. If you look at various 
 
 Given all this, I'd argue for choosing the power-law distribution $p(x) \propto 1/x^\lambda$. In fact, I think that $p(x) \propto 1/x$ makes the most sense - that distribution corresponds to a uniform distribution over the _scales_. <Footnote>By this, I mean that this distribution satisfies <Math math = "\int_{10^1}^{10^2} \frac{1}{x} dx = \int_{10^2}^{10^3} \frac{1}{x} dx = \int_{10^3}^{10^4} \frac{1}{x} dx = \dots " />. You may know this kind of distriution from [the Benford's law](https://en.wikipedia.org/wiki/Benford%27s_law). </Footnote> This is also called the [log-uniform distribution](https://en.wikipedia.org/wiki/Reciprocal_distribution). The problem with $p(x) \propto 1/x$ is that we can't normalize this distribution if the domain is all real numbers, similarly to why we can't normalize the uniform distribution there. In our case, we can restrict the domain to integers between $0$ and $10^{14}$, so it's fine.
 
-In the widget below, you can check out that the posterior probabbility that all hidden digits are zero becomes about $99.99\%$ under the new prior! Here's how to think about this: For a four-digit number, the probability it ends with $2382$ (and zeros are just padding) is about $1/10^5$. But for an eight-digit number, the probability it ends with $00002382$ is about $1/10^9$. So, if the number $X$ under the image is a "random four-digit" number, the evidence is much less suprising than if $X$ is a "random 9-digit number". 
+In the widget below, you can check out that the posterior probability that all hidden digits are zero becomes about $99.99\%$ under the new prior! Here's how to think about this: For a four-digit number, the probability it ends with $2382$ (and zeros are just padding) is about $1/10^5$. But for an eight-digit number, the probability it ends with $00002382$ is about $1/10^9$. So, if the number $X$ under the image is a "random four-digit" number, the evidence is much less suprising than if $X$ is a "random 9-digit number". 
 
 In the widget below, the prior power-law distribution is binned into 14 bins between powers of 10. The Likelihood bar shows for each bin the probability that if a number sampled from the prior happens to be from that bin, it satisfies the revealed evidence about its digits. This is what goes into Bayes' rule that essentially multiplies the numbers in the first two tabs and normalizes them to get the posterior in the final tab. 
 

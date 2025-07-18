@@ -6,7 +6,7 @@ In this chapter, we'll explore what happens when we minimize the KL divergence b
 We begin with a distribution $p$ that captures our best guess for the "truth". We want to replace it by a simpler distribution $q$ coming from a family of distributions $Q$. Which $q\in Q$ should we take? 
 </Block>
 
-We will solve this problem by taking $q \in Q$ that minimizes $D(p, q)$. If you remember the previous chapters, this should make a plenty of sense! We will also see how a special case of this approach is equivalent to the _maximum likelihood principle_ (MLE) in statistics.
+We will solve this problem by taking $q \in Q$ that minimizes $D(p, q)$. If you remember the previous chapters, this should make plenty of sense! We will also see how a special case of this approach is equivalent to the _maximum likelihood principle_ (MLE) in statistics.
 
 Let's dive into the details!
 
@@ -18,7 +18,7 @@ A good model $q$ for a distribution $p$ has small $D(p,q)$. This can be used to 
 
 Here's the example I want you to have in mind. Imagine we have some data—for instance, the 16 foot length measurements $X_1, \dots, X_{16}$ from [our statistics riddle](00-riddles#statistics). Assuming the order of the data points doesn't matter, it's convenient to represent them as an empirical distribution $p$, where each outcome is assigned a probability of $1/16$. This is what we call an _empirical distribution_. In some sense, this empirical distribution is the "best fit" for our data; it's the most precise distribution matching what we have observed. 
 
-However, this is a terrible predictive model—it assigns zero probability to outcomes not present in the data! If we were to measure the 17th person's foot, then unless we get one of the 16 lengths we already seen, our model is going to be "infinitely surprised" by the new outcome, since it assigns zero probability for it.<Footnote>Remember, we have discussed in [the first chapter](01-kl_intro) how we can measure the surprisal of seeing the outcome $x$ as $\log \frac{1}{p(x)}$.</Footnote> We need a better model.
+However, this is a terrible predictive model—it assigns zero probability to outcomes not present in the data! If we were to measure the 17th person's foot, then unless we get one of the 16 lengths we've already seen, our model is going to be "infinitely surprised" by the new outcome, since it assigns zero probability for it.<Footnote>Remember, we have discussed in [the first chapter](01-kl_intro) how we can measure the surprisal of seeing the outcome $x$ as $\log \frac{1}{p(x)}$.</Footnote> We need a better model.
 
 One common approach is to first identify a family of distributions $Q$ that we believe would be a good model for the data. Here, we might suspect that foot lengths follow a Gaussian distribution $N(\mu, \sigma^2)$.<Footnote>Why Gaussians? We'll see soon in the next few chapters.</Footnote> In this case, $Q$ would be the set of all Gaussian distributions with varying means and variances. 
 
@@ -47,11 +47,11 @@ It may seem a bit underwhelming that we did all of this math just to compute the
 
 ## Why KL? <a id="mle"></a>
 
-I claim that minizing KL to find a model $q$ of data $p$ is a pretty good approach in general. Why?  
+I claim that minimizing KL to find a model $q$ of data $p$ is a pretty good approach in general. Why?  
 
 Recall that KL divergence is designed to measure how well a model $q$ approximates the true distribution $p$. More specifically, it is the rate of how quickly a Bayesian detective learns that the true distribution is $p$, not $q$. So, minimizing KL simply means selecting the best "imposter" that it takes the longest to separate from the truth. That's pretty reasonable to me!
 
-Visually, I like to think of it like this. First, imagine a "potato" of all possible distributions. The empirical distribution $p$ is a single lonely point within it. Then, there's a subset of distributions $Q$ that we believe would be a good model for the data. Although KL divergence is not, technically speaking, a distance between distributions, because it's asymetric, it's close enough to think of it as a distance. Minimizing KL is then like finding the closest point in $Q$ to $p$; or, if you want, it's like projecting $p$ onto $Q$.
+Visually, I like to think of it like this. First, imagine a "potato" of all possible distributions. The empirical distribution $p$ is a single lonely point within it. Then, there's a subset of distributions $Q$ that we believe would be a good model for the data. Although KL divergence is not, technically speaking, a distance between distributions, because it's asymmetric, it's close enough to think of it as a distance. Minimizing KL is then like finding the closest point in $Q$ to $p$; or, if you want, it's like projecting $p$ onto $Q$.
 
 ![KL divergence potato](04-mle/potato_mle.png)
 
@@ -92,7 +92,7 @@ Let's talk about how large language models (LLMs) are trained. Do you still reme
 
 <LetterPredictionWidget/>
 
-This widget is essentially also how LLMs are trained. The task they are optimized for is that given a text snippet, they should output a probability distribution over what the next letter might be.<Footnote>In practice, it would be a _token_, not letter. If you don't know what a token is, don't worry. If you do, note that above widget converts token probabilities of GPT2/Llama 4 to letter probabilities. </Footnote> Basically, to train, you first collect many text snippets -- I collected some random Wikipedia text for the widget.<Footnote>Later, I found out I took all samples from topics that start with 'A'. If you played the game for a bit longer, you may have gotten bored a bit with all the Abraham Lincoln, anarchism, and Aristotle. Also, I am sorry for spoiling Atlas Shrugged... 😅 </Footnote> Then, consider some pair of a text snippet + the following letter, like this one: 
+This widget is essentially also how LLMs are trained. The task they are optimized for is that given a text snippet, they should output a probability distribution over what the next letter might be.<Footnote>In practice, it would be a _token_, not letter. If you don't know what a token is, don't worry. If you do, note that above widget converts token probabilities of GPT2/Llama 4 to letter probabilities. </Footnote> Basically, to train, you first collect many text snippets -- I collected some random Wikipedia text for the widget.<Footnote>Later, I found out I took all samples from topics that start with 'A'. If you played the game for a bit longer, you may have gotten bored a bit with all the Abraham Lincoln, anarchism, and Aristotle. Also, I am sorry for spoiling Atlas Shrugged... 😅 </Footnote> Then, consider some pair of a text snippet plus the following letter, like this one: 
 
 <Math displayMode={true} math = "(\textsf{The Abraham Lincoln National Cemetery is located in \_}, \,\, \textsf{E})"/>
 
@@ -102,7 +102,7 @@ Given the snippet, the neural net outputs the distribution predicting the next l
 
 We will now dig into an important aspect of the training process -- setting up the _loss function_. This is a function that takes the actual next letter (<Math math = "\textsf{E}"/>) and the distribution $q_{LLM}$. It outputs a single number -- how well the distribution is matching the truth. If the neural net nails it (<Math math = "q_{LLM} = \{\textsf{E}: 1.00 \}"/>), the loss should be zero, and worse guess means larger loss. 
 
-Although training LLMs is pretty complicated, it's ultimately just using gradient descent to make the loss function as small as possible. So, we should better do a good job picking the right one! There are couple of ad-hoc choice that makes sense, like the $\ell_1$ or $\ell_2$ distance functions, but KL gives us a more fundamental way of doing this. 
+Although training LLMs is pretty complicated, it's ultimately just using gradient descent to make the loss function as small as possible. So, we should better do a good job picking the right one! There are a couple of ad-hoc choices that make sense, like the $\ell_1$ or $\ell_2$ distance functions, but KL gives us a more fundamental way of doing this. 
 
 Fortunately, it's not going to be much more complicated than fitting numbers with a Gaussian distribution. Once we work out what $p$ and $q$ should be, we will be done! 
 
@@ -123,20 +123,20 @@ At this point, we are done. It remains to write down the KL formula and run the 
 
 <Math displayMode={true} math = "D(p, q) = \sum_{(\textrm{snippet}, \textrm{letter})} p_{\textrm{emp}}(\textrm{snippet}) \cdot p_{\textrm{emp}}(\textrm{letter} | \textrm{snippet}) \cdot \log \frac{p_{\textrm{emp}}(\textrm{snippet}) \cdot p_{\textrm{emp}}(\textrm{letter} | \textrm{snippet})}{p_{\textrm{emp}}(\textrm{snippet}) \cdot q_{LLM}(\textrm{letter} | \textrm{snippet})}"/>
 
-where the sum goes over all pairs (snippet, letter) in our dataset. This is a mouthful, but we can simplify drastically. Plugging in <Math math = "p_{\textrm{emp}}(\textrm{snippet}) = 1/n"/> for $n$ the number of snippets, we get 
+where the sum goes over all pairs (snippet, letter) in our dataset. This is a mouthful, but we can simplify drastically. Plugging in <Math math = "p_{\textrm{emp}}(\textrm{snippet}) = 1/n"/> where $n$ is the number of snippets, we get 
 <Math displayMode={true} math = "D(p, q) = \sum_{\textrm{snippet}}  \frac{1}{n} \cdot \sum_{\textrm{letter}} p_{\textrm{emp}}(\textrm{letter} | \textrm{snippet}) \log \frac{p_{\textrm{emp}}(\textrm{letter} | \textrm{snippet})}{q_{LLM}(\textrm{letter} | \textrm{snippet})}"/>
 and using that <Math math = "p_{\textrm{emp}}(\textrm{letter} | \textrm{snippet}) = 1"/> for the actual letter, and zero otherwise, we get: 
 <Math displayMode={true} math = "D(p, q) = \sum_{\textrm{snippet}}  \frac{1}{n} \cdot \log \frac{1}{q_{LLM}(\textrm{actual letter} | \textrm{snippet})}"/>
 
 The final formula is called the cross-entropy loss and it is as simple as it gets: To train a neural net, you look at the distribution it outputs on each snippet, take the probability <Math math = "q_{LLM}(\textrm{actual letter} | \textrm{snippet})" /> that the net assigns to the actual letter following the snippet, and compute the surprisal (i.e., $q \rightarrow \log 1/q$). You just keep summing surprisals for the snippets in your dataset. The average surprisal is the loss function that we are trying to push down during LLM training. 
 
-So, no wonder that Llama 4 has probably beaten you in the game - __being good at the game is it's entire shtick__! All of the knowledge / intelligence in the [base model](https://toloka.ai/blog/base-llm-vs-instruction-tuned-llm/) happened to accumulate inside because it helps the model to be good at this game. 
+So, no wonder that Llama 4 has probably beaten you in the game - __being good at the game is its entire shtick__! All of the knowledge / intelligence in the [base model](https://toloka.ai/blog/base-llm-vs-instruction-tuned-llm/) happened to accumulate inside because it helps the model to be good at this game. 
 
 In fact, this is a point I wanted to make when selecting three examples snippets for the table above. Since the text snippets I collected were cut at a random place, many of them are cut in the middle of some obvious English word, so they just test whether you know English. But, from time to time, guessing the next letter gets pretty hard, hence being _really really_ good at the game requires knowledge / intelligence. 
 
 Here's more about the three examples snippets: In the first snippet, you have to know that Lincoln national cemetery is in $\textsf{Elwood}$. The next word in the second widget is $\textsf{Achilles}$. To guess that, you have to know Greek mythology. Llama guesses 't', because of $\textsf{Thetys}$ - the wife of Peleus referenced in the text by 'her'. Finally, the last snippet continues <Math math = "\textsf{virtue to selfishness. }" /> Predicting the next letter well requires knowing Rand's philosophy (though distinguishing between <Math math = "\textsf{virtue to selfishness}"/> and <Math math = "\textsf{vice to victimhood}"/> remains a hard call). 
 
-Finally, here's a bit of historical trivia: Our letter prediction game comes from Claude Shannon, the father of information theory. He made the same experiment a few years after his invention (late 1940's). He found out that people can compress English text to about 1 bit per letter. <Footnote>Both Shannon and I made the following simplification. Instead of asking you to predict the whole distribution for the next letter, I computed your score as $\log k$, where $k$ is the number of guesses until the correct letter. We can view this as an 'optimistic' bound on what your true cross-entropy score would be. If you guessed the correct letter after $k$ trials, surely you would give that letter probability at most $1/k$ if I asked you for the whole distribution! </Footnote>
+Finally, here's a bit of historical trivia: Our letter prediction game comes from Claude Shannon, the father of information theory. He made the same experiment a few years after his invention (late 1940's). He found that people can compress English text to about 1 bit per letter. <Footnote>Both Shannon and I made the following simplification. Instead of asking you to predict the whole distribution for the next letter, I computed your score as $\log k$, where $k$ is the number of guesses until the correct letter. We can view this as an 'optimistic' bound on what your true cross-entropy score would be. If you guessed the correct letter after $k$ trials, surely you would give that letter probability at most $1/k$ if I asked you for the whole distribution! </Footnote>
 
 1 bit per letter is also roughly the score of LLMs, though old models like GPT-2 are somewhat worse and the new ones like Llama-4 used in the widget are better. As far as I can say, Claude Shannon's experiment was the first usage of the next-token prediction, 60+ years before it became cool!
 
@@ -160,7 +160,7 @@ To grade predictions, let $p = (p_1, \dots, p_n)$ be the true probabilities of t
 
 This is what this chapter is about -- minimizing KL is a good way to go, since ultimately it's about finding a model that's the hardest to distinguish from the truth by Bayes' rule. 
 
-If all $n$ events we are predicting are independent,<Footnote>They of course never are. </Footnote> the formula looks like this:
+If all $n$ events we are predicting are independent<Footnote>They of course never are.</Footnote> the formula looks like this:
 
 <Math displayMode={true} math="D(p,q) =
 \sum_{i = 1}^n D(p_i, q_i)
@@ -173,7 +173,7 @@ Ok, there's a huge problem with this score. Can you spot it?
 
 ### Cross-entropy score
 
-The problem: we have no clue what the "true" probabilities $p = (p_1, \dots, p_n)$ are! <Footnote> We could go down a philosophical rabbit hole about whether "true" probability even is even a meaningful concept. But let's not. </Footnote> Hence, we can't compute the ideal KL score. All we know is what actually happened - the ground-truth row in the picture above. Technically speaking, we know an empirical distribution $\hat{p}$ where each $\hat{p}_i$ is either 0 or 1—the whole distribution is concentrated on the single list of outcomes we saw.
+The problem: we have no clue what the "true" probabilities $p = (p_1, \dots, p_n)$ are! <Footnote> We could go down a philosophical rabbit hole about whether "true" probability even is a meaningful concept. But let's not. </Footnote> Hence, we can't compute the ideal KL score. All we know is what actually happened - the ground-truth row in the picture above. Technically speaking, we know an empirical distribution $\hat{p}$ where each $\hat{p}_i$ is either 0 or 1—the whole distribution is concentrated on the single list of outcomes we saw.
 
 So, we can only compute the KL score with $\hat{p}$, not $p$. Let's see how the formula looks like: 
 
@@ -184,7 +184,7 @@ D(\hat{p}, q) =
     \right)
 "/>
 
-We can actually simplify the formula a bit. Either you can observe algebraically, that since <Math math = "\hat{p}_i \in \{0,1\}"/>, we have <Math math = "\hat{p}_i\log\frac{\hat{p}_i}{q_i} = \hat{p}_i\log\frac{1}{q_i}" /> (recall that <Math math = "0\log 0 = 0"/>). Or, much more fancily, you can notice that since the entropy of <Math math = "\hat{p}"/> is literally zero, the KL divergence equals cross-entropy:
+We can actually simplify the formula a bit. Either you can observe algebraically that since <Math math = "\hat{p}_i \in \{0,1\}"/>, we have <Math math = "\hat{p}_i\log\frac{\hat{p}_i}{q_i} = \hat{p}_i\log\frac{1}{q_i}" /> (recall that <Math math = "0\log 0 = 0"/>). Or, much more fancily, you can notice that since the entropy of <Math math = "\hat{p}"/> is literally zero, the KL divergence equals cross-entropy:
 
 <Math displayMode={true} math="
 D(\hat{p}, q) = H(\hat{p}, q) =
@@ -207,8 +207,8 @@ Try the log-score on our example! You can see how it really doesn't like the $99
 ### ⚠️ Connection to the idealized score
 Feel free to skip this one. 
 
-Let's dig into how our cross-entropy score relates to our idealized KL score. 
-I want you to imagine an obtruse probability space of what might have happened if butterflies flipped their wings a bit differently a few years ago. Only in this weird multiverse probability space we can easily talk about 'the true' probability $p_i$ that an event happens. In this space, $\hat{p}_i$s are random variables - Each $\hat{p}_i$ has value 1 with probability $p_i$, otherwise it's 0. Our cross-entropy score $H(\hat{p}, q)$ is also a random variable attaining different values in different worlds. 
+Let's dig into how our cross-entropy score relates to our ideal KL score. 
+I want you to imagine an obtuse probability space of what might have happened if butterflies flipped their wings a bit differently a few years ago. Only in this weird multiverse probability space we can easily talk about 'the true' probability $p_i$ that an event happens. In this space, $\hat{p}_i$s are random variables - Each $\hat{p}_i$ has value 1 with probability $p_i$, otherwise it's 0. Our cross-entropy score $H(\hat{p}, q)$ is also a random variable attaining different values in different worlds. 
 
 So what's the expected cross-entropy score? Since $E_p[\hat{p}_i] = p_i$, [linearity of expectation](https://brilliant.org/wiki/linearity-of-expectation/) gives us:
 
@@ -265,9 +265,10 @@ Another way to write this is:
 
 The expressions like $q(x_i)$ (probability a data point $x_i$ has been generated from a probabilistic model $q \in Q$) are typically called [_likelihoods_](https://en.wikipedia.org/wiki/Likelihood_function). The product $\prod_{i = 1}^n q(x_i)$ is the overall likelihood - it's the overall probability that the dataset $x_1, \dots, x_n$ was generated by the model $q$. So, __minimizing the cross-entropy with $q$ is equivalent to maximizing the likelihood of $q$__. 
 
-The methodology of selecting $q$ that maximizes $\prod_{i = 1}^n q(x_i)$ is called the _maximum likelihood principle_ and it's considered as one of the most important cornerstones of statistics. We can now see that it's pretty much the same as our methodology of minimizing KL divergence (which is in fact a bit more general as it works also for non-uniform $p$). 
+The methodology of selecting $q$ that maximizes $\prod_{i = 1}^n q(x_i)$ is called the _maximum likelihood principle_ and it's considered one of the most important cornerstones of statistics. We can now see that it's pretty much the same as our methodology of minimizing KL divergence (which is in fact a bit more general as it works also for non-uniform $p$). 
 
-In a sense, this is not surprising at all. Let's remember how we defined KL divergence in the first chapter. It was all about the Bayesian detective trying to distinguish the truth from the imposter. But look, the detective accumulates the evidence literally by _multiplying her current probability distribution by the likelihoods_. KL divergence / cross-entropy / entropy is just a useful language to talk about the accumulated evidence, since it's often easier to talk about "summing stuff" instead of "multiplying stuff". 
+In a sense, this is not surprising at all. Let's remember how we defined KL divergence in the first chapter. It was all about the Bayesian detective trying to distinguish the truth from the imposter. But look—the detective accumulates evidence literally by _multiplying her current probability distribution by the likelihoods_. KL divergence / cross-entropy / entropy is just a useful language to talk about the accumulated evidence, since it's often easier to talk about "summing stuff" instead of "multiplying stuff". 
+
 So, the fact that minimizing cross-entropy is equivalent to maximizing the overall likelihood really just comes down to how we change our beliefs using Bayes' rule. 
 
 In the context of statistics, it's more common to talk about maximum likelihood principle (and instead of cross-entropy, you may hear about the [log-likelihood](https://www.statlect.com/glossary/log-likelihood)). In the context of machine learning, it's more common to talk about cross-entropy / KL divergence (and instead of likelihoods, you may hear about  [perplexity](https://en.wikipedia.org/wiki/Perplexity)). 

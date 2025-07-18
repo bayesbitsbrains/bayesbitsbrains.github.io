@@ -136,6 +136,13 @@ const BayesSequenceWidget: React.FC<Props> = ({
     }
   };
 
+  const handleReset = () => {
+    setCurrentStep(0);
+    setSequence(["H", "T", "T", "H", "T"]);
+    setEditText("HTTHT");
+    setIsEditing(false);
+  };
+
   return (
     <div className="p-2 sm:p-6 bg-gray-50 rounded-lg space-y-4 max-w-4xl mx-auto">
       {title && <h3 className="text-lg font-semibold text-center text-gray-800">{title}</h3>}
@@ -189,6 +196,15 @@ const BayesSequenceWidget: React.FC<Props> = ({
               className="w-full sm:w-auto px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
             >
               Next Step
+            </button>
+
+            {/* Reset button - only visible on desktop */}
+            <button
+              onClick={handleReset}
+              disabled={currentStep === 0 || isEditing}
+              className="hidden sm:block px-3 py-1 bg-gray-500 text-white rounded text-sm hover:bg-gray-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
+            >
+              Reset
             </button>
           </div>
         </div>
