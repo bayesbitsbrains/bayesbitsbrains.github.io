@@ -147,7 +147,7 @@ const EntropyWidget: React.FC<Props> = ({ title = "Entropy Explorer", numCategor
   ];
 
   return (
-    <div className="p-4 bg-gray-50 rounded-lg space-y-4 max-w-2xl mx-auto">
+    <div className="p-2 sm:p-4 bg-gray-50 rounded-lg space-y-4 max-w-2xl mx-auto">
       {title && <h3 className="text-lg font-semibold text-center text-gray-800">{title}</h3>}
 
       {/* SVG Chart */}
@@ -310,7 +310,7 @@ const EntropyWidget: React.FC<Props> = ({ title = "Entropy Explorer", numCategor
       </div>
 
       {/* Entropy Display */}
-      <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+      <div className="bg-blue-50 p-2 sm:p-4 rounded-lg border border-blue-200">
         <div className="text-center">
           <div className="text-sm text-gray-700 mb-2">Entropy</div>
           <div className="text-3xl font-mono font-bold text-blue-600">{entropy.toFixed(3)} bits</div>

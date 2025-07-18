@@ -150,7 +150,7 @@ export default function KLCalculatorWidget() {
   }
 
   return (
-    <div className="p-4 sm:p-6 bg-gray-50 rounded-lg space-y-4 sm:space-y-6 max-w-4xl mx-auto">
+    <div className="p-2 sm:p-6 bg-gray-50 rounded-lg space-y-4 sm:space-y-6 max-w-4xl mx-auto">
       <h3 className="text-xl font-semibold text-center text-gray-800">KL & Entropy Calculator</h3>
 
       <div className="text-sm text-gray-600 text-center">
@@ -200,13 +200,13 @@ export default function KLCalculatorWidget() {
 
       {/* Results */}
       {result && (
-        <div className="bg-white rounded-lg p-4 space-y-4">
+        <div className="bg-white rounded-lg p-2 sm:p-4 space-y-4">
           <h4 className="text-lg font-semibold text-gray-800">Results</h4>
 
           <div className="space-y-4">
             {/* KL Divergences */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="p-3 rounded-lg border" style={{backgroundColor: '#f3f1ff', borderColor: '#e4daff'}}>
+              <div className="p-2 sm:p-3 rounded-lg border" style={{backgroundColor: '#f3f1ff', borderColor: '#e4daff'}}>
                 <div className="text-sm font-medium mb-1" style={{color: '#7c3aed'}}>
                   <KatexMath math="D(p_1, p_2)" />
                 </div>
@@ -225,7 +225,7 @@ export default function KLCalculatorWidget() {
                 </div>
               </div>
 
-              <div className="p-3 rounded-lg border" style={{backgroundColor: '#f3f1ff', borderColor: '#e4daff'}}>
+              <div className="p-2 sm:p-3 rounded-lg border" style={{backgroundColor: '#f3f1ff', borderColor: '#e4daff'}}>
                 <div className="text-sm font-medium mb-1" style={{color: '#7c3aed'}}>
                   <KatexMath math="D(p_2, p_1)" />
                 </div>
@@ -247,7 +247,7 @@ export default function KLCalculatorWidget() {
 
             {/* Entropies */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="p-3 rounded-lg border" style={{backgroundColor: '#f0f9ff', borderColor: '#e0f2fe'}}>
+              <div className="p-2 sm:p-3 rounded-lg border" style={{backgroundColor: '#f0f9ff', borderColor: '#e0f2fe'}}>
                 <div className="text-sm font-medium mb-1" style={{color: '#0369a1'}}>
                   <KatexMath math="H(p_1)" />
                 </div>
@@ -255,7 +255,7 @@ export default function KLCalculatorWidget() {
                 <div className="text-xs" style={{color: '#0369a1'}}>Entropy of Text 1</div>
               </div>
 
-              <div className="p-3 rounded-lg border" style={{backgroundColor: '#f0f9ff', borderColor: '#e0f2fe'}}>
+              <div className="p-2 sm:p-3 rounded-lg border" style={{backgroundColor: '#f0f9ff', borderColor: '#e0f2fe'}}>
                 <div className="text-sm font-medium mb-1" style={{color: '#0369a1'}}>
                   <KatexMath math="H(p_2)" />
                 </div>
@@ -266,7 +266,7 @@ export default function KLCalculatorWidget() {
           </div>
 
           {/* Debug: Show Letter Frequency Distributions */}
-          <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
+          <div className="p-2 sm:p-3 bg-gray-50 rounded-lg border border-gray-200">
             <button
               onClick={() => setShowDistributions(!showDistributions)}
               className="text-sm font-medium text-blue-600 hover:text-blue-800 underline cursor-pointer"
@@ -279,7 +279,7 @@ export default function KLCalculatorWidget() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs mt-3">
                   <div>
                     <div className="font-medium text-gray-700 mb-2">Text 1 Distribution (p₁)</div>
-                    <div className="bg-white p-2 rounded border max-h-32 overflow-y-auto">
+                    <div className="bg-white p-1 sm:p-2 rounded border max-h-32 overflow-y-auto">
                       <div className="font-mono space-y-1">
                         {(() => {
                           const freq1 = calculateLetterFrequencies(text1);
@@ -298,7 +298,7 @@ export default function KLCalculatorWidget() {
 
                   <div>
                     <div className="font-medium text-gray-700 mb-2">Text 2 Distribution (p₂)</div>
-                    <div className="bg-white p-2 rounded border max-h-32 overflow-y-auto">
+                    <div className="bg-white p-1 sm:p-2 rounded border max-h-32 overflow-y-auto">
                       <div className="font-mono space-y-1">
                         {(() => {
                           const freq2 = calculateLetterFrequencies(text2);
@@ -320,7 +320,7 @@ export default function KLCalculatorWidget() {
           </div>
 
           {/* Explanation */}
-          <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+          <div className="p-2 sm:p-4 bg-gray-50 rounded-lg border border-gray-200">
             <h5 className="text-base font-semibold text-gray-800 mb-3">Understanding the Results</h5>
             <div className="space-y-3 text-sm text-gray-700">
               <p>

@@ -436,7 +436,7 @@ const LetterPredictionWidget: React.FC = () => {
   const canShowResults = completedGames.length >= 1;
 
   return (
-    <div className="p-6 bg-gray-50 rounded-lg space-y-6 max-w-4xl mx-auto">
+    <div className="p-2 sm:p-6 bg-gray-50 rounded-lg space-y-6 max-w-4xl mx-auto">
       <h3 className="text-xl font-semibold text-gray-800 text-center">Human vs LLM: Next Letter Prediction</h3>
 
       <p className="text-sm text-gray-600 text-center">
@@ -446,7 +446,7 @@ const LetterPredictionWidget: React.FC = () => {
 
       {/* Current Game */}
       {currentGame && currentGame.snapshot && (
-        <div className="bg-white p-4 rounded-lg border">
+        <div className="bg-white p-2 sm:p-4 rounded-lg border">
           <div className="space-y-4">
             {/* Context Display */}
             <div className="text-lg">

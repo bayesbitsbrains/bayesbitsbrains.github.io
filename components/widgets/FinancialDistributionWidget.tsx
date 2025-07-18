@@ -229,9 +229,9 @@ export default function FinancialDistributionWidget({ showBTC = true, showSAP = 
   }
 
   return (
-    <div className="p-4 sm:p-6 bg-gray-50 rounded-lg space-y-4 max-w-4xl mx-auto">
+    <div className="p-2 sm:p-6 bg-gray-50 rounded-lg space-y-4 max-w-4xl mx-auto">
       {/* Controls */}
-      <div className="bg-white rounded-lg p-4 space-y-4">
+      <div className="bg-white rounded-lg p-2 sm:p-4 space-y-4">
         {/* Top row: Asset selector and Distribution toggles */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Asset selector */}
@@ -312,7 +312,7 @@ export default function FinancialDistributionWidget({ showBTC = true, showSAP = 
 
       {/* Plot */}
       {plotData && (
-        <div className="bg-white rounded-lg p-4">
+        <div className="bg-white rounded-lg p-2 sm:p-4">
           <svg width="100%" viewBox="0 0 800 400" className="max-w-4xl mx-auto">
             {/* Background */}
             <rect width="800" height="400" fill="#f9fafb" stroke="#e5e7eb" />

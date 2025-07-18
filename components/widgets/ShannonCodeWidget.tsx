@@ -433,11 +433,11 @@ export default function ShannonCodeWidget() {
       {/* Fullscreen zoom overlay */}
       {isZoomed && tree && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-2 sm:p-4"
           onClick={() => setIsZoomed(false)}
         >
           <div 
-            className="bg-white rounded-lg p-6 w-full max-w-7xl max-h-[90vh] overflow-auto"
+            className="bg-white rounded-lg p-3 sm:p-6 w-full max-w-7xl max-h-[90vh] overflow-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex justify-between items-center mb-4">
@@ -452,7 +452,7 @@ export default function ShannonCodeWidget() {
               </button>
             </div>
             
-            <div className="bg-gray-50 rounded-lg p-4 overflow-auto max-h-[70vh]" ref={zoomedTreeContainerRef}>
+            <div className="bg-gray-50 rounded-lg p-2 sm:p-4 overflow-auto max-h-[70vh]" ref={zoomedTreeContainerRef}>
               <svg width={canvasDimensions.width} height={canvasDimensions.height} className="mx-auto">
                 {/* Draw edges */}
                 {allVisibleNodes.map(node => (
@@ -537,7 +537,7 @@ export default function ShannonCodeWidget() {
         </div>
       )}
 
-    <div className="shannon-code-widget bg-white border border-gray-200 rounded-lg p-6 my-6">
+    <div className="shannon-code-widget bg-white border border-gray-200 rounded-lg p-2 sm:p-6 my-6">
       <h3 className="text-lg font-semibold mb-4">Shannon Code Constructor</h3>
       {/* Letter frequency bars */}
       <div className="relative select-none frequency-bars-container">
@@ -613,7 +613,7 @@ export default function ShannonCodeWidget() {
             />
           </div>
           <div 
-            className={`bg-gray-50 rounded-lg p-4 overflow-auto max-h-96 ${isZoomed ? 'cursor-zoom-out' : 'cursor-zoom-in'}`}
+            className={`bg-gray-50 rounded-lg p-2 sm:p-4 overflow-auto max-h-96 ${isZoomed ? 'cursor-zoom-out' : 'cursor-zoom-in'}`}
             ref={treeContainerRef}
             onClick={() => setIsZoomed(!isZoomed)}
           >
@@ -704,7 +704,7 @@ export default function ShannonCodeWidget() {
       {codeAssignments.length > 0 && (
         <div className="mt-6">
           <h4 className="font-medium mb-4">Shannon Code Assignments</h4>
-          <div className="bg-gray-50 rounded-lg p-4">
+          <div className="bg-gray-50 rounded-lg p-2 sm:p-4">
             {/* Fixed header outside scrollable area */}
             <div className="grid grid-cols-4 gap-4 text-sm font-semibold text-gray-700 mb-3 p-2 bg-gray-100 rounded">
               <div>Letter</div>
@@ -732,7 +732,7 @@ export default function ShannonCodeWidget() {
       {/* Metrics Display */}
       {codeAssignments.length > 0 && (
         <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-blue-50 rounded-lg p-4">
+          <div className="bg-blue-50 rounded-lg p-2 sm:p-4">
             <h5 className="font-semibold text-blue-800 mb-2">Entropy</h5>
             <div className="text-2xl font-bold text-blue-600">
               {entropy.toFixed(3)} bits
@@ -742,7 +742,7 @@ export default function ShannonCodeWidget() {
             </div>
           </div>
           
-          <div className="bg-green-50 rounded-lg p-4">
+          <div className="bg-green-50 rounded-lg p-2 sm:p-4">
             <h5 className="font-semibold text-green-800 mb-2">Average code length (rate)</h5>
             <div className="text-2xl font-bold text-green-600">
               {averageCodeLength.toFixed(3)} bits

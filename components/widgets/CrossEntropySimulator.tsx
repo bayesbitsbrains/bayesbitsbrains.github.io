@@ -199,7 +199,7 @@ const CrossEntropySimulator: React.FC = () => {
   }, [currentFlip, numFlips, entropy, crossentropy, isRunning]);
 
   return (
-    <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+    <div className="mb-6 p-2 sm:p-4 bg-gray-50 rounded-lg">
       <h4 className="text-center mb-4">Cross-Entropy Simulator</h4>
 
       <div className="space-y-4">
@@ -319,7 +319,7 @@ const CrossEntropySimulator: React.FC = () => {
       </div>
 
       <div className="bg-white rounded-lg">
-        <div className={isZoomed ? "fixed inset-0 z-50 bg-white p-8" : "relative"}>
+        <div className={isZoomed ? "fixed inset-0 z-50 bg-white p-8" : "p-2 sm:p-4 relative"}>
           <div
             className={`${isZoomed ? CHART_CONFIG.height.zoomed : CHART_CONFIG.height.normal} transition-all duration-${CHART_CONFIG.animation.transitionDuration} relative`}
           >

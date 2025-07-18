@@ -535,7 +535,7 @@ const MWUWidget: React.FC<Props> = ({
         </div>
       )}
 
-      <div className="p-6 bg-gray-50 rounded-lg space-y-6 max-w-6xl mx-auto">
+      <div className="p-2 sm:p-6 bg-gray-50 rounded-lg space-y-4 sm:space-y-6 max-w-6xl mx-auto">
         {title && (
           <h3 className="text-xl font-semibold text-center text-gray-800">
             {title}
@@ -543,7 +543,7 @@ const MWUWidget: React.FC<Props> = ({
         )}
 
       {/* Algorithm Selection */}
-      <div className="bg-white rounded-lg p-4">
+      <div className="bg-white rounded-lg p-2 sm:p-4">
         <h4 className="text-lg font-semibold text-gray-800 mb-3">Select Algorithms</h4>
         <div className="flex flex-wrap gap-3">
           {algorithms.map(alg => (
@@ -563,7 +563,7 @@ const MWUWidget: React.FC<Props> = ({
       </div>
 
       {/* Scenario Buttons */}
-      <div className="bg-white rounded-lg p-4">
+      <div className="bg-white rounded-lg p-2 sm:p-4">
         <h4 className="text-lg font-semibold text-gray-800 mb-3">Choose Scenario</h4>
         <div className="grid md:grid-cols-3 gap-3">
           {scenarios.map(scenario => (
@@ -587,7 +587,7 @@ const MWUWidget: React.FC<Props> = ({
 
       {/* Chart */}
       {currentScenario && (
-        <div className="bg-white rounded-lg p-4">
+        <div className="bg-white rounded-lg p-2 sm:p-4">
           <div className="flex justify-between items-center mb-4">
             <h4 className="text-lg font-semibold text-gray-800">
               Cumulative Gains (Step {displayStep}/200)
@@ -657,7 +657,7 @@ const MWUWidget: React.FC<Props> = ({
           
           {/* Replay Slider */}
           {!isRunning && currentStep >= 200 && isReplaying && (
-            <div className="mt-6 bg-gray-50 rounded-lg p-4">
+            <div className="mt-6 bg-gray-50 rounded-lg p-2 sm:p-4">
               <div className="flex items-center gap-4">
                 <span className="text-sm font-semibold text-gray-700">Replay:</span>
                 <input
@@ -682,13 +682,13 @@ const MWUWidget: React.FC<Props> = ({
 
       {/* Current Status */}
       {currentScenario && displayedAlgorithmStates.size > 0 && (
-        <div className="bg-white rounded-lg p-4">
+        <div className="bg-white rounded-lg p-2 sm:p-4">
           <h4 className="text-lg font-semibold text-gray-800 mb-3">Current Algorithm States</h4>
           <div className="grid md:grid-cols-3 gap-4">
             {Array.from(displayedAlgorithmStates.entries()).map(([alg, state]) => {
               const algInfo = algorithms.find(a => a.id === alg)!;
               return (
-                <div key={alg} className="border rounded-lg p-3">
+                <div key={alg} className="border rounded-lg p-1 sm:p-3">
                   <div className="font-semibold" style={{ color: algInfo.color }}>
                     {algInfo.emoji} {algInfo.name}
                   </div>

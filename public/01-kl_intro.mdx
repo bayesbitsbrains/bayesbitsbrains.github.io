@@ -135,8 +135,13 @@ $$
 
 bits of evidence toward the truth.
 
-__When this number is small, the distribution $q$ is a pretty good probabilistic model of $p$__ - it takes many samples before our detective figures out that she's indeed sampling from $p$, and not from the imposter $q$. 
-You can also think of $1/D(p,q)$ as "how many samples until I get one bit of evidence." (assuming $D(p,q) < 1$) One bit of evidence means that the odds for the true hypothesis doubled. <Footnote>This isn't the same as doubling the probability. Going from 1:1 to 2:1 odds changes the probability from 50% to 66.7%. But with lopsided odds like 1:1000, gaining a bit toward the underdog (making it 2:1000) almost doubles its probability. And gaining a bit the other way (1:2000) almost halves the underdog's probability. If you keep getting bits of evidence toward the truth, the truth's probability shoots up exponentially until it's comparable to the alternative, then the alternative's probability tanks exponentially. </Footnote>
+<Block>
+_When $D(p, q)$ is small, the distribution $q$ is a good probabilistic model of $p$._
+
+That is, it takes many samples before our detective figures out that she's indeed sampling from $p$, and not from the imposter $q$. 
+</Block>
+
+If $D(p,q)$ is small (less than one), you can also think of $1/D(p,q)$ as _how many samples until I get one bit of evidence._ One bit of evidence means that the odds for the true hypothesis doubled. <Footnote>This isn't the same as doubling the probability. Going from 1:1 to 2:1 odds changes the probability from 50% to 66.7%. But with lopsided odds like 1:1000, gaining a bit toward the underdog (making it 2:1000) almost doubles its probability. And gaining a bit the other way (1:2000) almost halves the underdog's probability. If you keep getting bits of evidence toward the truth, the truth's probability shoots up exponentially until it's comparable to the alternative, then the alternative's probability tanks exponentially. </Footnote>
 
 Notice that KL divergence is about the evidence, not your starting beliefs. It tells you how fast beliefs change, no matter whether the detective started with $1:2$ or $1000:1$. 
 

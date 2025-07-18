@@ -8,10 +8,16 @@
 .header {
   display: flex;
   align-items: center;
-  padding: 0.75rem 1rem;
+  padding: 0.75rem 0.5rem;
   cursor: pointer;
   user-select: none;
   gap: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .header {
+    padding: 0.75rem 1rem;
+  }
 }
 
 .advancedIcon {
@@ -50,9 +56,15 @@
 }
 
 .content {
-  padding: 0.75rem 1rem 1rem;
+  padding: 0.75rem 0.5rem 1rem;
   font-size: 1rem;
   line-height: 1.6;
+}
+
+@media (min-width: 640px) {
+  .content {
+    padding: 0.75rem 1rem 1rem;
+  }
 }
 
 .hide {

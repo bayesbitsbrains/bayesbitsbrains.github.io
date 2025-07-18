@@ -141,7 +141,7 @@ const VolatilityDistributionWidget: React.FC = () => {
     Array.from({ length: 6 }, (_, i) => (i / 5) * maxY);
 
   return (
-    <div className="p-4 sm:p-6 bg-gray-50 rounded-lg space-y-4 max-w-4xl mx-auto">
+    <div className="p-2 sm:p-6 bg-gray-50 rounded-lg space-y-4 max-w-4xl mx-auto">
       <h3 className="text-xl font-semibold text-gray-800">
         S&P 500 Variance Distribution
       </h3>
@@ -196,7 +196,7 @@ const VolatilityDistributionWidget: React.FC = () => {
       </div>
 
       {/* Chart */}
-      <div className={isZoomed ? 'fixed inset-0 z-50 bg-white p-8' : 'bg-white p-4 rounded-lg border relative'}>
+      <div className={isZoomed ? 'fixed inset-0 z-50 bg-white p-8' : 'bg-white p-2 sm:p-4 rounded-lg border relative'}>
         <div className={`${isZoomed ? 'h-full' : ''} relative`}>
           <ZoomButton 
             type="zoom-toggle"
@@ -370,7 +370,7 @@ const VolatilityDistributionWidget: React.FC = () => {
       </div>
 
       {/* Legend */}
-      <div className="bg-white p-3 rounded-lg border">
+      <div className="bg-white p-2 sm:p-3 rounded-lg border">
         <div className="flex flex-wrap gap-4 text-sm">
           <div className="flex items-center gap-2">
             <div className="w-4 h-3 bg-blue-300 border border-blue-500 rounded"></div>

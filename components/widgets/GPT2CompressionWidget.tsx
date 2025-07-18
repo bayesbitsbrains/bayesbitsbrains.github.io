@@ -214,7 +214,7 @@ const GPT2CompressionWidget: React.FC = () => {
   const currentStepData = compressionData?.steps[currentStep];
 
   return (
-    <div className="p-6 bg-gray-50 rounded-lg space-y-6 max-w-4xl mx-auto">
+    <div className="p-2 sm:p-6 bg-gray-50 rounded-lg space-y-6 max-w-4xl mx-auto">
       <h3 className="text-xl font-semibold text-gray-800 text-center">
         GPT2 Compression Visualization
       </h3>
@@ -256,7 +256,7 @@ const GPT2CompressionWidget: React.FC = () => {
       {compressionData && (
         <div className="space-y-6">
           {/* Summary */}
-          <div className="bg-white p-4 rounded-lg border">
+          <div className="bg-white p-2 sm:p-4 rounded-lg border">
             <h4 className="font-semibold mb-2">Compression Summary</h4>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
               <div>
@@ -311,7 +311,7 @@ const GPT2CompressionWidget: React.FC = () => {
           </div>
 
           {/* Tokenization Display */}
-          <div className="bg-white p-4 rounded-lg border">
+          <div className="bg-white p-2 sm:p-4 rounded-lg border">
             <h4 className="font-semibold mb-2">Tokenization</h4>
             <div className="flex flex-wrap gap-1 mb-3">
               {compressionData.tokens.map((token, index) => (

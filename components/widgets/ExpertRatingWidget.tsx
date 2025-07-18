@@ -128,7 +128,7 @@ const ExpertRatingWidget: React.FC<Props> = ({
           box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
         }
       `}</style>
-      <div className="p-4 bg-gray-50 rounded-lg space-y-4 max-w-6xl mx-auto">
+      <div className="p-2 sm:p-4 bg-gray-50 rounded-lg space-y-4 max-w-6xl mx-auto">
       {title && (
         <h3 className="text-lg font-semibold text-center text-gray-800">
           {title}
