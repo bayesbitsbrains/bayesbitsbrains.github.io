@@ -191,18 +191,6 @@ const ExpertRatingWidget: React.FC<Props> = ({
                             background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${predictions[expertIdx][questionIdx] * 100}%, #e5e7eb ${predictions[expertIdx][questionIdx] * 100}%, #e5e7eb 100%)`
                           }}
                         />
-                        {/* Quick preset buttons for mobile */}
-                        <div className="flex justify-center space-x-1 mt-1">
-                          {[0, 0.5, 1].map(preset => (
-                            <button
-                              key={preset}
-                              onClick={() => updatePrediction(expertIdx, questionIdx, preset.toString())}
-                              className="text-xs px-1 py-0.5 bg-gray-300 hover:bg-gray-400 rounded text-gray-700 min-w-[20px]"
-                            >
-                              {preset}
-                            </button>
-                          ))}
-                        </div>
                       </div>
                     </div>
                   </td>
