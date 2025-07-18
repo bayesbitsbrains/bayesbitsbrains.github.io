@@ -71,10 +71,10 @@ const BayesCalculatorWidget: React.FC<{ title?: string }> = ({ title = "Bayes Ca
   const labels = mode === 2 ? LABELS_2 : LABELS_3;
 
   return (
-    <div className="p-4 sm:p-6 bg-gray-50 rounded-lg space-y-4 max-w-3xl mx-auto">
+    <div className="p-2 sm:p-6 bg-gray-50 rounded-lg space-y-4 max-w-3xl mx-auto">
       {title && <h3 className="text-lg font-semibold text-center text-gray-800">{title}</h3>}
 
-      <div className="bg-white rounded-lg p-4 sm:p-6 space-y-4 relative">
+      <div className="bg-white rounded-lg p-2 sm:p-6 space-y-4 relative">
         {/* Prior odds input */}
         <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
           <span className="w-full sm:w-40 font-medium text-sm text-gray-700 sm:text-right">Prior odds:</span>

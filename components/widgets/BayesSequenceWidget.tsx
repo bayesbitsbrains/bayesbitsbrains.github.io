@@ -137,10 +137,10 @@ const BayesSequenceWidget: React.FC<Props> = ({
   };
 
   return (
-    <div className="p-6 bg-gray-50 rounded-lg space-y-4 max-w-4xl mx-auto">
+    <div className="p-2 sm:p-6 bg-gray-50 rounded-lg space-y-4 max-w-4xl mx-auto">
       {title && <h3 className="text-lg font-semibold text-center text-gray-800">{title}</h3>}
 
-      <div className="bg-white rounded-lg p-6 space-y-4">
+      <div className="bg-white rounded-lg p-2 sm:p-6 space-y-4">
         {/* Sequence controls */}
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-6">
           {/* Coin sequence section */}
@@ -162,9 +162,7 @@ const BayesSequenceWidget: React.FC<Props> = ({
                     key={index}
                     className={`w-8 h-8 flex items-center justify-center rounded border-2 font-mono font-bold cursor-pointer ${
                       index < currentStep
-                        ? logSpace
-                          ? "bg-purple-100 border-purple-300 text-purple-700"
-                          : "bg-blue-100 border-blue-300 text-blue-700"
+                        ? "bg-blue-100 border-blue-300 text-blue-700"
                         : "bg-gray-100 border-gray-300 text-gray-500"
                     }`}
                     onClick={() => handleCoinClick(index)}
@@ -196,10 +194,10 @@ const BayesSequenceWidget: React.FC<Props> = ({
         </div>
 
         {/* Prior and flip rows */}
-        <div className="bg-white rounded-lg p-4 relative">
+        <div className="bg-white rounded-lg p-2 sm:p-4 relative">
           {/* Prior row */}
-          <div className={`relative flex items-center py-3 pl-4 pr-4 ml-20 sm:ml-44 rounded bg-blue-50 border-blue-200`}>
-            <div className="absolute -left-20 w-16 sm:-left-44 sm:w-40 text-right text-sm font-medium text-gray-700">
+          <div className={`relative flex items-center py-3 pl-4 pr-4 ml-16 sm:ml-44 rounded bg-blue-50 border-blue-200`}>
+            <div className="absolute -left-16 w-12 sm:-left-44 sm:w-40 text-right text-sm font-medium text-gray-700">
               {logSpace ? "Prior log-odds" : "Prior odds"}
             </div>
             <div className="flex-1 flex items-center">
@@ -220,9 +218,9 @@ const BayesSequenceWidget: React.FC<Props> = ({
           {/* Flip rows */}
           {steps.slice(1, currentStep + 1).map((step, index) => (
             <div key={index} className="relative">
-              <div className={`relative flex items-center py-3 pl-4 pr-4 ml-20 sm:ml-44 rounded bg-orange-50 mt-2`}>
+              <div className={`relative flex items-center py-3 pl-4 pr-4 ml-16 sm:ml-44 rounded bg-orange-50 mt-2`}>
                 {/* H/T label outside the colored row */}
-                <div className="absolute -left-20 w-16 sm:-left-44 sm:w-40 top-1/2 transform -translate-y-1/2 text-right font-mono font-bold text-lg">
+                <div className="absolute -left-16 w-12 sm:-left-44 sm:w-40 top-1/2 transform -translate-y-1/2 text-right font-mono font-bold text-lg">
                   {step.flip}
                 </div>
                 <div className="flex-1 flex items-center">
@@ -260,8 +258,8 @@ const BayesSequenceWidget: React.FC<Props> = ({
           <div className="mt-6 pt-4 border-t border-gray-300">
             {/* Cumulative Surprisals - only show when highlightSurprisals is true */}
             {highlightSurprisals && logSpace && currentStep > 0 && (
-              <div className={`relative flex items-center py-3 pl-4 pr-4 ml-20 sm:ml-44 rounded bg-orange-50 mb-2`}>
-                <div className="absolute -left-20 w-16 sm:-left-44 sm:w-40 text-right text-sm font-medium text-gray-700">
+              <div className={`relative flex items-center py-3 pl-4 pr-4 ml-16 sm:ml-44 rounded bg-orange-50 mb-2`}>
+                <div className="absolute -left-16 w-12 sm:-left-44 sm:w-40 text-right text-sm font-medium text-gray-700">
                   Total surprisal
                 </div>
                 <div className="flex-1 flex items-center">
@@ -285,8 +283,8 @@ const BayesSequenceWidget: React.FC<Props> = ({
             )}
 
             {logSpace && (
-              <div className={`relative flex items-center py-3 pl-4 pr-4 ml-20 sm:ml-44 rounded bg-green-50 mb-2`}>
-                <div className="absolute -left-20 w-16 sm:-left-44 sm:w-40 text-right text-sm font-medium text-gray-700">
+              <div className={`relative flex items-center py-3 pl-4 pr-4 ml-16 sm:ml-44 rounded bg-green-50 mb-2`}>
+                <div className="absolute -left-16 w-12 sm:-left-44 sm:w-40 text-right text-sm font-medium text-gray-700">
                   Posterior log odds
                 </div>
                 <div className="flex-1 flex items-center">
@@ -310,8 +308,8 @@ const BayesSequenceWidget: React.FC<Props> = ({
             )}
 
             {/* Posterior odds */}
-            <div className={`relative flex items-center py-3 pl-4 pr-4 ml-20 sm:ml-44 rounded bg-green-50 mb-2`}>
-              <div className="absolute -left-20 w-16 sm:-left-44 sm:w-40 text-right text-sm font-medium text-gray-700">Posterior odds</div>
+            <div className={`relative flex items-center py-3 pl-4 pr-4 ml-16 sm:ml-44 rounded bg-green-50 mb-2`}>
+              <div className="absolute -left-16 w-12 sm:-left-44 sm:w-40 text-right text-sm font-medium text-gray-700">Posterior odds</div>
               <div className="flex-1 flex items-center">
                 <div className="flex-1 text-right">
                   <span className="font-mono text-sm font-bold text-blue-600">
@@ -330,8 +328,8 @@ const BayesSequenceWidget: React.FC<Props> = ({
             </div>
 
             {/* Probabilities */}
-            <div className={`relative flex items-center py-3 pl-4 pr-4 ml-20 sm:ml-44 rounded bg-green-50`}>
-              <div className="absolute -left-20 w-16 sm:-left-44 sm:w-40 text-right text-sm font-medium text-gray-700">
+            <div className={`relative flex items-center py-3 pl-4 pr-4 ml-16 sm:ml-44 rounded bg-green-50`}>
+              <div className="absolute -left-16 w-12 sm:-left-44 sm:w-40 text-right text-sm font-medium text-gray-700">
                 Posterior probability
               </div>
               <div className="flex-1 flex items-center">
