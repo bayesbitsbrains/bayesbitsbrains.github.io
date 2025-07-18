@@ -379,7 +379,7 @@ const MaxEntropyVisualization: React.FC<MaxEntropyVisualizationProps> = () => {
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Constraint: x₁ + x₂ = {constraintSum.toFixed(2)}
+                  Constraint: x<sub>1</sub> + x<sub>2</sub> = {constraintSum.toFixed(2)}
                 </label>
                 <input
                   type="range"
@@ -397,8 +397,8 @@ const MaxEntropyVisualization: React.FC<MaxEntropyVisualizationProps> = () => {
           {/* 2D Heatmap */}
           <div className="bg-white rounded-lg p-4">
             <div className="flex justify-center">
-              <div className="relative inline-block">
-              <svg width="400" height="400" className="border border-gray-300">
+              <div className="relative inline-block w-full max-w-md">
+              <svg width="100%" height="auto" viewBox="0 0 400 400" className="border border-gray-300 w-full h-auto max-w-md mx-auto">
                 {/* Heatmap */}
                 <Heatmap2D heatmapData={heatmapData} getColor={getColor} />
                 
@@ -482,7 +482,7 @@ const MaxEntropyVisualization: React.FC<MaxEntropyVisualizationProps> = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  λ₁ (quadratic coefficient) = {lambda1_3D}
+                  λ<sub>1</sub> (quadratic coefficient) = {lambda1_3D}
                 </label>
                 <input
                   type="range"
@@ -497,7 +497,7 @@ const MaxEntropyVisualization: React.FC<MaxEntropyVisualizationProps> = () => {
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  λ₂ (linear coefficient) = {lambda2_3D}
+                  λ<sub>2</sub> (linear coefficient) = {lambda2_3D}
                 </label>
                 <input
                   type="range"
@@ -547,8 +547,9 @@ const MaxEntropyVisualization: React.FC<MaxEntropyVisualizationProps> = () => {
           {/* 3D Visualization */}
           <div className="bg-white rounded-lg p-2">
             <div className="flex justify-center">
-              <div className="relative inline-block">
-                <div style={{ width: "500px", height: "400px" }}>
+              <div className="relative w-full max-w-lg">
+                <div className="w-full h-0 pb-[80%] relative"> {/* 5:4 aspect ratio */}
+                  <div className="absolute inset-0">
               <Canvas 
                 camera={{ position: [1.5, 1.2, 1.5], fov: 50 }}
                 gl={{ localClippingEnabled: true }}
@@ -570,6 +571,7 @@ const MaxEntropyVisualization: React.FC<MaxEntropyVisualizationProps> = () => {
                   maxDistance={5}
                 />
               </Canvas>
+                  </div>
                 </div>
               </div>
             </div>
