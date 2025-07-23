@@ -1,0 +1,47 @@
+{
+  "algorithm": "LLM (GPT-2)",
+  "bits": 99,
+  "ratio": "5.01x",
+  "compression_progression": [
+    {
+      "progressPercent": 10,
+      "bitsPerChar": 1.875
+    },
+    {
+      "progressPercent": 20,
+      "bitsPerChar": 2
+    },
+    {
+      "progressPercent": 30,
+      "bitsPerChar": 1.75
+    },
+    {
+      "progressPercent": 40,
+      "bitsPerChar": 1.5555555555555556
+    },
+    {
+      "progressPercent": 50,
+      "bitsPerChar": 1.6
+    },
+    {
+      "progressPercent": 60,
+      "bitsPerChar": 1.6666666666666667
+    },
+    {
+      "progressPercent": 70,
+      "bitsPerChar": 1.0909090909090908
+    },
+    {
+      "progressPercent": 80,
+      "bitsPerChar": 0.5
+    },
+    {
+      "progressPercent": 90,
+      "bitsPerChar": 2
+    },
+    {
+      "progressPercent": 100,
+      "bitsPerChar": 2
+    }
+  ]
+}

@@ -416,6 +416,8 @@ export default function CompressionWidget() {
   };
 
   // Call Hugging Face GPT-2 compression API using queue system
+  // Note: The default text "Language models can compress text by predicting the next token" 
+  // is memoized and loaded from gpt2_default_memoized.json to avoid unnecessary API calls
   const callGPT2Compression = async (text: string): Promise<{ algorithm: string; bits: number; ratio: string; compressionProgression?: any[] } | null> => {
     try {
       console.log('Calling GPT-2 API with text:', text.substring(0, 50) + '...');
@@ -629,6 +631,31 @@ export default function CompressionWidget() {
       // Show first 3 results immediately
       setUserResults(initialResults);
       
+      // Check if this is the default text - if so, use memoized results
+      const DEFAULT_TEXT = "Language models can compress text by predicting the next token";
+      if (trimmedText === DEFAULT_TEXT) {
+        // Load memoized results instead of calling API
+        try {
+          const memoizedResponse = await fetch(getAssetPath('/compression_experiments/gpt2_default_memoized.json'));
+          if (memoizedResponse.ok) {
+            const memoizedData = await memoizedResponse.json();
+            const gpt2ResultFormatted: CompressionResult = {
+              algorithm: memoizedData.algorithm,
+              bits: memoizedData.bits,
+              ratio: memoizedData.ratio,
+              generalDescription: "Use language model for next token prediction. We estimate the compression rate by computing the cross-entropy of the net on the text.",
+              specificDescription: "Actual GPT-2 compression measurement on your text",
+              compressionProgression: memoizedData.compression_progression
+            };
+            
+            setUserResults(prev => [...(prev || []), gpt2ResultFormatted]);
+            return; // Exit early, no need to call API
+          }
+        } catch (error) {
+          // Silently fall back to API if memoized results fail to load
+        }
+      }
+      
       // Add GPT-2 when ready (this takes longer)
       const gpt2Result = await callGPT2Compression(trimmedText);
       if (gpt2Result) {
@@ -740,7 +767,14 @@ export default function CompressionWidget() {
       {/* Your Text button - centered and differently designed */}
       <div className="flex justify-center mb-6">
         <button
-          onClick={() => {setShowUserText(true); setSelectedSample(null);}}
+          onClick={() => {
+            setShowUserText(true); 
+            setSelectedSample(null);
+            // Set default text if userText is empty
+            if (!userText) {
+              setUserText("Language models can compress text by predicting the next token");
+            }
+          }}
           className={`px-6 py-4 text-center border-2 border-dashed rounded-lg transition-all min-h-[60px] ${
             showUserText
               ? "border-blue-500 bg-blue-50 text-blue-700"
