@@ -1,34 +1,11 @@
 
-> generic-academic-website@0.1.0 dev /home/vasek/problens-web
-> next dev --turbopack
+> generic-academic-website@0.1.0 dev /home/vasek/bayesbitsbrains.github.io
+> next dev
 
  ⚠ Port 3000 is in use, trying 3001 instead.
- ⚠ Port 3001 is in use, trying 3002 instead.
-   ▲ Next.js 15.2.4 (Turbopack)
-   - Local:        http://localhost:3002
-   - Network:      http://10.13.2.186:3002
+   ▲ Next.js 15.2.4
+   - Local:        http://localhost:3001
    - Environments: .env
 
  ✓ Starting...
- ✓ Ready in 2.1s
- ○ Compiling /[...path] ...
- ✓ Compiled /[...path] in 12s
-Each child in a list should have a unique "key" prop. See https://react.dev/link/warning-keys for more information.
-Each child in a list should have a unique "key" prop. See https://react.dev/link/warning-keys for more information.
-Each child in a list should have a unique "key" prop. See https://react.dev/link/warning-keys for more information.
-Each child in a list should have a unique "key" prop. See https://react.dev/link/warning-keys for more information.
-Each child in a list should have a unique "key" prop. See https://react.dev/link/warning-keys for more information.
-Each child in a list should have a unique "key" prop. See https://react.dev/link/warning-keys for more information.
-Each child in a list should have a unique "key" prop. See https://react.dev/link/warning-keys for more information.
- GET /00-introduction/ 200 in 15158ms
- ○ Compiling /_error ...
- ✓ Compiled /_error in 1613ms
- ⨯ A conflicting public file and page file was found for path /favicon.ico https://nextjs.org/docs/messages/conflicting-public-file-page
- GET /favicon.ico?favicon.35dd0f14.ico 500 in 1780ms
- GET /03-minimizing/ 200 in 1193ms
- ⨯ A conflicting public file and page file was found for path /favicon.ico https://nextjs.org/docs/messages/conflicting-public-file-page
- GET /favicon.ico?favicon.35dd0f14.ico 500 in 29ms
- ⨯ A conflicting public file and page file was found for path /favicon.ico https://nextjs.org/docs/messages/conflicting-public-file-page
- GET /favicon.ico?favicon.35dd0f14.ico 500 in 24ms
- ELIFECYCLE  Command failed.
-[?25h
+ ✓ Ready in 1778ms
