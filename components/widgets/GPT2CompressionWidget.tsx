@@ -387,6 +387,9 @@ const GPT2CompressionWidget: React.FC = () => {
                       isActual: false
                     }));
                     
+                    // Check if actual token is in top 5 predictions
+                    const isActualInTop5 = topPreds.some(pred => pred.token === actualToken.token);
+                    
                     // Combine and remove duplicates, then sort by probability
                     const allTokens = [actualToken, ...topPreds]
                       .filter((token, index, array) => 
@@ -395,23 +398,32 @@ const GPT2CompressionWidget: React.FC = () => {
                       .sort((a, b) => b.probability - a.probability)
                       .slice(0, 6); // Show top 6
                     
-                    return allTokens.map((tokenData, index) => (
-                      <div
-                        key={index}
-                        className={`flex justify-between items-center px-3 py-2 rounded text-sm ${
-                          tokenData.isActual
-                            ? 'bg-blue-100 border border-blue-300 font-semibold'
-                            : 'bg-gray-50 border border-gray-200'
-                        }`}
-                      >
-                        <span className="font-mono">
-                          {tokenData.token.replace(/ /g, '·')}{tokenData.isActual ? ' (actual)' : ''}
-                        </span>
-                        <span className="font-mono">
-                          {formatProbability(tokenData.probability)}
-                        </span>
-                      </div>
-                    ));
+                    return allTokens.map((tokenData, index) => {
+                      // Check if this is the actual token and it's not in top 5
+                      const isActualNotInTop5 = tokenData.isActual && !isActualInTop5;
+                      // Find the position where actual token appears in the sorted list
+                      const actualTokenIndex = allTokens.findIndex(t => t.isActual);
+                      // Add extra spacing if actual token is not in top 5 and this is the actual token
+                      const needsExtraSpacing = isActualNotInTop5 && index === actualTokenIndex;
+                      
+                      return (
+                        <div
+                          key={index}
+                          className={`flex justify-between items-center px-3 py-2 rounded text-sm ${
+                            tokenData.isActual
+                              ? 'bg-blue-100 border border-blue-300 font-semibold'
+                              : 'bg-gray-50 border border-gray-200'
+                          } ${needsExtraSpacing ? 'mt-4' : ''}`}
+                        >
+                          <span className="font-mono">
+                            {tokenData.token.replace(/ /g, '·')}{tokenData.isActual ? ' (actual)' : ''}
+                          </span>
+                          <span className="font-mono">
+                            {formatProbability(tokenData.probability)}
+                          </span>
+                        </div>
+                      );
+                    });
                   })()}
                 </div>
               </div>
