@@ -41,7 +41,8 @@ const GPT2CompressionWidget: React.FC = () => {
 
   const API_URL = "https://vaclavrozhon-probabilistic-lenses-widgets.hf.space";
 
-  // Load default compression result from file
+  // Load default compression result from file for memoization
+  // This avoids calling the HuggingFace API when using the default text
   const [defaultCompressionResult, setDefaultCompressionResult] = useState<CompressionResult | null>(null);
 
   useEffect(() => {
