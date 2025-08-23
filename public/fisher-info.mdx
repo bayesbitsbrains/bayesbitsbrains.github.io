@@ -26,7 +26,7 @@ $$
 D((0.5 + \eps, 0.5 - \eps), (0.5, 0.5)) \approx 2\eps^2
 $$
 
-The intuition we should take from this is that each time we flip a coin, we get around "$2\eps^2$ bits of information" about whether the coin is fair or biased by $\eps$. Intuitively, once we get around 1 bit of information, we begin to be able to say which of the two coins we are looking at. We conclude that the number of trials we need to estimate the bias of a coin should scale like $n = 1/\eps^2$. 
+The intuition we should take from this is that each time we flip a coin, we get around "$2\eps^2$ nats of information" about whether the coin is fair or biased by $\eps$. <Footnote>A nat (natural unit of information) is the unit of information when using natural logarithm in the KL divergence formula, as opposed to bits which use base-2 logarithm. 1 nat ≈ 1.44 bits.</Footnote> Intuitively, once we get around 1 nat of information, we begin to be able to say which of the two coins we are looking at. We conclude that the number of trials we need to estimate the bias of a coin should scale like $n = 1/\eps^2$. 
 
 ## Fisher information
 

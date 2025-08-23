@@ -31,7 +31,7 @@ export default function Sidebar({ className = "", onLinkClick, style }: SidebarP
 
   return (
     <nav className={`${styles.sidebar} ${className}`} style={style}>
-      <div className="mb-6">
+      <div className="mb-6 flex-shrink-0">
         <Link href="/" onClick={onLinkClick} className="text-2xl font-semibold text-neutral-900 hover:text-neutral-600 transition-colors">
           {TITLE}
         </Link>

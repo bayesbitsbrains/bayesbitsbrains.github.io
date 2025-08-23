@@ -58,6 +58,7 @@ import BuildYourOwnCodeWidget from "@/components/widgets/BuildYourOwnCodeWidget"
 import CoinFlipRandomnessWidget from "@/components/widgets/CoinFlipRandomnessWidget";
 import KLCalculatorWidget from "@/components/widgets/KLCalculatorWidget";
 import KLAsymmetryVisualizerWidget from "@/components/widgets/KLAsymmetryVisualizerWidget";
+import KLDivergenceSimplex from "@/components/widgets/KLDivergenceSimplex";
 import BICModelSelectionWidget from "@/components/widgets/BICModelSelectionWidget";
 import PolynomialRegressionWidget from "@/components/widgets/PolynomialRegressionWidget";
 import ParametricCurveWidget from "@/components/widgets/ParametricCurveWidget";
@@ -219,6 +220,7 @@ export async function getMdxContent(path: string) {
       CoinFlipRandomnessWidget: CoinFlipRandomnessWidget,
       KLCalculatorWidget: KLCalculatorWidget,
       KLAsymmetryVisualizerWidget: KLAsymmetryVisualizerWidget,
+      KLDivergenceSimplex: KLDivergenceSimplex,
       BICModelSelectionWidget: BICModelSelectionWidget,
       PolynomialRegressionWidget: PolynomialRegressionWidget,
       ParametricCurveWidget: ParametricCurveWidget,

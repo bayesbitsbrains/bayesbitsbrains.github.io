@@ -7,8 +7,8 @@ export const TITLE_ABBR = "BBB";
 // Part structure
 export const PARTS = [
   {
-    name: "Intro",
-    chapters: [["Riddles", "00-riddles"]],
+    name: "Intro", 
+    chapters: [["Riddles", ""]],
   },
   {
     name: "Part I: Foundations",

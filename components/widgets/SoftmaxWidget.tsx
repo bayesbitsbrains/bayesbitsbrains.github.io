@@ -13,13 +13,14 @@ type Props = {
 };
 
 const SoftmaxWidget: React.FC<Props> = ({
-  values = [1, 3, 2, 5, 4],
+  values: initialValues = [1, 3, 2, 5, 4],
   title = "Softmax Distribution",
   minLambda = -3,
   maxLambda = 3,
   initialLambda = 0.5,
 }) => {
   const [lambda, setLambda] = useState(initialLambda);
+  const [values, setValues] = useState(initialValues);
   const [containerWidth, setContainerWidth] = useState(400);
 
   useEffect(() => {
@@ -30,6 +31,16 @@ const SoftmaxWidget: React.FC<Props> = ({
     window.addEventListener('resize', updateWidth);
     return () => window.removeEventListener('resize', updateWidth);
   }, []);
+
+  // Handle value change for input boxes
+  const handleValueChange = (index: number, newValue: string) => {
+    const num = parseFloat(newValue);
+    if (!isNaN(num)) {
+      const newValues = [...values];
+      newValues[index] = num;
+      setValues(newValues);
+    }
+  };
 
   // Calculate softmax probabilities
   const probabilities = useMemo(() => {
@@ -149,41 +160,67 @@ const SoftmaxWidget: React.FC<Props> = ({
       </div>
 
       {/* Formula display */}
-      <div className="bg-blue-50 p-3 rounded text-center">
+      <div className="bg-white p-4 rounded-lg border text-center">
         <BlockMath
           math={`p_i = \\frac{\\exp(${lambda.toFixed(2)} \\cdot a_i)}{\\sum_j \\exp(${lambda.toFixed(2)} \\cdot a_j)}`}
         />
       </div>
 
       {/* Lambda slider */}
-      <div className="bg-white rounded-lg p-4 space-y-3">
-        <div className="text-center text-sm font-medium text-gray-700">
-          <strong>Lambda</strong> (λ) = {lambda.toFixed(1)}
+      <div className="bg-white p-4 rounded-lg border">
+        <div className="space-y-2">
+          <div className="text-center text-sm text-gray-700">
+            <strong>λ = {lambda.toFixed(1)}</strong>
+          </div>
+          <div className="relative">
+            <input
+              type="range"
+              min={minLambda}
+              max={maxLambda}
+              step={0.1}
+              value={lambda}
+              onChange={(e) => setLambda(Number(e.target.value))}
+              className="w-full h-3 bg-gradient-to-r from-red-200 via-yellow-200 to-green-200 rounded-lg appearance-none cursor-pointer"
+              style={{
+                background: `linear-gradient(to right, 
+                  #fecaca 0%, 
+                  #fef3c7 50%, 
+                  #d1fae5 100%)`
+              }}
+            />
+            <div className="flex justify-between text-xs text-gray-500 mt-1">
+              <span>{minLambda}</span>
+              <span>0</span>
+              <span>{maxLambda}</span>
+            </div>
+          </div>
+          <div className="text-xs text-center text-gray-600">← argmin | uniform distribution | argmax →</div>
         </div>
-        <div className="relative">
-          <input
-            type="range"
-            min={minLambda}
-            max={maxLambda}
-            step={0.1}
-            value={lambda}
-            onChange={(e) => setLambda(Number(e.target.value))}
-            className="w-full h-4 bg-gradient-to-r from-red-200 via-yellow-200 to-green-200 rounded-lg appearance-none cursor-pointer"
-            style={{
-              background: `linear-gradient(to right, 
-                #fecaca 0%, 
-                #fef3c7 50%, 
-                #d1fae5 100%)`,
-              minHeight: '44px'
-            }}
-          />
-          <div className="flex justify-between text-xs text-gray-500 mt-1">
-            <span>{minLambda}</span>
-            <span>0</span>
-            <span>{maxLambda}</span>
+      </div>
+
+      {/* Input boxes for values */}
+      <div className="bg-white p-4 rounded-lg border">
+        <div className="space-y-2">
+          <div className="text-center text-sm font-medium text-gray-700">
+            Input Values (a₁ to a₅)
+          </div>
+          <div className="grid grid-cols-5 gap-2">
+            {values.map((value, index) => (
+              <div key={index} className="space-y-1">
+                <label className="text-xs text-gray-600 text-center block">
+                  a<sub>{index + 1}</sub>
+                </label>
+                <input
+                  type="number"
+                  value={value}
+                  onChange={(e) => handleValueChange(index, e.target.value)}
+                  className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  step="0.1"
+                />
+              </div>
+            ))}
           </div>
         </div>
-        <div className="text-xs text-center text-gray-600">← argmin | uniform distribution | argmax →</div>
       </div>
 
     </div>

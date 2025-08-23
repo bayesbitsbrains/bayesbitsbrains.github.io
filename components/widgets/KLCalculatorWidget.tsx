@@ -154,7 +154,7 @@ export default function KLCalculatorWidget() {
       <h3 className="text-xl font-semibold text-center text-gray-800">KL & Entropy Calculator</h3>
 
       <div className="text-sm text-gray-600 text-center">
-        Computes KL and entropy for the letter frequency distributions (case insensitive, English letters only)
+        Guess which distribution over letters has bigger entropy. Also, which of the two KL divergences <KatexMath math="D(p_1, p_2), D(p_2, p_1)" /> is bigger? (case insensitive, English letters only)
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -323,19 +323,16 @@ export default function KLCalculatorWidget() {
           <div className="p-2 sm:p-4 bg-gray-50 rounded-lg border border-gray-200">
             <h5 className="text-base font-semibold text-gray-800 mb-3">Understanding the Results</h5>
             <div className="space-y-3 text-sm text-gray-700">
-              <p>
-                First, we can see that the mixed file has larger entropy. This makes sense! Every language uses
-                different letters with different frequencies. For example, <KatexMath math="\mathsf{z}" /> is quite uncommon in English,
-                but pretty common in German. If we pool different languages together, the distribution of frequencies is
-                becoming &lsquo;smoother&rsquo;, more uniform. Hence, larger entropy. Admittedly, it&rsquo;s only
-                slightly larger, since increasing the probability of <KatexMath math="\mathsf{z}" /> from 0.0003 to 0.02 is not really
-                increasing the entropy that much.
-              </p>
-              <p>
-                For similar reasons, KL between <KatexMath math="p_1" /> and <KatexMath math="p_2" /> is smaller than vice versa. Remember, KL is all about
-                probability <em>ratios</em>, not differences. Since <KatexMath math="p_1" />(<KatexMath math="\mathsf{e}" />) = 0.12 and <KatexMath math="p_2" />(<KatexMath math="\mathsf{e}" />) = 0.11, <KatexMath math="p_2" /> is a good
-                model of <KatexMath math="p_1" />. However, since <KatexMath math="p_2" />(<KatexMath math="\mathsf{z}" />) = 0.02 and <KatexMath math="p_1" />(<KatexMath math="\mathsf{z}" />)=0.0003, <KatexMath math="p_1" /> is a crappy model of <KatexMath math="p_2" />.
-              </p>
+<p>
+  First, the mixed file has slightly larger entropy. This makes sense: different languages use different letters at different frequencies. For example, <KatexMath math="\mathsf{z}" /> is rare in English but fairly common in German. Pooling languages together smooths the frequency distribution, making it more uniform — and thus increasing entropy. The effect is small, though; raising the probability of <KatexMath math="\mathsf{z}" /> from 0.0003 (English) to 0.02 (mixed) doesn’t boost entropy much.
+</p>
+<p>
+  For similar reasons, KL from <KatexMath math="p_1" /> to <KatexMath math="p_2" /> is smaller than the reverse. KL is about probability <em>ratios</em>, not differences. Example: <KatexMath math="p_1(\mathsf{e}) = 0.12" /> vs. <KatexMath math="p_2(\mathsf{e}) = 0.11" />, giving <KatexMath math="\log_2 \frac{p_1(\mathsf{e})}{p_2(\mathsf{e})} \approx 0.1" />. That is, seeing <KatexMath math="\mathsf{e}" /> gives us only a sliver of evidence that we are reading the English and not the mixed text. In general, <KatexMath math="D(p_1, p_2)" /> stays pretty small.
+</p>
+<p>
+  A bigger contrast: <KatexMath math="p_2(\mathsf{z}) = 0.02" /> vs. <KatexMath math="p_1(\mathsf{z}) = 0.0003" />, giving <KatexMath math="\log_2 \frac{p_2(\mathsf{z})}{p_1(\mathsf{z})} \approx 6" />. Seeing <KatexMath math="\mathsf{z}" /> is a super strong evidence for the mixed text! But since <KatexMath math="\mathsf{z}" /> appears only 2% of the time in that text, <KatexMath math="D(p_2, p_1)" /> is in the end only modestly larger than <KatexMath math="D(p_1, p_2)" />.
+</p>
+
             </div>
           </div>
         </div>
