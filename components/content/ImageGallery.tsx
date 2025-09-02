@@ -28,15 +28,25 @@ export default function ImageGallery({
   width,
   compactCaption = false,
 }: ImageGalleryProps) {
-  // Special handling for single image with fullWidth
-  // Also allow custom width for single-image case
-  if (images.length === 1 && (fullWidth || width)) {
+  // Special handling for single image
+  if (images.length === 1) {
     const image = images[0];
     return (
       <div className="my-6">
         <div className="w-full flex justify-center">
-          <div className="rounded shadow-sm overflow-hidden bg-white" style={width ? { width } : { maxWidth: "100%" }}>
-            <ExpandableImage src={image.src} alt={image.alt} className="max-w-full h-auto object-contain block" />
+          <div className="inline-block rounded shadow-sm overflow-hidden bg-white" style={
+            width ? { width } : 
+            fullWidth ? { width: "100%" } : 
+            {}
+          }>
+            <ExpandableImage 
+              src={image.src} 
+              alt={image.alt} 
+              className="block w-auto h-auto" 
+              style={
+                !width && !fullWidth ? { maxHeight: `${height * 1.5}px`, maxWidth: "90%" } : {}
+              }
+            />
           </div>
         </div>
         {/* Markdown caption below */}

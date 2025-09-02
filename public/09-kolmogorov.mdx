@@ -137,6 +137,56 @@ If you look at above example, you can notice that we did not really use that the
 
 The case of a uniform distribution is the most interesting one: it tells us that most <Math math="n" />-bit strings can't really be compressed, since their Kolmogorov complexity is close to <Math math="n" />! In fact, <Math math="n" />-bit strings with Kolmogorov complexity <Math math="\ge n" /> are called _Kolmogorov random_, to highlight the insight that __bits are random if we can't compress them__. 
 
+
+
+<Expand headline="Long walks">
+<ImageGallery
+  images={[
+    { src: "/fig/kolmogorov.jpg", alt: "Andrey Kolmogorov" },
+  ]}
+  width="80%"
+  caption={"Kolmogorov"}
+/>
+
+Kolmogorov didn’t just lecture; he walked. Students remember “seminars” that were actually day‑long hikes—40 km around Bolshevo, the Klyaz’ma, later Komarovka—arguing mathematics the whole way and then ending with dinner at the dacha.
+
+Before those walks made him legendary as a mentor, he had already made probability a rigorous part of mathematics. In 1933 he wrote down the measure‑theoretic axioms of probability, putting the subject on the same footing as analysis. The axioms tell you how probabilities must behave; but they don’t give that much of an intuition for what probability actually _is_, where it is coming from. 
+
+In the 1960s, Kolmogorov turned to that question. His move was algorithmic: call an object simple if it has a short description; call it random when no description is much shorter than the object itself. In his shorthand: **random = incompressible**.
+
+
+<Expand advanced={true} headline = "What the hell is randomness?"> 
+
+If there is a person we can call the 'father of probability theory', it would be [Pierre Laplace](https://en.wikipedia.org/wiki/Pierre-Simon_Laplace). Laplace lived around the year 1800. At that time, everybody, Laplace included, was amazed by how Newton seemingly solved physics (~1700) by postulating a few simple laws that seemed to describe pretty much all there is. In fact, Laplace himself is the author of [Laplace’s demon](https://en.wikipedia.org/wiki/Laplace%27s_demon) — a thought experiment based on the idea that if you knew all the info about the present state of the universe, you could deterministically simulate it and know all there is about the future. 
+
+Yet Laplace spent a lot of his time developing probability theory <Tooltip tooltip="![chesterton](/fig/chesterton2.jpg)">exactly</Tooltip> because he believed in the deterministic nature of the world. He understood that we can never know all there is to the world anyway. Hence, we need a language — probability — to talk about our epistemic uncertainty.  
+
+When [Solomonoff](https://en.wikipedia.org/wiki/Ray_Solomonoff) and [Kolmogorov](https://en.wikipedia.org/wiki/Andrey_Kolmogorov) developed Kolmogorov complexity,<Footnote>Even though 'Kolmogorov complexity' stuck, Solomonoff was first by a couple of years. We are talking ~1960s.</Footnote> they came from a similar angle. At the heart of the matter, probability is not about whether our world is governed by deterministic Newtonian laws, or what’s your favorite interpretation of quantum physics. It’s about modelling unpredictability. 
+
+This intuition is extremely helpful in computer science. Algorithms frequently want to work with random bits — but how do we get them fast? In practice, we typically use a [_pseudorandom generator_](https://en.wikipedia.org/wiki/Pseudorandom_generator): we ask the operating system for a [_seed_](https://en.wikipedia.org/wiki/Random_seed) of perhaps 64 “truly random” bits (e.g., from hardware sensors). The pseudorandom generator is then a short piece of code that takes those 64 bits as input and repeatedly applies obscure mathematical operations to generate many more **random‑looking** bits. 
+
+How do we even talk about those pseudorandom bits? As they are a deterministic function of the initial seed, they are not random at all from the perspective of classical probability theory. However, with Kolmogorov complexity, we can generalize “a string is random if we can’t compress it” to: **a string looks random to an algorithm \(A\) if \(A\) can’t compress it**. 
+
+A bit more concretely: for a pseudorandom generator, we test whether it **fools** certain statistical tests, meaning the test can’t reliably distinguish whether the input is truly random or comes from the generator. The string is then _pseudorandom_ for such a fooled test — the test can’t find patterns it could use to compress it.   
+
+You can try this in the widget below. It implements four simple \(k\)-mer statistical tests — based on counting frequencies of \(k\) consecutive flips for \(k\in\{1,2,3,4\}\). Let’s see how long you can flip coins before the \(k=4\) test flags you — getting to 100 flips is not so easy!
+
+If a test flags your sequence of \(n\) flips as nonrandom, it means some patterns are too rare / too frequent, and the test could in principle compress your \(n\) flips to fewer than \(n\) bits. 
+
+<CoinFlipRandomnessWidget />
+
+Here are examples of how pseudorandomness helps us think about all kinds of stuff:
+
+- [Mathematicians believe](https://en.wikipedia.org/wiki/Normal_number) that the digits of <Math math="\pi" /> fool all fixed \(k\)-mer counting tests. But digits of <Math math="\pi" /> are not a very good pseudorandom generator: an algorithm that “tests against <Math math="\pi" />” is not fooled. 
+- Typical pseudorandom generators fool all kinds of basic statistical tests.<Footnote>See e.g. Chapter 3 in [AoCP](https://en.wikipedia.org/wiki/The_Art_of_Computer_Programming).</Footnote> These sequences thus look random to those tests. But they fail to look random to algorithms that can use exponential time (such algorithms can brute‑force all the seeds). 
+- In cryptography theory, we like to assume there are cryptographically secure pseudorandom generators that fool all statistical tests running in polynomial time. We don’t know whether such generators exist, but we have practical implementations that fool all known reasonably fast tests. 
+- The classic [overhand shuffle](https://en.wikipedia.org/wiki/Shuffling) sucks and is not used in casinos. But if no player is trying to take advantage of it, the game being played typically looks the same as if the cards were shuffled properly.  
+- Is a coin flip really random or not? With precise measuring apparatus, you could predict the result by measuring the coin as it is being flipped. Without it, you can’t. Thus, the result of the coin flip can be called random (unless you have the apparatus). 
+- In general, when people discuss “what is probability,” they often end up at quantum‑physics interpretations. I prefer a down‑to‑earth view: **Randomness is a limit of pseudorandomness** — we say a bit sequence is random when we can safely disregard the existence of any feasible algorithm that could predict or compress it. 
+
+</Expand>
+</Expand>
+
 <Expand advanced={true} headline="Long runs">
 Think of a long <Math math="n" />-bit string generated by flipping a fair coin <Math math="n" /> times. What is the longest consecutive run of heads in such a string? You can use classical tools of probability theory like [Chernoff's inequality](https://en.wikipedia.org/wiki/Chernoff_bound) to compute that with high probability, the string won't contain runs of length more than <Math math="O(\log n)" />. 
 
@@ -155,6 +205,23 @@ The true power of this view is that we can now understand why random strings can
 
 
 ## Solomonoff prior
+
+<Expand headline="Dartmouth Summer Research Project">
+<ImageGallery
+images={[
+{ src: "/fig/mccarthy.jpg", alt: "John McCarthy" },
+{ src: "/fig/minsky.jpg", alt: "Minsky" },
+{ src: "/fig/solomonoff.jpg", alt: "Ray Solomonoff" },
+]}
+width="80%"
+caption={"Ray Solomonoff, John McCarthy, Marvin Minsky"}
+/>
+
+In the summer 1956, John McCarthy invited a small group to Darthmouth to think about the so-called "Artificial Intelligence" -- the legendary [Dartmouth workshop](https://en.wikipedia.org/wiki/Dartmouth_workshop) A bunch of people visited, but only three of them stayed the whole time: McCarthy, Marvin Minsky, and Ray Solomonoff. <Footnote>It's the Solomonoff's notes that give us quite precise idea about happened in that workshop. </Footnote> Solomonoff brought a memo about an “inductive inference machine,” then kept worrying the same question for years: how should we weigh competing hypotheses? A few years later, this led him to the invenion of Kolmogorov complexity (around the same time as Kolmogorov), as well as the Solomonoff prior that shows up next. 
+</Expand>
+
+
+
 
 
 Let's finish this minicourse where we started—with our Bayesian detective. 
@@ -213,6 +280,14 @@ The following widget shows how these hypotheses fare on the data: <Footnote>In r
 
 <Expand advanced={true} headline = "🐘 Von Neumann's elephant">
 
+<ImageGallery
+images={[
+{ src: "/fig/neumann.gif", alt: "John von Neumann" },
+]}
+caption={"John von Neumann"}
+/>
+
+
 [John von Neumann](https://en.wikipedia.org/wiki/John_von_Neumann) [allegedly](https://en.wikipedia.org/wiki/Von_Neumann%27s_elephant) said "With four parameters I can fit an elephant, and with five I can make him wiggle his trunk." 
 This quote is about [_overfitting_](https://en.wikipedia.org/wiki/Overfitting): adding a few more parameters to a model can make it fit your data pretty well, even if the data is a silhouette of an elephant. 
 
@@ -253,36 +328,6 @@ That is, using Solomonoff prior means that we are simply supposed to __prefer th
 
 My favorite application of Kolmogorov complexity and Solomonoff prior are actually very theoretical. If you like to ask yourself questions like what is randomness? Or how do we get knowledge of stuff?, you might like the following. 
 
-<Expand advanced={true} headline = "What the hell is randomness?"> 
-
-If there is a person who we can call the 'father of probability theory', it would be [Pierre Laplace](https://en.wikipedia.org/wiki/Pierre-Simon_Laplace). Laplace lived around the year 1800. At this point in time, everybody, Laplace included, was amazed by how Newton seemingly solved physics (~1700) by postulating a few simple laws that seemingly described pretty much all there is. In fact, Laplace himself is an author of [Laplace demon](https://en.wikipedia.org/wiki/Laplace%27s_demon) - a thought experiment based on the idea that if you knew all the info about the present-state universe, you could deterministically simulate it and know all there is about the future. 
-
-Yet, Laplace spent a lot of his time developing probability theory <Tooltip tooltip="![chesterton](/fig/chesterton2.jpg)">exactly</Tooltip> because he believed in the deterministic nature of the world. He understood that we can never know all there is to the world anyway. Hence, we need a language - probability - to talk about our epistemic uncertainty.  
-
-When [Solomonoff](https://en.wikipedia.org/wiki/Ray_Solomonoff) and [Kolmogorov](https://en.wikipedia.org/wiki/Andrey_Kolmogorov) developed Kolmogorov complexity,<Footnote>Even though 'Kolmogorov complexity' stuck, Solomonoff was first by a couple of years. We are talking ~1960s. </Footnote> they came from similar angle. At the heart of the matter, probability is not about whether our world is governed by deterministic Newton laws, or what's your favorite interpretation of quantum physics. It's about modelling unpredictability. 
-
-This kind of intuition is extremely helpful in computer science. Algorithms frequently want to work with random bits, but how do we get them fast? In practice, we typically use a [_pseudorandom generator_](https://en.wikipedia.org/wiki/Pseudorandom_generator): We ask the operating system for a [_seed_](https://en.wikipedia.org/wiki/Random_seed) of perhaps 64 'truly random' bits, that the system gets by e.g. measuring some hardware sensor. The pseudorandom generator is then a short piece of code that gets the 32 bits as the input and it repeatedly applies obscure mathematical operations to it to generate more randomly looking bits. 
-
-How do we even talk about those pseudorandom bits? As they are a deterministic function of the initial seed, they are not random at all from the perspective of classical probability theory. However, if we understand Kolmogorov complexity, we can generalize the fact 'a string is random if we can't compress it' to say that 'a string looks random to an algorithm <Math math="A" /> if <Math math="A" /> can't compress it'. 
-
-A bit more concretely, for a pseudorandom generator, we can test whether it fools certain statistical tests, meaning that the test can't reliably separate whether the input is truly random, or coming from the generator. The string is then _pseudorandom_ for such a fooled test, the test can't find any patterns in it that it could use to compress it.   
-
-You can try this concept in the following widget. It implements four simple <Math math="k" />-mer statistical tests - those are based on counting frequencies of <Math math="k" /> consecutive flips for <Math math="k \in \{1,2,3,4\}" />. Let's see how long you can flip coins, until you flag <Math math="k = 4" /> - getting 100 flips is not so easy! 
-
-If a test flags your sequence of <Math math="n" /> flips as nonrandom, it means that some patterns are too rare / too frequent and the statistical tests could in principle compress your <Math math="n" /> flips to less than <Math math="n" /> bits. 
-
-<CoinFlipRandomnessWidget />
-
-Here's examples of how pseudorandomness helps to think about all kinds of stuff:
-
-- [Mathematicians believe](https://en.wikipedia.org/wiki/Normal_number) that digits of <Math math="\pi" /> fool all <Math math="k" />-mer counting tests. But digits of <Math math="\pi" /> are not a very good pseudorandom generator: an algorithm that 'tests against <Math math="\pi" />' is not fooled. 
-- Typical pseudorandom generator fools all kinds of basic statistical tests.<Footnote>See e.g. Chapter 3 in [AoCP](https://en.wikipedia.org/wiki/The_Art_of_Computer_Programming). </Footnote> These sequences thus look random to those tests. But they fail to look random to algorithms that can use exponential amount of time (such algorithms can bruteforce all the seeds). 
-- in cryptography theory, we like to assume that there are cryptographically secure pseudorandom generators that fool all statistical tests running in polynomial time. We don't know whether such an algorithm exists, but we have practical implementations that fool all known reasonably-fast tests. 
-- Classic [overhand shuffle](https://en.wikipedia.org/wiki/Shuffling) sucks and is not used in casinos. But if no player is trying to take advantage of it, the game being played typically looks the same as if the cards were shuffled properly.  
-- Is a coin flip really random or not? If you have precise measuring apparatus, you could predict the result by measuring the coin as it is being flipped. But if you don't have the apparatus, you can't predict it. Thus, the result of the coin flip can be called random (unless you have the apparatus). 
-- In general, whenever it comes to the discussion of 'what is probability', people often end up talking about quantum physics interpretations and physics in general. But I like a more down-to-earth approach: Randomness is a limit of pseudorandomness - we say that a bit sequence is random whenever we believe that we can safely disregard the existence of an algorithm that could predict/compress it. 
-</Expand>
-
 <Expand advanced={true} headline = "Philosophy">
 
 <ImageGallery 
@@ -291,12 +336,13 @@ Here's examples of how pseudorandomness helps to think about all kinds of stuff:
     { src: "/fig/William_of_Ockham.png", alt: "William of Ockham" },
     { src: "/fig/hume.jpg", alt: "David Hume" }
   ]}
-  caption={`[Epicurus](https://en.wikipedia.org/wiki/Epicurus) (~300 BC) is the father of Epicureanism - a school of thought which is a kind of like an early atheism. [William of Ockham](https://en.wikipedia.org/wiki/William_of_Ockham) (~1400) was a medieval philosopher, now mostly known for his razor. [David Hume](https://en.wikipedia.org/wiki/David_Hume) (~1750) was an enlightement empiricist, claiming that our reasoning should be traceable back to some experience with the world - That's why he was super interested in the problem of induction! `}
+  caption={`[Epicurus](https://en.wikipedia.org/wiki/Epicurus) (~300 BC) is the father of Epicureanism — a school of thought that is kind of like an early atheism. [William of Ockham](https://en.wikipedia.org/wiki/William_of_Ockham) (~1400) was a medieval philosopher, now mostly known for his razor. [David Hume](https://en.wikipedia.org/wiki/David_Hume) (~1750) was an Enlightenment empiricist, claiming that our reasoning should be traceable back to experience with the world — that's why he was super interested in the problem of induction! `}
 />
 
-Imagine a special case of Solomonoff induction where each observation either is predicted by the model (likelihood = 1) or is not (likelihood = 0). Then, Solmonoff induction consists of crossing out models incompatible with data. The posterior distribution over the non-crossed models is very similar to the original Solomonoff prior: each hypothesis <Math math="q" /> has probability proportional to <Math math="2^{-K(q)}" />. This generalizes [Occam's razor](https://en.wikipedia.org/wiki/Occam%27s_razor) that says that we should prefer simple hypotheses, and [Epicurus principle](https://en.wikipedia.org/wiki/Epicurus#Principle_of_Multiple_Explanations) that says that if more hypothesis explain the data, we should not disregard any of them. 
+Imagine a special case of Solomonoff induction where each observation is either predicted by the model (likelihood = 1) or is not (likelihood = 0). Then Solomonoff induction is just crossing out models incompatible with the data. The posterior distribution over the non‑crossed‑out models is essentially the Solomonoff prior restricted there: each hypothesis <Math math="q" /> has probability proportional to <Math math="2^{-K(q)}" />. This neatly combines [Occam’s razor](https://en.wikipedia.org/wiki/Occam%27s_razor) (prefer simple hypotheses) with [Epicurus’ principle](https://en.wikipedia.org/wiki/Epicurus#Principle_of_Multiple_Explanations) (if multiple hypotheses explain the data, don’t discard any of them). 
 
-Years later, an enlightment philosopher [David Hume](https://en.wikipedia.org/wiki/David_Hume) was struggling with [the problem of induction](https://en.wikipedia.org/wiki/Problem_of_induction). Basically: Even if we solve physics and find a perfectly good model of it <Math math="q" /> that fits everything that happened so far, what about a model <Math math="q'" /> that is the same as <Math math="q" /> until tomorrow, but does some stupid rubbish afterwards? Hume was an empiricist and held that there's no good rational justification for preferring <Math math="q" /> over <Math math="q'" />. But Solomonoff induction is a pretty good "rational" answer, if you ask me!<Footnote>Of course, whether this is a satisfying answer depends on how we justified using the Solomonoff prior in the first place. I kind of pulled it out of a hat, but there are [nice](http://www.vetta.org/documents/Machine_Super_Intelligence.pdf) [theorems](https://link.springer.com/book/10.1007/978-0-387-49820-1) showing that it's in a sense a unique probability distribution. </Footnote> If you use that prior, you get Occam's razor: even if both hypotheses fit the data, the simpler one - <Math math="q" /> - is much more probable. 
+Years later, an Enlightenment philosopher [David Hume](https://en.wikipedia.org/wiki/David_Hume) struggled with [the problem of induction](https://en.wikipedia.org/wiki/Problem_of_induction). Basically: even if we solve physics and find a perfectly good model <Math math="q" /> that fits everything so far, what about a model <Math math="q'" /> that is the same as <Math math="q" /> until tomorrow, but does some stupid rubbish afterwards? Hume, an empiricist, held that there’s no good rational justification for preferring <Math math="q" /> over <Math math="q'" />. But Solomonoff induction is a pretty good “rational” answer, if you ask me!<Footnote>Of course, whether this is satisfying depends on how we justified using the Solomonoff prior in the first place. I kind of pulled it out of a hat, but there are [nice](http://www.vetta.org/documents/Machine_Super_Intelligence.pdf) [theorems](https://link.springer.com/book/10.1007/978-0-387-49820-1) showing that it’s, in a sense, a unique probability distribution.</Footnote> If you use that prior, you get Occam’s razor: even if both hypotheses fit the data, the simpler one — <Math math="q" /> — is much more probable. 
+
 </Expand>
 
 
