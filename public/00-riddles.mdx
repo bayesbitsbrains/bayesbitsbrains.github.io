@@ -102,7 +102,7 @@ This gives you a fairly stable estimate that shouldn't change much if you do it 
   ]}
   correctIndices={[0, 1, 2]}
   feedbackType="all-show"
-  explanation={<>In a sense, they're all correct! Well, more like they're all defensible options from the viewpoint of frequentist statistics. Using <Math math="1/(n-1)" /> gives you the <a href="https://en.wikipedia.org/wiki/Bias_of_an_estimator">unbiased estimate</a>, <Math math="1/n" /> gives the <a href="https://en.wikipedia.org/wiki/Maximum_likelihood_estimation">maximum likelihood estimate</a>, and <Math math="1/(n+1)" /> minimizes <a href="https://en.wikipedia.org/wiki/Mean_squared_error">the mean squared error</a> between your guess and the truth.<br/><br/>But here's the thing: out of all these ways to estimate stuff, only maximum likelihood became the rockstar of machine learning. Using KL divergence, <a href="04-minimizing#mle">we'll see</a> why maximum likelihood is so special and what makes it tick.</>}
+  explanation={<>In a sense, they're all correct! Well, more like they're all defensible options from the viewpoint of frequentist statistics. Using <Math math="1/(n-1)" /> gives you the <a href="https://en.wikipedia.org/wiki/Bias_of_an_estimator">unbiased estimate</a>, <Math math="1/n" /> gives the <a href="https://en.wikipedia.org/wiki/Maximum_likelihood_estimation">maximum likelihood estimate</a>, and <Math math="1/(n+1)" /> minimizes <a href="https://en.wikipedia.org/wiki/Mean_squared_error">the mean squared error</a> between your guess and the truth.<br/><br/>But here's the thing: out of all these ways to estimate stuff, only maximum likelihood became the rockstar of machine learning. <a href="04-minimizing#mle">We'll see</a> why maximum likelihood is so special and what makes it tick.</>}
 />
 </RiddleStatement>
 
@@ -135,9 +135,7 @@ Your LLM tries to guess this distribution with its own guess $q$. We need to mea
 
 <RiddleStatement id="xkcd">
 
-<a href="https://www.explainxkcd.com/wiki/index.php/1159:_Countdown" target="_blank" rel="noopener noreferrer">
-  <ImageGallery images={[{src: "00-introduction/countdown.png", alt: "Are the odds in our favor?"}]} fullWidth={true} />
-</a>
+<ImageGallery images={[{src: "00-introduction/countdown.png", alt: "Are the odds in our favor?"}]} fullWidth={true} />
 
 So... are the odds in our favor?
 
@@ -145,7 +143,9 @@ So... are the odds in our favor?
   options={["Yes", "No", "depends"]}
   correctIndices={[1, 2]}
   explanation={<>
-  <p>The guy in the hat seems to be confident that at least one digit behind the picture is not zero. If those digits are uniformly random, it's a safe assumption. However, we will use the maximum entropy principle to justify a different probabilistic model and confirm our gut feeling: Given all the zeros we can see, it's actually very plausible that all other hidden digits are zeros too.</p>
+  <p>
+  The guy in the hat [in that joke](https://xkcd.com/1159/) seems to be confident that at least one digit behind the picture is not zero. If those digits are uniformly random, it's a safe assumption. However, we will justify a different probabilistic model and confirm our gut feeling: Given all the zeros we can see, it's actually very plausible that all other hidden digits are zeros too!
+  </p>
 
   <p>More on that <a href="05-max_entropy#xkcd">later</a>; We will use the widget below to confirm that there's a huge difference between seeing "00002382" and just "2382".</p>
 
@@ -176,11 +176,11 @@ As we go through the mini-course, we'll revisit each puzzle and understand what'
 
 Here are some questions we will explore. 
 
-- What's KL divergence, entropy and cross-entropy? What's the intuition behind them? (chapters 1-3)
-- Where do the machine-learning principles of maximum likelihood & maximum entropy come from? (chapters 4-5)
-- Why do we use logits, softmax, and Gaussian all the time? (chapter 5)
+- What's KL divergence, entropy and cross-entropy? What's the probabilistic intuition behind them? (chapters 1-3)
+- Where do powerful principles like maximum likelihood & entropy come from? (chapters 4-5)
+- Why do we use logits, softmax, and Gaussians all the time? (chapter 5)
 - How to set up loss functions? (chapter 6)
-- How compression works and what intuitions it gives about LLMs? (chapter 7)
+- How compression works and what intuitions it gives about LLMs? (chapters 7 and 8)
 
 <Expand headline = "Prerequisites"> <a id="what-we-assume"></a>
 

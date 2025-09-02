@@ -1,6 +1,6 @@
 # Kolmogorov Complexity
 
-In the [previous chapter](08-coding_theory), we saw what entropy tells us about compressing strings. If we treat letters independently, coding theory is especially powerful. But that's an assumption that good compression algorithms can't make. 
+In the [previous chapter](08-coding_theory), we saw how entropy tells us about compressing strings. If we treat letters independently, coding theory is especially powerful. But that's an assumption that good compression algorithms can't make. 
 
 Kolmogorov complexity is the ultimate limit for how much a file can be compressed. This makes it a very powerful theoretical concept to have in our dictionary!
 
@@ -13,26 +13,58 @@ Kolmogorov complexity of an object is the length of its shortest specification. 
 
 ## The Mandelbrot Set
 
-Take a good look at the following picture.<Footnote>Be careful, though, excessive zooming may result in psychedelic experience. </Footnote> It shows a so called Mandelbrot set -- we color each pixel of the plane based on how quickly a certain sequence of numbers shoots to infinity. 
+Take a good look at the following picture.<Footnote>Be careful, though, excessive zooming may result in psychedelic experience. </Footnote> It shows a so-called Mandelbrot set -- we color each pixel of the plane based on how quickly a certain sequence of numbers shoots to infinity. 
 
-If you take print screen of this picture and save it on your disk, it's going to take a few MB. But what if you instead save the _instruction_ for how to create this image? All relevant ingredients are stored in the two boxes below the picture - the formula used to create it, and the coordinates of the plane you are looking at. We are talking about less than kilobyte of memory now. 
+If you take print screen of this picture and save it on your disk, it's going to take a few MB. But what if you instead save the _instruction_ for how to create this image? All relevant ingredients are stored in the two boxes below the picture - the formula used to create it, and a bunch of numbers like the coordinates you are looking at. We are talking about less than kilobyte of memory now. <Footnote>The difference between the two approaches is even larger than megabytes vs kylobytes: The printscreen will look ugly once you zoom out a bit. If we wanted to store the picture in a much better quality, we would need much more than megabytes of memory. But the second approach already "stores" the picture in infinite quality; it already contains all the weird stuff you can see after hours of zooming in. </Footnote>
 
 <MandelbrotExplorer />
 
-This is the gist of Kolmogorov complexity. For any given object - say, represented as a binary string - it's Kolmogorov complexity is the length of the shortest program that prints that string. 
+This is the gist of Kolmogorov complexity. For any given object—represented as a binary string—its Kolmogorov complexity is the length of the shortest program that prints that string. This is the limit on how much a file can be compressed. 
 
 Here are a few more examples. 
 
-- Although digits of $\pi$ have many random-like properties, the Kolmogorov complexity of its first million digits is extremely small. That's because there are some [extremely short](https://cs.uwaterloo.ca/~alopez-o/math-faq/mathtext/node12.html) programs printing it. 
+- Although digits of <Math math="\pi" /> have many random-like properties, the Kolmogorov complexity of its first million digits is extremely small. That's because there are some [extremely short](https://cs.uwaterloo.ca/~alopez-o/math-faq/mathtext/node12.html) programs printing it. 
 - Larger numbers (written down in binary) typically have larger Kolmogorov complexity. But there are huge numbers like <Math math = "3^{3^{3^{3^3}}}" /> with very small Kolmogorov complexity.  
 - Whenever you can ZIP a file to a size of 100MB, you can say that "Kolmogorov complexity of the file is at most 100MB"
-- The Hutter's challenge from [coding theory chapter](08-coding_theory) is about estimating the Kolmogorov complexity of 1GB of Wikipedia
-- If you keep flipping a coin $n$ times, the resulting sequence is likely to have Kolmogorov complexity of about $n$. There's no good way of compressing it.  
+- If you keep flipping a coin <Math math="n" /> times, the resulting sequence is likely to have Kolmogorov complexity of about <Math math="n" />. There's no good way of compressing it.  
 
 
-## Choosing the language
+And here's one more example: The final riddle we haven't discussed yet -- the [Hutter's challenge](00-riddles#wikipedia) is the challenge of upper bounding the Kolmogorov complexity of 1GB of Wikipedia as much as possible. 
 
-There is an awkward problem with the definition of Kolmogorov complexity. It's the length of the shortest program -- but what programming language do we use? Python? C? Assembly? Turing machine? Do we allow languages _and_ libraries? Printing million digits of $\pi$ can then reduce to this:
+
+<RiddleExplanation id="wikipedia">
+Remember, [our Wikipedia riddle](00-riddles#wikipedia) was about Hutter's compression challenge: How far can we compress a single 1GB file of English Wikipedia.<Footnote>Do you wonder which parts of Wikipedia he took? I used that file to generate snippets for the [very first riddle](00-riddles#intelligence). I turns out it's basically large Wikipedia pages on topics that start with 'A'. </Footnote> Hutter is an AI researcher and he started his challenge because he understands very well the topic of this and previous chapter - if you can compress text, you can also predict it, and that implies you have to have relevant knowledge / intelligence.  
+
+There are several approaches of how we might compress text files. Let's go through them and you can see in the next widget how they fare for various types of data. 
+
+- _Baseline_: The standard way to store text files is UTF-8. Simplifying a bit, this format stores each letter using 8 bits. <Footnote>More precisely, [UTF-8](https://en.wikipedia.org/wiki/UTF-8) stores standard ASCII characters in 8 bits. Fancier letters from reasonable alphabets are stored using 16 bits, and emojis like 😀 or hieroglyphs like 𓀀 take 32 bits. 
+UTF-8 is a beautiful example of a good engineering inspired by coding theory: rare stuff gets longer codes. </Footnote>
+
+- _Optimal letter code_: Treat letters as independent, we can encode them using <Math math="H(p)" /> bits per letter on average, where <Math math="p" /> is the distribution of English letter frequencies. In the [Shannon's coding widget](../02-crossentropy#construction), we saw that the entropy of English letter frequencies is around 4.2 bits. So, we can shrink the file by almost __2x__ just by using that different letters have different frequencies. 
+
+- _Zipping_: Standard compression algorithms (like ZIP) implement dictionaries to catch patterns that are often reused in the text. They can compress English text up to a factor around __3x__.  
+
+- _LLMs_: Large Language Models are trained to predict text, hence they compress it. If we disregard the fact that technically speaking, LLM size should count toward the size of the compressed text, they compress English text around __7x__ for old LLMs like GPT-2 and up to perhaps __10x__ for state-of-the-art networks. 
+
+I encourage you to play with the following widget, especially making GPT-2 compress your texts. 🙂
+
+<CompressionWidget />
+
+The best algorithms in Hutter's competition have compressed by a factor of about 9x. But unfortunately, while the challenge is backed by a very deep understanding of the nature of intelligence, the precise parameters of the challenge makes it hard to win it with LLMs. 
+
+Here's the problem: the file to compress has only 1GB. Remember, our LLM-based compression algorithm is only good if we don't count the size of the LLM itself. But that's not allowed in the competition -- we can't just say "decompress this file using GPT-2", we have to add the weights of GPT-2, too, and its size is gigabytes. So this approach would probably win the competition if we were trying to compress the whole Internet, but doesn't really work for the 1GB-challenge. 
+
+</RiddleExplanation>
+
+## Definition of Kolmogorov complexity
+
+Kolmogorov complexity is a great concept that helps me to think clearly about all kinds of things. The unfortunate part is that it takes a bit of time to get over some subtleties. The two main ones: How do we define it formally, and how do we compute it? 
+
+<Expand headline = "Choosing the language">
+
+Kolmogorov complexity of <Math math="x" /> is the length of the shortest program that prints <Math math="x" /> (and then terminates). 
+
+There is an awkward problem with above definition -- what programming language do we use? Python? C? Assembly? Turing machine? Do we allow languages _and_ libraries? Printing million digits of <Math math="\pi" /> can then reduce to this:
 
 ```
 import sympy
@@ -44,92 +76,160 @@ Interpreter is a piece of code that reads a code written in some other language,
 
 In any reasonable programming language, you can write an interpreter for any other reasonable language in at most, say, 1MB. But this means that Kolmogorov complexity of any object is fixed 'up to 1MB': If you have a 100MB Python script that prints the file, then you have a 101MB C, Assembly, Java, ... script printing the same file - just write a code where the first 1MB is an interpreter of Python tasked to execute the remaining 100MB. 
 
-So for large objects (like the 1GB Wikipedia file from Hutter's prize), there's nothing awkward in using Kolmogorov complexity. The flip side is that it's pretty meaningless to argue whether the Kolmogorov complexity of $\pi$ is 200 or 300 bytes. That difference depends on the choice of programming language too much. 
+So for large objects (like the 1GB Wikipedia file from Hutter's prize), there's nothing awkward in using Kolmogorov complexity. The flip side is that it's pretty meaningless to argue whether the Kolmogorov complexity of <Math math="\pi" /> is 200 or 300 bytes. That difference depends on the choice of programming language too much. 
 
-## Kolmogorov vs entropy: $E[K(x)] \approx H(X)$ 
+</Expand>
 
-Both Kolmogorov complexity and entropy are trying to measure something very similar: complexity, information, compression limit. Naturally, there are closely connected. The connection goes like this: If you have a reasonable distribution ($X$) over bit strings and you sample from it ($x$), then the entropy of the distribution is roughly equal to the expected Kolmogorov complexity of the sample. I.e., <Math displayMode={false} math = "E[K(x)] \approx H(X)"/>. 
+<Expand headline = "How do we compute it? ">
+The short answer: we don't. In fact, I am very, very certain that the answer to Hutter's challenge will never be known. 
+
+The problem is that the shortest program printing 1GB of Wikipedia is going to be an absolute mess: If we ran it, it would start doing some absolutely incomprehensible stuff -- allocating tons of memory, rewriting it again and again,... until it would finally stop with the right output.<Footnote>Not really, the algorithm would finish a long time after the heat death of our universe. </Footnote>
+
+More precisely, there are two issues. First, the number of potential candidate solutions to the challenge is exponentially large: Even if the answer to Hutter's riddle is just 10MB, we would still have to check <Math math="2^{10\,000\,000}" /> programs. 
+
+Second, and even worse: checking whether a given program solves Hutter's challenge is incredibly tough: we can't do better than run that program and hope that it terminates at some point. But even programs that do terminate can do so only after [some incredibly large number of steps](https://www.quantamagazine.org/busy-beaver-hunters-reach-numbers-that-overwhelm-ordinary-math-20250822/). 
+
+The problem of computing Kolmogorov complexity is so badly hard that we literally call it uncomputable. 
+
+<Expand advanced={true} headline = "Berry's paradox and uncomputability">
+Here's a fun paradox known as [Berry's paradox](https://en.wikipedia.org/wiki/Berry_paradox). Consider the expression:
+
+<Quote>
+Let <Math math="n^*" /> be the smallest positive integer not definable in less than one hundred letters.
+</Quote>
+
+Presumably, there are only so many numbers you can define with sixty letters, so there should be the smallest 'undefinable' one -- <Math math="n^*" />. But wait a minute, <Math math="n^*" /> is 'defined' by the sentence above! <Footnote>I often hear the following, more cheeky variant of Berry's paradox: I claim that all postive integers are interesting. Why? Well, consider the smallest noninteresting number. But this is a very interesting property! </Footnote>
+
+What should we take of this? To understand a paradox properly, we have to slow down as much as possible and rephrase it as precisely as possible. Here, Kolmogorov complexity is the right language to do so. 
+
+Here's the rephrasing. If you write positive integers in binary, you can see that talking about them is pretty much the same as talking about all binary strings. So let's talk about strings, not numbers. To formalize the part 'definable in less than a hundred letters', let's replace <Math math="60" /> by some number <Math math="C" /> and consider all those binary strings such that their Kolmogorov complexity is at most <Math math="C" />. In fact, let's call this set of strings <Math math="\text{Berry}(C)" />. 
+
+Now, let's assume that there is an algorithm <Math math="A" /> that gets a string <Math math="x" /> as an input an outputs its Kolmogorov complexity <Math math="K(x)" />. We can use <Math math="A" /> to perform the devilish plan of Berry: Imagine the lexicographically smallest string <Math math="x^*" /> that has <Math math="K(x^*) > C" />. This <Math math="x^*" /> is analogous to the integer <Math math="n^*" /> from the original paradox.<Footnote>Or the smallest boring integer from the joke. </Footnote>
+
+On one hand, we have a simple algorithm <Math math="A'" /> that generates <Math math="x^*" />: Just generate all the strings in lexicographical order (<Math math="\mathsf{0}, \mathsf{1}, \mathsf{00}, \dots" />) and run <Math math="A" /> on each one. Stop once you find the first string where <Math math="A" /> returns more than <Math math="C" />. 
+
+On the other hand, we defined <Math math="x^*" /> by <Math math="K(x^*) > C" />. If we choose <Math math="C" /> to be large enough, the two conditions <Math math="K(x^*) > C" /> and <Math math="K(x^*) \le |A'|" /> are in contradiction. 
+
+We can now see where the problem lies. We made one tiny assumption: the existence of an algorithm <Math math="A" /> computing Kolmogorov complexity. So, this assumption must be wrong, there is unfortunately no such algorithm! <Footnote>This result is closely related to [halting problem](https://en.wikipedia.org/wiki/Halting_problem) and [Gödel's incompleteness theorems](https://en.wikipedia.org/wiki/G%C3%B6del%27s_incompleteness_theorems), see e.g. [this book](https://users.math.cas.cz/~pudlak/preface_toc.pdf). </Footnote>
+</Expand>
+
+</Expand>
+
+## Kolmogorov vs entropy: <Math math="E[K(x)] \approx H(X)" /> 
+
+Both Kolmogorov complexity and entropy try to measure something very similar: complexity, information, compression limit. Naturally, they are closely connected. The connection goes like this: If you have a reasonable distribution (<Math math="X" />) over bit strings and you sample from it (<Math math="x" />), then the entropy of the distribution is roughly equal to the expected Kolmogorov complexity of the sample. I.e., <Math displayMode={false} math = "E[K(x)] \approx H(X)"/>. 
 
 <Block headline = "Example: uniform distribution">
-Let's see why this is true on an example. Take a sequence of $n$ fair coin flips. This is a uniform distribution over $2^n$ binary strings of length $n$. The entropy of this distribution is $n$. Now let's examine the Kolmogorov complexity. 
+Let's see why this is true on an example. Take a sequence of <Math math="n" /> fair coin flips. This is a uniform distribution over <Math math="2^n" /> binary strings of length <Math math="n" />. The entropy of this distribution is <Math math="n" />. Now let's examine the Kolmogorov complexity. 
 
-On one hand, the Kolmogorov complexity of any $n$-bit string is at most <Math displayMode={true} math = "K(\underbrace{\textsf{01000\dots 010110}}_{\textrm{$n$ bits}}) \le n + \textrm{something small}." /> That's because in any (reasonable) language, you can just print the string:
+On one hand, the Kolmogorov complexity of any <Math math="n" />-bit string is at most <Math displayMode={true} math = "K(\underbrace{\textsf{01000\dots 010110}}_{\textrm{n bits}}) \le n + \textrm{something small}." /> That's because in any (reasonable) language, you can just print the string:
 
 ```
 print('01000...010110')
 ```
 
-But can the average Kolmogorov complexity be much smaller than $n$? Notice that our uniform distribution contains many strings with very small Kolmogorov complexity, like the string $000\dots 0$. The reason why those special snowflakes don't really matter on average is [coding theory](/08-coding_theory). 
-We can construct a concrete code like this: for any string in our distribution, its code name is the shortest program that prints it.<Footnote>There is a subtlety here. Code has to be prefix-free: If $\mathsf{0}$ is a code, then <Math math = "\mathsf{01}"/> can't be a code. So, to interpret a program as a code name, our programming language has to be prefix-free -- no program can be a prefix of another program. This can be done e.g. by appending a [null-character at the end of the string](https://en.wikipedia.org/wiki/Null-terminated_string), or writing its length at the beginning. </Footnote> The average length of this code is exactly $E[K(x)]$. But [we have seen](/08-coding_theory#source-coding) that any code has its average length at least as big as the entropy. Hence, $E[K(x)] \ge H(X) = n$ and we have the formula:
+But can the average Kolmogorov complexity be much smaller than <Math math="n" />? Notice that our uniform distribution contains many strings with very small Kolmogorov complexity, like the string <Math math="000\dots 0" />. The reason why those special snowflakes don't really matter on average is [coding theory](/08-coding_theory). 
+We can construct a concrete code like this: for any string in our distribution, its code name is the shortest program that prints it.<Footnote>There is a subtlety here. Code has to be prefix-free: If <Math math="\mathsf{0}" /> is a code, then <Math math = "\mathsf{01}"/> can't be a code. So, to interpret a program as a code name, our programming language has to be prefix-free -- no program can be a prefix of another program. This can be done e.g. by appending a [null-character at the end of the string](https://en.wikipedia.org/wiki/Null-terminated_string), or writing its length at the beginning. </Footnote> The average length of this code is exactly <Math math="E[K(x)]" />. But [we have seen](/08-coding_theory#source-coding) that any code has its average length at least as big as the entropy. Hence, <Math math="E[K(x)] \ge H(X) = n" /> and we have the formula:
 <Math displayMode={true} math = "E[K(x)] \approx H(X)"/> 
 </Block>
 
-If you look at above proof sketch, you can notice that we did not really use that the distribution is uniform, it works pretty much for any distribution.<Footnote>There is an annoying detail. The distribution _itself_ can be hard to describe in the sense of having large Kolmogorov complexity. See e.g. 14.3 in [Elements of Information theory](http://staff.ustc.edu.cn/~cgong821/Wiley.Interscience.Elements.of.Information.Theory.Jul.2006.eBook-DDU.pdf). </Footnote> 
+If you look at above example, you can notice that we did not really use that the distribution is uniform, it works pretty much for any distribution.<Footnote>There is an annoying detail. The distribution _itself_ can be hard to describe in the sense of having large Kolmogorov complexity. See e.g. 14.3 in [Elements of Information theory](http://staff.ustc.edu.cn/~cgong821/Wiley.Interscience.Elements.of.Information.Theory.Jul.2006.eBook-DDU.pdf). </Footnote> I.e., you can think of the relation between the two as **The entropy of a distribution is the expected Kolmogorov complexity of a sample from it**. 
 
-However, the case of a uniform distribution is the most interesting: It tells us that most $n$-bit strings can't really be compressed, since their Kolmogorov complexity is close to $n$! In fact, $n$-bit strings with Kolmogorov complexity $\ge n$ are called _Kolmogorov random_, to highlight the insight that __bits are random if we can't compress them__. 
+The case of a uniform distribution is the most interesting one: it tells us that most <Math math="n" />-bit strings can't really be compressed, since their Kolmogorov complexity is close to <Math math="n" />! In fact, <Math math="n" />-bit strings with Kolmogorov complexity <Math math="\ge n" /> are called _Kolmogorov random_, to highlight the insight that __bits are random if we can't compress them__. 
 
-<Expand headline="Long runs">
-Think of a long $n$-bit string generated by flipping a fair coin $n$ times. What is the longest consecutive run of heads in such a string? You can use classical tools of probability theory like [Chernoff's inequality](https://en.wikipedia.org/wiki/Chernoff_bound) to compute that with high probability, the string won't contain runs of length more than $O(\log n)$. 
+<Expand advanced={true} headline="Long runs">
+Think of a long <Math math="n" />-bit string generated by flipping a fair coin <Math math="n" /> times. What is the longest consecutive run of heads in such a string? You can use classical tools of probability theory like [Chernoff's inequality](https://en.wikipedia.org/wiki/Chernoff_bound) to compute that with high probability, the string won't contain runs of length more than <Math math="O(\log n)" />. 
 
-But there's also a more direct way to see this: If a bit string $s$ contains a large run of zeros of length $k$ at position $i$, i.e., 
+But there's also a more direct way to see this: If a bit string <Math math="s" /> contains a large run of zeros of length <Math math="k" />, i.e., 
 <Math displayMode={true} math = "s = s_1 \underbrace{00\dots 0}_{k} s_2"/>
 
-you need only store $s_1, s_2, k, i$ in memory. The overhead to store a few additional numbers is definitely less than $10 \log_2 n$ (the true constant factor is much better). The good part is that we store $k$ bits less. So, the Kolmogorov complexity of strings with pattern of $k$ zeros is 
-<Math displayMode={true} math = "K(x) \le n - k + 10\log_2 n." />
-If it was often the case that a random string contains a substring of zeros of length $> 10\log_2n$, we could use this trick to compress random strings on average. But that's not possible, so random strings typically can't have long runs of zeros. 
+you can **compress** it: Instead of storing <Math math="s" />, it suffices to store <Math math="s_1, s_2, k" /> in your memory. We need <Math math="\log_2 n" /> bits to store the value of <Math math="k" />, so all in all, we can store <Math math="s" /> with only something like <Math math="|s_1| + |s_2| + O(\log n) = n - k + O(\log n)" /> bits. 
 
-The true power of this view is that we can now understand why random strings can't have any long interesting patterns in them. If there were patterns, they would be predictable, and hence the strings compressible. But $E[K(x)] \ge H(X) = n$ says that this can't happen. 
+In other words, the Kolmogorov complexity of a string containing a pattern of <Math math="k" /> zeros is 
+<Math displayMode={true} math = "K(x) \le n - k + O(\log n)." />
+If it was often the case that a random string contains a substring of zeros of length <Math math="> C\log n" /> (for some suitable constant <Math math="C" /> that I did not bother computing and hid it inside <Math math="O()" />), we could use above trick to compress random strings. But that's not possible as we saw above. Hence, random strings typically can't have long runs of zeros. 
+
+The true power of this view is that we can now understand why random strings can't have any long interesting patterns in them. If there were patterns, they would be predictable, and hence the strings compressible. But <Math math="E[K(x)] \ge H(X) = n" /> says that this can't happen. 
 </Expand>
 
 
 
+## Solomonoff prior
 
-## Solomonoff prior & induction
 
+Let's finish this minicourse where we started—with our Bayesian detective. 
 
-What's the most natural distribution over all (finite) binary strings, if what we care about is their Kolmogorov complexity? The [maximum entropy principle](04-max_entropy) says we should consider the distribution <Math math = "p(x) \propto e^{- \lambda K(x)}" />, for some $\lambda$. In a minute, we will see that the right $\lambda$ is such that $p(x) \propto 2^{-K(x)}$ <Footnote>A quick intuition: Larger $\lambda$ makes the weight of long algorithms negligible, and smaller $\lambda$ will likely not even be normalizable. </Footnote> This distribution is called _Solomonoff prior_. <Footnote>todo maybe mention universal probability. </Footnote>
+Bayes' rule and derived formulas like KL divergence are great to understand what's happening as we are getting more and more evidence. Yet, there's a big elephant in the room here—how should the detective set up her prior probabilities? 
 
-It's called _prior_ because this is how we typically want to use this distribution. Similarly to other maximum entropy distributions, this is where should start before we start making observations and updating it. I find it philosophically very appealing, feel free to check the expand boxes. 
+Solomonoff induction is the right answer to this question. It says: 
+<Quote>
+A prior <Math math="x" /> should start with probability proportional to <Math math="2^{-K(x)}" />. 
+</Quote>
 
-<Expand advanced={true} headline = "Solomonoff induction" >
-The reason why Solomonoff came up with the prior is that he used it to develop what's known as [Solomonoff induction](https://en.wikipedia.org/wiki/Solomonoff%27s_theory_of_inductive_inference) - a theory formalizing how reasoning is supposed to be done. This all sounds very abstract, so imagine that you are given a mysterious machine<Footnote>E.g. the universe if you are a physicist or LLM if you are a computer scientist. </Footnote> that you can poke into and it sometimes produces some outputs you can observe. You have a few hypotheses - models - for what's going on inside. The question is: what's the best model? 
+The formula shouldn't feel so shocking. After all, we spent an [entire chapter](04-max_entropy) arguing that if you care about <Math math="f(x)" />, the natural distributions look like <Math math="p(x) \propto 2^{\lambda \cdot f(x)}" />. 
 
-A partial answer to the question is Bayes' rule from [the first chapter](01-kl_intro): Say that we start with some prior distribution over the models. Then, as we keep poking at the machine, we make observations that have different likelihoods under different models and Bayes' rule uses those likelihoods to update the prior. 
+### A fishy situation
 
-But what prior should we start with? Solomonoff offers his. This way, if the model $q$ has Kolmogorov $K(q)$ and the log-likelihood of our observations under that hypothesis is $L(q)$, Bayes' rule says that in the posterior, the hypothesis probability will be proportional to $2^{- K(q) + L(q)}$. That is, more complicated hypotheses are charged for their complexity by the prior. If you now want to select the most likely hypothesis, it should not be the one maximizing the log-likelihood (which is the suggestion of the [maximum likelihood principle](04-mle)), we should additionally regularize by Kolmogorov complexity. 
+Let's see this on an example. This time, our Bayesian detective isn't flipping a coin, but she has a black box with a button -- each press gives back one bit (a red or a blue chip), possibly correlated with the past outputs of the box.  
 
-Here is a coding-theory intuition for why this makes sense. The hypothesis that is the most likely under Solomonoff prior is exactly the hypothesis that compresses the observed data the best. Remember, negative log-likelihood is just crossentropy. More concretely, if we use $p$ for the true distributions over the $n$ observations we see, we have $L(q) = -n \cdot H(p,q)$. So, maximizing $-K(q) + L(q)$ is really the same as minimizing $K(q) + n \cdot H(p, q)$. But this formula has very clear meaning - it is the number of bits needed to compress the observations by $q$. Indeed, we first have to store $q$ and then use coding theory to compress the observations with $H(p,q)$ bits per letter. <Footnote>Example: in our [coding theory chapter](08-coding_theory), we discussed the Hutter's challenge. State-of-the-art LLMs have top-notch $H(p,q)$ on Wikipedia, but humongous $K(q)$. On the other hand, using optimal code has so negligible $K(q)$ for texts of nontrivial length that we did not even discuss it in the [compression widget](09-coding-theory#compression) at that page. </Footnote>
-</Expand>
+Our detective pressed the button ten times and this is what she sees: 
 
-<Expand advanced={true} headline = "Solving epistemology">
+<SolomonoffMiniWidget />
 
-<ImageGallery 
-  images={[
-    { src: "/fig/epikuros.jpg", alt: "Epicurus" },
-    { src: "/fig/William_of_Ockham.png", alt: "William of Ockham" },
-    { src: "/fig/hume.jpg", alt: "David Hume" }
-  ]}
-  caption={`[Epicurus](https://en.wikipedia.org/wiki/Epicurus) (~300 BC) is the father of Epicureanism - a school of thought which is a kind of like an early atheism. [William of Ockham](https://en.wikipedia.org/wiki/William_of_Ockham) (~1400) was a medieval philosopher, now mostly known for his razor. [David Hume](https://en.wikipedia.org/wiki/David_Hume) (~1750) was an enlightement empiricist, claiming that our reasoning should be tracable back to some experience with the world - That's why he was super interested in the problem of induction! `}
-/>
+What now? You can notice that our detective is now in an opposite situation to [the first chapter](01-kl_intro). In that chapter, she started with a fixed prior and we just focused on the evolution of that prior as she was getting evidence. 
 
-Imagine a special case of Solomonoff induction where each observation either is predicted by the model (likelihood = 1) or is not (likelihood = 0). Then, Solmonoff induction consists of crossing out models incompatible with data. The posterior distribution over the non-crossed models is very similar to the original Solomonoff prior: each hypothesis $q$ has probability proportional to $2^{-K(q)}$. This generalizes [Occam's razor](https://en.wikipedia.org/wiki/Occam%27s_razor) that says that we should prefer simple hypotheses, and [Epicurus principle](https://en.wikipedia.org/wiki/Epicurus#Principle_of_Multiple_Explanations) that says that if more hypothesis explain the data, we should not disregard any of them. 
+Now, she has the data and has to come up with some hypotheses and their priors. This is the situation that we find ourselves in much more often than the first-chapter situation. It's also much more dangerous: this is where we can fall into the trap of _overfitting_ (discussed later). 
 
-Years later, an enlightment philosopher [David Hume](https://en.wikipedia.org/wiki/David_Hume) was struggling with [the problem of induction](https://en.wikipedia.org/wiki/Problem_of_induction). Basically: Even if we solve physics and find a perfectly good model of it $q$ that fits everything that happened so far, what about a model $q'$ that is the same as $q$ until tomorrow, but does some stupid rubbish afterwards? Hume was an empiricist and held that there's no good rational justification for preferring $q$ over $q'$. But Solomonoff induction is a pretty good "rational" answer, if you ask me!<Footnote>Of course, whether this is a satisfying answer depends on how we justified using the Solomonoff prior in the first place. I kind of pulled it out of a hat, but there are [nice](http://www.vetta.org/documents/Machine_Super_Intelligence.pdf) [theorems](https://link.springer.com/book/10.1007/978-0-387-49820-1) showing that it's in a sense a unique probability distribution. </Footnote> If you use that prior, you get Occam's razor: even if both hypotheses fit the data, the simpler one - $q$ - is much more probable. 
-</Expand>
+Solomonoff gives the detective the following advice for what to do in our situation: just start with all possible hypotheses you can imagine and give each hypothesis <Math math="x" /> a prior proportional to <Math math="2^{-K(x)}" />. Then compute the posterior. 
 
-<Expand advanced={true} headline = "🐘 Von Neumann's elephant & overfitting">
+In theory, this is an extremely appealing approach, and pretty much the answer for how to do statistics, if you ask me. In practice, there are two problems with this: First, we can't work with infinitely many hypotheses. Second, we can't compute their Kolmogorov complexity. 
 
-[John von Neumann](https://en.wikipedia.org/wiki/John_von_Neumann) [allegedly](https://en.wikipedia.org/wiki/Von_Neumann%27s_elephant) said "With four parameters I can fit an elephant, and with five I can make him wiggle his trunk." This quote famously illustrates the danger of [_overfitting_](https://en.wikipedia.org/wiki/Overfitting): adding more parameters to a model can make it fit any data, but such a model won't generalize very well. 
+### Computing priors
 
-The widget below shows von Neumann's elephant curve and other parametric curves. If you can make the elephant wiggle its trunk by adjusting the coefficients, let me know how you did it!
+This sounds pretty bad but it's not the end of the world. To overcome the first problem, our detective may simply come up with a few plausible hypotheses after she sees the data. Most hypotheses have probabilities close to zero anyway. 
+
+Here are four of them: 
+
+- <Math math="\mathsf{Uniform}" />: Each dot is 50/50 red or blue, independently
+- <Math math="\mathsf{Biased}" />: Each dot is independently red with 60% probability
+- <Math math="\mathsf{Alternating}" />: The sequence alternates red and blue—each time there's 10% probability of the other color, though.  
+- <Math math="\mathsf{Half\text{-}half}" />: The sequence alternates blocks of length five that are either "mostly red" (2/3 red probability) or "mostly blue" (2/3 blue probability)
+
+The second problem is that we can't compute Kolmogorov complexity; and it's not even well-defined unless we fix some programming language. That's also not necessarily that bad. We can often get some reasonable approximation. Let me try to do it here: 
+
+- <Math math="\mathsf{Uniform}" />: I give this one zero bits of penalty, i.e., <Math math="K(\mathsf{uniform}) = 0" />. This looks weird since all programs that generate this hypothesis as their output have to spend at least a few bits to do stuff like "print(0.5)". But this kind of constant overhead is the same for all four hypothesis and adding a constant to all log-priors does not change anything, so we might as well forget this and give 0 penalty to the simplest hypothesis—this one.  
+- <Math math="\mathsf{Biased}" />: The difference between this and the previous hypothesis is that now we have to specify a number—0.6. If you asked me to start listing different numbers between 0 and 1 in order of how "simple" they are, I would probably list 0.6 somewhere around 20-50th place, so let me give this hypothesis a penalty of <Math math="K(\mathsf{biased})\approx 5" />. 
+- <Math math="\mathsf{Alternating}" />: This hypothesis is more complicated than treating each dot independently, but we still have only two types of dots. I give this penalty of 3 bits since I can think of a bunch of different mechanisms roughly as simple as this one, even if this one is among the simplest. The number 0.9 seems roughly as "simple" as 0.6 to me, so I give it 5 bits. In total: <Math math="K(\mathsf{alternating}) \approx 8" />. 
+- <Math math="\mathsf{Half\text{-}half}" />: This one seems the most complicated. I give 3 bits for alterations, and additional 3-4 more bits for the blocks having length 5. Finally, the number <Math math="2/3" /> is actually pretty simple, so <Math math="2-3" /> bits for that. In total: <Math math="K(\mathsf{half\text{-}half}) \approx 9" />. 
+
+The following widget shows how these hypotheses fare on the data: <Footnote>In reality, all the nonzero penalties should be at least a bit larger. This touches on some subtleties like that our codes have to be [prefix-free](https://en.wikipedia.org/wiki/Prefix_code), so I won't go into details. Also, hypotheses always look simpler if you are the person who came up with them... </Footnote>
+
+<SolomonoffInductionWidget />
+
+### Some observations: 
+- If you compare <Math math="\mathsf{uniform}" /> and <Math math="\mathsf{biased}" /> hypotheses, they both have almost the same likelihoods (-10 vs -9.71 bits). Seeing 10 data points is simply not enough to start making meaningful inferences about whether the bias is 50%, or only "close to 50% but not quite". 
+- <Math math="\mathsf{Alternating}" /> hypothesis is making very strong predictions. Since it matches the data pretty well, it hence accumulated a lot of evidence in its favor. With just 10 data points, the evidence is roughly offset by its complexity. But if we generate a few more data points from either <Math math="\mathsf{uniform}" /> or <Math math="\mathsf{alternating}" /> distribution, the hypothesis quickly gets to the top, or to the bottom. 
+- The <Math math="\mathsf{half\text{-}half}" /> hypothesis looks a lot like [overfitting](https://en.wikipedia.org/wiki/Overfitting)<Footnote>Overfitting is a term used mostly by the machine-learning community. In statistics, people rather talk about [p-hacking and data dredging](https://en.wikipedia.org/wiki/Data_dredging). That term is a bit more general and includes variations on overfitting, as well as other vices like simply lying about your data. </Footnote>: We got a modest improvement at evidence at the cost of a large complexity of the hypothesis. 
+
+<Expand advanced={true} headline = "🐘 Von Neumann's elephant">
+
+[John von Neumann](https://en.wikipedia.org/wiki/John_von_Neumann) [allegedly](https://en.wikipedia.org/wiki/Von_Neumann%27s_elephant) said "With four parameters I can fit an elephant, and with five I can make him wiggle his trunk." 
+This quote is about [_overfitting_](https://en.wikipedia.org/wiki/Overfitting): adding a few more parameters to a model can make it fit your data pretty well, even if the data is a silhouette of an elephant. 
+
+The widget below shows von Neumann's elephant curve. It uses 8 numbers (so, if you stretch a bit, 4 complex parameters). The upshot is that having a model that fits well with your evidence does not mean that much, once your model has at least a few moving parts. 
 
 <ParametricCurveWidget />
 </Expand>
 
 <Expand advanced={true} headline = "AIC & BIC model selection" >
-In practice, we can't compute Kolmogorov complexity, but we can estimate it as the number of parameters in the model: Instead of simply taking the model with minimum crossentropy loss (MLE), we should add a term $C \cdot k$ to the overall loss. Here, $k$ is the number of parameters and $C$ is 'how many bits per parameter'. If parameters are small numbers, we may opt for $C \approx 1$. If the parameters are some kind of real numbers, it is typically more sensible to think about them as having $O(\log n)$ bits. The choice of $C = 1$ is called [AIC](https://en.wikipedia.org/wiki/Akaike_information_criterion) and $C = \frac{1}{2}\ln n$ is called [BIC](https://en.wikipedia.org/wiki/Bayesian_information_criterion). Both of these choices are typically justified by a different argument with some more concrete assumptions. 
 
-You can test both rules on the following widget that fits input points with a polynomial curve. The crossentropy is computed by so-called [cross-validation](https://en.wikipedia.org/wiki/Cross-validation_(statistics)), and you can see how the choice of the best model slightly differs between MLE, AIC, and BIC. 
+The following widget shows a simple machine-learning experiment -- we try to fit a bunch of points with polynomials of degree $k = 1, 2, \dots$ The question is: what is the best $k$? 
+
+Remember, if we have a probabilitistic model, we can interpret the loss (here: mean squared error) of the $k$-th model as the logarithm of the evidence going for it. So, naively (i.e., using the maximum likelihood principle), we should pick the model with the smallest loss. Of course, the loss goes down as we increase $k$, so MLE naively suggests to simply take $k$ as large as possible. 
+
+Solomonoff prior is the ultimate theoretical answer to this: A polynomial of degree $k$ has $k+1$ parameters, so it should incur a penalty of size $\sim k$. I think that this is a powerful intuition for selecting the best model, though similarly to our above example: the devil lies in the details; especially: how many bits does each parameter has? 
+
+In practice, there are two popular options to choose the right $k$ called [AIC](https://en.wikipedia.org/wiki/Akaike_information_criterion) and [BIC](https://en.wikipedia.org/wiki/Bayesian_information_criterion). Both of them are derived by much more technical arguments than our compression philosophising. Yet, they both agree that the penalty should be $k$-ish. The penalty of AIC is $k \cdot \ln 2$<Footnote>It's more subtle for $k \approx n$, we use [AICc](https://en.wikipedia.org/wiki/Akaike_information_criterion#Modification_for_small_sample_size) correction in the widget below</Footnote> and the penalty of BIC is $k/2 \cdot \log n$. <Footnote>That is, you can view one technique as treating each parameter as a constant, while the other says that for $n$-sized inputs, parameters are $n$-ish-sized numbers.  </Footnote>
 
 <PolynomialRegressionWidget />
 
@@ -137,47 +237,21 @@ You can test both rules on the following widget that fits input points with a po
 
 
 
-<Expand advanced={true} headline = "Uncomputability">
+### Intuition
 
-Unfortunately, there's no simple way to compute the Kolmogorov complexity of most strings, even after we decide on which programming language we use in the definition. To see why, let's see a fun paradox known as [Berry's paradox](https://en.wikipedia.org/wiki/Berry_paradox). Consider the expression:
+Why is Solomonoff prior the right one? There are some more complicated and rigorous justifications, but here's how I think about this. 
 
-<Quote>
-    The smallest positive integer not definable in under sixty letters.
-</Quote>
+Let's think of an experiment where our Bayesian detective samples $n$ samples from an unknown distribution $p$; we have different models $q_1, \dots, q_k$. Solomonoff prior of $q_i$ is $2^{-K(q_i)}$ and the evidence going for that model is $2^{-H(p, q_i)}$.   
 
-Presumably, there are only so many numbers you can define with sixty letters, so there should be the smallest 'undefinable' one. But wait a minute, that number is 'definable' by the sentence above! <Footnote>I often hear the following, more cheeky variant of Berry's paradox: I claim that all postive integers are interesting. Why? Well, consider the smallest noninteresting number. But this is a very interesting property! </Footnote>
+First, remember: under Solomonoff prior, a hypothesis $q$ has prior $2^{-K(q)}$ and if the data are $p$, the evidence for $q$ is $2^{-H(p,q)}$. So, choosing the most likely hypothesis means choosing the $q$ that minimize $K(q) + n \cdot H(p,q)$. 
 
-As all the great ideas, Berry's paradox can be formalized into an intersting math theorem, we just have to find the right language to rephrase the paradox properly. Here, the right language is Kolmogorov complexity. 
+But we know what that formula means! $K(q)$ is how many bits of memory we need to store the model $q$, and $n \cdot H(p,q)$ is how many bits of memory we need to store $p$, once we know $q$. <Footnote>Cf. our discussion on the Wikipedia riddle where we compared different compression algorithms ($q$) by how well they compress Wikipedia ($p$), where the length of the compressed file is $K(q) + H(p,q)$. Except for LLMs, the compression algorithms were so simple that $K(q)$ did not play much of a role, so we mostly just compared cross-entropies. </Footnote>
 
-Here's the rephrasing. If you write positive integers in binary, you can see that talking about them is the same as talking about all binary strings. To formalize the part 'definable in under sixty letters', let's simply consider all those binary strings such that their Kolmogorov complexity is at most some constant $C$. We can call this set of strings $\textrm{Berry}(C)$. 
+That is, using Solomonoff prior means that we are simply supposed to __prefer the hypotheses that compress the data the most__. This is also called optimizing [Minimum description length](https://en.wikipedia.org/wiki/Minimum_description_length). 
 
-Now, let's assume that there is an algorithm $A$ that gets a string $x$ as an input an outputs its Kolmogorov complexity $K(x)$. We can use $A$ to perform the devilous plan of Berry: Imagine an algorithm $A'$ that uses $A$ to iterate over all the strings in lexicographical order. It then outputs the first string $x^*$ that has $K(x^*) > C$. I.e., $A'$ outputs the lexicographically smallest string outside of $\textrm{Berry(C)}$. 
+### Theoretical applications
 
-But wait a minute! The algorithm $A'$ is just another algorithm that prints a string $x^*$, so $K(x^*) \le |A'|$. If we choose $C$ to be large enough, the two conditions $K(x^*) > C$ and $K(x^*) \le |A'|$ are in contradiction. 
-
-By turning the paradox into a theorem, we can now see where's the problem. We made just one assumption, the existence of an algorithm $A$ computing Kolmogorov complexity. So, this assumption must be wrong, there is unfortunately no such algorithm. <Footnote>This result is closely related to [halting problem](https://en.wikipedia.org/wiki/Halting_problem) and [Gödel's incompleteness theorems](https://en.wikipedia.org/wiki/G%C3%B6del%27s_incompleteness_theorems), see e.g. [this book](https://users.math.cas.cz/~pudlak/preface_toc.pdf). </Footnote>
-</Expand>
-
-<Expand advanced={true} headline = "Clustering by relative Kolmogorov complexity" >
-
-Here's a fun application of Kolmogorov complexity. First, let's define _relative Kolmogorov complexity_ $K(x | y)$: This is the shortest program to print $x$, if the program can also access a string $y$. For example, there are short codes writing $\pi$, but if we choose $y$ as the Python library `sympy`, the relative complexity of $x = \pi$ becomes even shorter, as we can just run something like `print(sympy.N(sympy.pi, 1000000))`. 
-
-This can be used to measure how much two files $x_1, x_2$ are similar: we measure $K(x_1 \circ x_2)$ versus $K(x_1) + K(x_2)$ ($\circ$ means concatenation). In practice, we use something like ZIP instead, since we can't compute Kolmogorov complexity exactly. 
-
-I was curious to test how it works, the following widget tries to cluster wikipedia pages about three different topics using three algorithms. 
-
-- KL divergence between character frequencies: Remember, this corresponds to looking at one file, and building the best code based on its frequencies and using it for the other file. I compute in both ways and average to make it symmetric. 
-- ZIP divergence: ZIP algorithm builds a dictionary of common words and phrases as it scans through the text. But you can persuade it to build one static dictionary on one text and use it for the other texts. Analogously to KL divergence, ZIP divergence is how many more bits you spend if you use this static dictionary built on another file, versus normal ZIP algorithm. 
-- normalized compression distance: This is defined as $(K(x \circ y) - \min(K(x), K(y)))/ \max (K(x), K(y))$ - it's about comparing $K(x \circ y)$ with $K(x), K(y)$ as we discussed above. 
-
-Unfortunately, the third one did not work well for me, probably because concatenating files actually does not help in compression by ZIP almost at all. Not sure if I am stupid or if this method sucks. 🤷
-
-<ThreeCategoriesWidget />
-
-One thing I would like to point out on this is that relative entropy (=KL divergence) and relative Kolmogorov complexity are different "relativizations". On the one hand, KL divergence and ZIP divergence are about how _worse_ a code is if it expects different data. On the other hand, relative Kolmogorov is about how much _better_ the compression gets, if we can, but do not have to use some additional data. In short, $H(x, y) \ge H(x)$, but $K(x | y) \le K(x)$.  
-
-</Expand>
-
+My favorite application of Kolmogorov complexity and Solomonoff prior are actually very theoretical. If you like to ask yourself questions like what is randomness? Or how do we get knowledge of stuff?, you might like the following. 
 
 <Expand advanced={true} headline = "What the hell is randomness?"> 
 
@@ -185,23 +259,23 @@ If there is a person who we can call the 'father of probability theory', it woul
 
 Yet, Laplace spent a lot of his time developing probability theory <Tooltip tooltip="![chesterton](/fig/chesterton2.jpg)">exactly</Tooltip> because he believed in the deterministic nature of the world. He understood that we can never know all there is to the world anyway. Hence, we need a language - probability - to talk about our epistemic uncertainty.  
 
-When [Solomonoff](https://en.wikipedia.org/wiki/Ray_Solomonoff) and [Kolmogorov](https://en.wikipedia.org/wiki/Andrey_Kolmogorov) devoloped Kolmogorov complexity,<Footnote>Even though 'Kolmogorov complexity' sticked, Solomonoff was first by a couple of years. We are talking ~1960s. </Footnote> they came from similar angle. At the heart of the matter, probability is not about whether our world is governed by deterministic Newton laws, or what's your favorite intepretation of quantum physics. It's about modelling unpredictability. 
+When [Solomonoff](https://en.wikipedia.org/wiki/Ray_Solomonoff) and [Kolmogorov](https://en.wikipedia.org/wiki/Andrey_Kolmogorov) developed Kolmogorov complexity,<Footnote>Even though 'Kolmogorov complexity' stuck, Solomonoff was first by a couple of years. We are talking ~1960s. </Footnote> they came from similar angle. At the heart of the matter, probability is not about whether our world is governed by deterministic Newton laws, or what's your favorite interpretation of quantum physics. It's about modelling unpredictability. 
 
 This kind of intuition is extremely helpful in computer science. Algorithms frequently want to work with random bits, but how do we get them fast? In practice, we typically use a [_pseudorandom generator_](https://en.wikipedia.org/wiki/Pseudorandom_generator): We ask the operating system for a [_seed_](https://en.wikipedia.org/wiki/Random_seed) of perhaps 64 'truly random' bits, that the system gets by e.g. measuring some hardware sensor. The pseudorandom generator is then a short piece of code that gets the 32 bits as the input and it repeatedly applies obscure mathematical operations to it to generate more randomly looking bits. 
 
-How do we even talk about those pseudorandom bits? As they are a deterministic function of the initial seed, they are not random at all from the perspective of classical probability theory. However, if we understand Kolmogorov complexity, we can generalize the fact 'a string is random if we can't compress it' to say that 'a string looks random to an algorithm $A$ if $A$ can't compress it'. 
+How do we even talk about those pseudorandom bits? As they are a deterministic function of the initial seed, they are not random at all from the perspective of classical probability theory. However, if we understand Kolmogorov complexity, we can generalize the fact 'a string is random if we can't compress it' to say that 'a string looks random to an algorithm <Math math="A" /> if <Math math="A" /> can't compress it'. 
 
 A bit more concretely, for a pseudorandom generator, we can test whether it fools certain statistical tests, meaning that the test can't reliably separate whether the input is truly random, or coming from the generator. The string is then _pseudorandom_ for such a fooled test, the test can't find any patterns in it that it could use to compress it.   
 
-You can try this concept in the following widget. It implements four simple $k$-mer statistical tests - those are based on counting frequencies of $k$ consecutive flips for $k \in \{1,2,3,4\}$. Let's see how long you can flip coins, until you flag $k = 4$ - getting 100 flips is not so easy! 
+You can try this concept in the following widget. It implements four simple <Math math="k" />-mer statistical tests - those are based on counting frequencies of <Math math="k" /> consecutive flips for <Math math="k \in \{1,2,3,4\}" />. Let's see how long you can flip coins, until you flag <Math math="k = 4" /> - getting 100 flips is not so easy! 
 
-If a test flags your sequence of $n$ flips as nonrandom, it means that some patterns are too rare / too frequent and the statistical tests could in principle compress your $n$ flips to less than $n$ bits. 
+If a test flags your sequence of <Math math="n" /> flips as nonrandom, it means that some patterns are too rare / too frequent and the statistical tests could in principle compress your <Math math="n" /> flips to less than <Math math="n" /> bits. 
 
 <CoinFlipRandomnessWidget />
 
 Here's examples of how pseudorandomness helps to think about all kinds of stuff:
 
-- [Mathematicians believe](https://en.wikipedia.org/wiki/Normal_number) that digits of $\pi$ fool all $k$-mer counting tests. But digits of $\pi$ are not a very good pseudorandom generator: an algorithm that 'tests against $\pi$' is not fooled. 
+- [Mathematicians believe](https://en.wikipedia.org/wiki/Normal_number) that digits of <Math math="\pi" /> fool all <Math math="k" />-mer counting tests. But digits of <Math math="\pi" /> are not a very good pseudorandom generator: an algorithm that 'tests against <Math math="\pi" />' is not fooled. 
 - Typical pseudorandom generator fools all kinds of basic statistical tests.<Footnote>See e.g. Chapter 3 in [AoCP](https://en.wikipedia.org/wiki/The_Art_of_Computer_Programming). </Footnote> These sequences thus look random to those tests. But they fail to look random to algorithms that can use exponential amount of time (such algorithms can bruteforce all the seeds). 
 - in cryptography theory, we like to assume that there are cryptographically secure pseudorandom generators that fool all statistical tests running in polynomial time. We don't know whether such an algorithm exists, but we have practical implementations that fool all known reasonably-fast tests. 
 - Classic [overhand shuffle](https://en.wikipedia.org/wiki/Shuffling) sucks and is not used in casinos. But if no player is trying to take advantage of it, the game being played typically looks the same as if the cards were shuffled properly.  
@@ -209,3 +283,22 @@ Here's examples of how pseudorandomness helps to think about all kinds of stuff:
 - In general, whenever it comes to the discussion of 'what is probability', people often end up talking about quantum physics interpretations and physics in general. But I like a more down-to-earth approach: Randomness is a limit of pseudorandomness - we say that a bit sequence is random whenever we believe that we can safely disregard the existence of an algorithm that could predict/compress it. 
 </Expand>
 
+<Expand advanced={true} headline = "Philosophy">
+
+<ImageGallery 
+  images={[
+    { src: "/fig/epikuros.jpg", alt: "Epicurus" },
+    { src: "/fig/William_of_Ockham.png", alt: "William of Ockham" },
+    { src: "/fig/hume.jpg", alt: "David Hume" }
+  ]}
+  caption={`[Epicurus](https://en.wikipedia.org/wiki/Epicurus) (~300 BC) is the father of Epicureanism - a school of thought which is a kind of like an early atheism. [William of Ockham](https://en.wikipedia.org/wiki/William_of_Ockham) (~1400) was a medieval philosopher, now mostly known for his razor. [David Hume](https://en.wikipedia.org/wiki/David_Hume) (~1750) was an enlightement empiricist, claiming that our reasoning should be traceable back to some experience with the world - That's why he was super interested in the problem of induction! `}
+/>
+
+Imagine a special case of Solomonoff induction where each observation either is predicted by the model (likelihood = 1) or is not (likelihood = 0). Then, Solmonoff induction consists of crossing out models incompatible with data. The posterior distribution over the non-crossed models is very similar to the original Solomonoff prior: each hypothesis <Math math="q" /> has probability proportional to <Math math="2^{-K(q)}" />. This generalizes [Occam's razor](https://en.wikipedia.org/wiki/Occam%27s_razor) that says that we should prefer simple hypotheses, and [Epicurus principle](https://en.wikipedia.org/wiki/Epicurus#Principle_of_Multiple_Explanations) that says that if more hypothesis explain the data, we should not disregard any of them. 
+
+Years later, an enlightment philosopher [David Hume](https://en.wikipedia.org/wiki/David_Hume) was struggling with [the problem of induction](https://en.wikipedia.org/wiki/Problem_of_induction). Basically: Even if we solve physics and find a perfectly good model of it <Math math="q" /> that fits everything that happened so far, what about a model <Math math="q'" /> that is the same as <Math math="q" /> until tomorrow, but does some stupid rubbish afterwards? Hume was an empiricist and held that there's no good rational justification for preferring <Math math="q" /> over <Math math="q'" />. But Solomonoff induction is a pretty good "rational" answer, if you ask me!<Footnote>Of course, whether this is a satisfying answer depends on how we justified using the Solomonoff prior in the first place. I kind of pulled it out of a hat, but there are [nice](http://www.vetta.org/documents/Machine_Super_Intelligence.pdf) [theorems](https://link.springer.com/book/10.1007/978-0-387-49820-1) showing that it's in a sense a unique probability distribution. </Footnote> If you use that prior, you get Occam's razor: even if both hypotheses fit the data, the simpler one - <Math math="q" /> - is much more probable. 
+</Expand>
+
+
+## Bye :)
+That's it! I had a lot of fun writing this site, if you had fun reading it, [let me know](https://forms.gle/wXShyQRsGWtb8afd6)! Also, check out the [resources](resources) for further reading. 

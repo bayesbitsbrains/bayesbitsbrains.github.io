@@ -154,7 +154,7 @@ Try building your own maximum entropy distribution on the interval $[0,1]$ by pl
 
 <Expand headline = "Why? "><a id = "intuition"></a>
 
-Let's build some intuition for this. Remember from [the previous chapter](04-mle) that the max-entropy principle is essentially about finding a distribution that is as close to uniform as possible, in the sense of minimizing KL divergence.
+Let's build some intuition for this. Remember that the max-entropy principle is essentially about finding a distribution that is as close to uniform as possible, in the sense of minimizing KL divergence.
 
 So, in what way are max-entropy distributions "close" to being uniform? Let's use the exponential distribution $p(x) \propto e^{-x}$ as an example. Say I independently sample two numbers from it, $x_1$ and $x_2$. Here's a little riddle: Is it more probable that I sample $x_1 = 10, x_2 = 20$ or that I sample $x_1' = 15, x_2' = 15$?
 
@@ -188,7 +188,7 @@ We are solving the following optimization problem for $K$ variables $p_1, \dots,
 &\quad \sum_{i = 1}^K p_i = 1
 \end{aligned}"/>
 
-If there were no constraints, the problem would be simple! We'd just take the expression to maximize (the entropy) and set all partial derivatives with respect to $p_1, \dots, p_K$ to zero.
+If there were no constraints, the problem would be simple! We'd just take the expression to maximize (the entropy) and set all partial derivatives with respect to $p_1, \dots, p_K$ to zero. However, with constraints present, this straightforward approach no longer works.
 
 Fortunately, a technique called [Lagrange multipliers](https://en.wikipedia.org/wiki/Lagrange_multiplier) helps us here. It involves turning _hard_ constraints (like those in our problem) into _soft_ constraints. A soft-constraint version of our problem would be:
 
@@ -207,13 +207,8 @@ What happens is that instead of requiring the solution to *exactly* satisfy all 
 Long story short, Lagrange's method tells us that if someone provides a solution to our problem satisfying all $m+1$ _hard_ constraints, then we can find $m+1$ numbers $\lambda_1, \dots, \lambda_{m+1}$ such that this solution also solves the soft-constrained version. That's neat! We can now implement our plan of solving this by differentiation.
 
 More precisely, let's use $\mathcal{L}$ for the soft-constrained objective:
-$$
-\mathcal{L}(p_1, \dots, p_K) = \sum_{i = 1}^K p_i \log \frac{1}{p_i}
-- \lambda_1 \left(\sum_{i = 1}^K p_i \cdot f_1(i) - \alpha_1\right)
-- \dots -
-- \lambda_m \left(\sum_{i = 1}^K p_i \cdot f_m(i) - \alpha_m\right)
-- \lambda_{m+1} \left(\sum_{i = 1}^K p_i - 1\right)
-$$
+
+<Math displayMode={true} math = "\mathcal{L}(p_1, \dots, p_K) = \sum_{i = 1}^K p_i \log \frac{1}{p_i} - \lambda_1 \left(\sum_{i = 1}^K p_i \cdot f_1(i) - \alpha_1\right) - \dots - \lambda_m \left(\sum_{i = 1}^K p_i \cdot f_m(i) - \alpha_m\right) - \lambda_{m+1} \left(\sum_{i = 1}^K p_i - 1\right)" />
 
 We compute the derivative with respect to some $p_i$. Using the fact that $(p \log 1/p)' = -(p\log p)' = -\log p - 1$, we find that:
 
@@ -249,7 +244,7 @@ Let's go through the examples with this in mind. Please, do skip whatever doesn'
 Let's start with what happens if we don't have any constraints. 
 
 <Expand headline = "No Constraints">
-In the absence of any constraints, we have $p(x) \propto e^{0}$, which means the max-entropy distribution is *uniform*. In other words, the maximum entropy principle is truly an extension of [the principle of indifference](04-mle#maximum-entropy-principle) that we discussed in the previous chapter.
+In the absence of any constraints, we have $p(x) \propto e^{0}$, which means the max-entropy distribution is *uniform*. In other words, the maximum entropy principle is truly an extension of [the principle of indifference](05-max_entropy#maximum-entropy-principle).
 
 One painful fact to keep in mind is that the uniform distribution doesn't always exist. Concretely, there's no uniform distribution over all real numbers.
 </Expand>
@@ -278,7 +273,7 @@ The function $\sigma(x) = 1/(1 + e^{-x})$ is called the [logistic function](http
 
 Here's my interpretation: if you want to talk about probabilities, but for some reason you prefer to work with general real numbers instead of numbers in $[0,1]$, you should use logits and apply the logistic transformation to convert them to probabilities. 
 
-The parameter $\lambda$ in the formula corresponds to the choice of units in which we measure those logits. For instance, I often prefer to use the binary logarithm, which means measuring logits in bits.
+The parameter $\lambda$ in the formula corresponds to the choice of units in which we measure those logits. For instance, when $\lambda = 1$, we're using natural logarithms (measuring in nats). When $\lambda = 1/\ln(2) \approx 1.44$, we're effectively using binary logarithms, which means measuring logits in bits.
 
 <LogisticWidget 
   title="Sigmoid Function" 
@@ -445,7 +440,7 @@ And here's an application to our [XKCD riddle](00-riddles#xkcd):
 
 <RiddleExplanation id="xkcd">
 
-After four chapters developing the theory of KL divergence, we're finally ready to [dissect](https://www.goodreads.com/quotes/440683-explaining-a-joke-is-like-dissecting-a-frog-you-understand) the XKCD joke from [the list of riddles](00-riddles#xkcd).
+The joke is explained [here](https://www.explainxkcd.com/wiki/index.php/1159:_Countdown) but we're now ready to analyze even even more!
 
 [![Are the odds in our favor?](00-introduction/countdown.png)](https://xkcd.com/1159/)
 

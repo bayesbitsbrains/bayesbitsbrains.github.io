@@ -39,7 +39,7 @@ We can compute the best $\mu, \sigma$ by minimizing the right-hand side of <EqRe
 
 <Math displayMode={true} math = "\argmin_{\mu, \sigma} D(p, N(\mu, \sigma^2)) = \argmin_{\mu, \sigma} \left( \log \sqrt{2\pi \sigma^2} + \sum_{i = 1}^{16} \frac{1}{16} \cdot\frac{(x_i - \mu)^2}{2\sigma^2}\right)" />
 
-To find the best $\mu$, you can notice that whatever $\sigma$, finding the $\mu$ minimizing the right-hand side boils down to minimizing the expression $\sum_{i = 1}^{16} (x_i - \mu)^2$. It turns out this is minimized by $\mu_{best} = \frac{1}{16} \cdot \sum_{i = 1}^{16} x_i$. This formula is called [_the sample mean_](https://en.wikipedia.org/wiki/Sample_mean_and_covariance). 
+To find the best $\mu$, you can notice that whatever $\sigma$ is, finding the $\mu$ minimizing the right-hand side boils down to minimizing the expression $\sum_{i = 1}^{16} (x_i - \mu)^2$. It turns out this is minimized by $\mu_{best} = \frac{1}{16} \cdot \sum_{i = 1}^{16} x_i$. This formula is called [_the sample mean_](https://en.wikipedia.org/wiki/Sample_mean_and_covariance). 
 
 It may seem a bit underwhelming that we did all of this math just to compute the average of 16 numbers, but in a minute, we will see more interesting examples. We'll also revisit this problem [in a later chapter](07-machine_learning) and compute the formula for $\sigma$. 
 
@@ -140,7 +140,7 @@ Finally, here's a bit of historical trivia: Our letter prediction game comes fro
 
 1 bit per letter is also roughly the score of LLMs, though old models like GPT-2 are somewhat worse and the new ones like Llama-4 used in the widget are better. As far as I can say, Claude Shannon's experiment was the first usage of the next-token prediction, 60+ years before it became cool!
 
-[![volcano](04-mle/twitter_volcano.png)](https://what-if.xkcd.com/34/)
+<ImageGallery images={[{src: "04-mle/twitter_volcano.png", alt: "volcano"}]} caption="From [xkcd](https://what-if.xkcd.com/34/)" width="60%" />
 
 
 </RiddleExplanation>
@@ -204,11 +204,9 @@ Try the log-score on our example! You can see how it really doesn't like the $99
     showBrierScore={true}
   />
 
-### ⚠️ Connection to the idealized score
-Feel free to skip this one. 
-
+<Expand advanced={true} headline="Connection to the idealized score">
 Let's dig into how our cross-entropy score relates to our ideal KL score. 
-I want you to imagine an obtuse probability space of what might have happened if butterflies flipped their wings a bit differently a few years ago. Only in this weird multiverse probability space we can easily talk about 'the true' probability $p_i$ that an event happens. In this space, $\hat{p}_i$s are random variables - Each $\hat{p}_i$ has value 1 with probability $p_i$, otherwise it's 0. Our cross-entropy score $H(\hat{p}, q)$ is also a random variable attaining different values in different worlds. 
+I want you to imagine an abstruse probability space of what might have happened if butterflies flipped their wings a bit differently a few years ago. Only in this weird multiverse probability space we can easily talk about 'the true' probability $p_i$ that an event happens. In this space, $\hat{p}_i$s are random variables - Each $\hat{p}_i$ has value 1 with probability $p_i$, otherwise it's 0. Our cross-entropy score $H(\hat{p}, q)$ is also a random variable attaining different values in different worlds. 
 
 So what's the expected cross-entropy score? Since $E_p[\hat{p}_i] = p_i$, [linearity of expectation](https://brilliant.org/wiki/linearity-of-expectation/) gives us:
 
@@ -243,7 +241,8 @@ We can't compute these scores in practice, because in practice we would not know
 
 For large $N$, the law of large numbers says that the actual score we measure - $H(\hat{p}, q)$ - is likely close to the expected score $H(p, q)$. In that case, since both scores shift by the same amount, cross-entropy still picks the best expert just like KL would. 
 
-However, this only works _in the long run_. Disentangling $N$ from $N + 0.03\cdot N$ reliably would require about $N \approx 1000$ questions. That's why the original riddle does not try to pretend we can actually say which expert is good. With just 5 predictions, any scoring is going to be pretty noisy. 
+However, this only works _in the long run_. Disentangling $N$ from $N + 0.03\cdot N$ reliably would require about $1000$ to $10\,000$ questions. That's why the original riddle does not try to pretend we can actually say which expert is good. With just 5 predictions, any scoring is going to be pretty noisy. 
+</Expand>
 </Expand>
 
 </RiddleExplanation>

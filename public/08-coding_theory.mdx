@@ -197,34 +197,10 @@ I think this is a powerful intuition that can help us understand where the knowl
 
 This is a complementary intuition to our intuition that being good in the text-prediction game requires knowledge. Indeed, prediction and compression are two sides of the same coin! 
 
-<RiddleExplanation id="wikipedia">
-Let's go back to our Wikipedia compression riddle, the last riddle we haven't discussed yet. 
-Remember, [our Wikipedia riddle](00-riddles#wikipedia) was about Hutter's compression challenge: How much can we compress a single 1GB file of English Wikipedia. Hutter is an AI researcher and he started his challenge because he understands very well the topic of this chapter - if you can compress text, you can also predict it, and that implies you have to have relevant knowledge /intelligence.  
-
-The honest answer to what's the best way to compress Wikipedia is that we don't know (see the bonus section on Kolmogorov complexity), but we at least broadly understand how well different algorithms compress English text. 
-
-There are more approaches to compress text files. Let's go through them and you can see in the next widget how they fare for various types of data. 
-
-- _Baseline_: The standard way to store text files is UTF-8. Simplifying a bit, this format store each letter using 8 bits. <Footnote>Why is it lying? [UTF-8](https://en.wikipedia.org/wiki/UTF-8) itself is a beautiful example of good engineering inspired by coding theory. There are around 100 characters (English letters, digits) that are stored using 8 bits, fancier letters from reasonable alphabets are stored using 16 bits, and emojis like 😀 or hieroglyphs like 𓀀 take 32 bits. Classic coding theory—rare stuff gets longer codes. But English Wiki is mostly standard English letters, so 8 bits per character it is. </Footnote>
-
-- _Optimal letter code_: Treat letters as independent, we can encode them using $H(p)$ bits per letter on average, where $p$ is the distribution of English letter frequencies. [In the Shannon's coding widget above](../02-crossentropy#construction), we saw that the entropy is around 4.2 bits. So, we can shrink the file by almost __2x__ just by using that different letters have different frequencies. 
-
-- _Zipping_: Standard compression algorithms like those used in ZIP implement dictionaries to catch patterns that are often reused in the text. They can compress English text up to a factor around __3x__.  
-
-- _LLMs_: Large Language Models are trained to predict text, hence they compress it. If we disregard the fact that technically speaking, LLM size should count toward the size of the compressed text, they compress English text around __7x__ for old LLMs like GPT-2 and up to perhaps __10x__ for state-of-the-art networks. 
-
-I encourage you to play with the following widget, especially making GPT-2 compress your texts. 🙂
-
-<CompressionWidget />
-
-The best algorithms in Hutter's competition have compressed by a factor of about 9x. But unfortunately, while the challenge is backed by a very deep understanding of the nature of intelligence, the precise parameters of the challenge makes it hard to win it with LLMs. The problem is that the file size is only 1GB. Remember, our LLM-based compression algorithm is only good if we don't count the size of the LLM itself. But in the competition, we naturally have to account for that. 1GB is then too small for our approach to scale. 
-
-</RiddleExplanation>
 
 
 
-
-<Expand headline = "Chinese room">
+<Expand advanced={true} headline = "Chinese room">
 
 One of the most important ideas of AI is what's known as [Turing test](https://en.wikipedia.org/wiki/Turing_test):
 Imagine that you can chat for a few minutes with an entity that is either a human, or an AI impersonating a human. If you can't reliably tell the two cases apart, Turing claims that we should concede that the AI is intelligent.  <Footnote> This was considered the holy grail of AI but, somehow, people stopped talking about it after GPT-4-level models. </Footnote>
@@ -251,7 +227,7 @@ In Searle's thought experiment, he basically imagines a Turing test for speaking
 The person with the book are successfully fooling our judge, but neither the person, nor the list of phrases seem to be very intelligent! So what's left of Turing test then, asks Searle? 
 
 I think we now have good enough understanding and language to talk about what's happening here. 
-First, let's focus on the rule book from the thought experiment. The problem with it is that it has to be incredibly large! Let's say that there are 1000 questions that a typical person can ask you about as the first question. Then, your rule book has to have 1000 items for a conversation long enough for 1 question, $1000^2$ if there's time to ask two questions and so on. In 5 minutes, you can then ask enough questions to make the rulebook collapse to a black hole!<Footnote>See [this book]() by Scott Aaronson for more discussion. </Footnote>
+First, let's focus on the rule book from the thought experiment. The problem with it is that it has to be incredibly large! Let's say that there are 1000 questions that a typical person can ask you about as the first question. Then, your rule book has to have 1000 items for a conversation long enough for 1 question, $1000^2$ if there's time to ask two questions and so on. In 5 minutes, you can then ask enough questions to make the rulebook collapse to a black hole!<Footnote>See [this book](https://www.amazon.com/Quantum-Computing-since-Democritus-Aaronson/dp/0521199565) by Scott Aaronson for more discussion. </Footnote>
 
 So the rulebook, as Searle defined it, is not in any way close to any real algorithm that'll ever exist. Any actual algorithm that passes the Turing test thus necessarily has to involve compression: It has to be able to compress the enormous possibility space of human conversations into something manageable. 
 
@@ -264,6 +240,7 @@ _Predicting the next token well means that you understand the underlying reality
 </Block>
 
 </Expand>
+
 
 ## What's next? 
 

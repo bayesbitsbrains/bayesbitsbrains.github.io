@@ -5,17 +5,20 @@
   padding-right: 2rem;
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: 100%;           /* trust the fixed parent */
   max-height: 100%;
-  overflow: hidden; /* Ensure parent doesn't scroll */
+  min-height: 0;          /* important in flex layouts (Firefox) */
+  overflow: hidden;       /* only inner content should scroll */
 }
 
 .scrollableContent {
-  flex: 1;
+  flex: 1 1 auto;         /* explicit flex-basis helps Firefox */
   overflow-y: auto;
   overflow-x: hidden;
   padding-bottom: 2rem;
-  min-height: 0; /* Important for flex child to properly overflow */
+  min-height: 0;          /* Important for flex child to properly overflow */
+  /* iOS momentum scrolling for smooth experience on mobile */
+  -webkit-overflow-scrolling: touch;
   /* Custom scrollbar styling for better appearance */
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
@@ -121,10 +124,9 @@
 
 @media (max-width: 1023px) {
   /* On mobile and tablet, the sidebar sits inside a container that starts 4rem below the top header (see `top-16`).
-   * Without subtracting that offset, the sidebar is taller than its container, so the bottom items are cut off and
-   * unreachable by scrolling. Limiting the height fixes the issue. */
+   * The sidebar should fill its parent's height rather than calculating its own vh-based height. */
   .sidebar {
-    height: calc(100vh - 4rem);
-    max-height: calc(100vh - 4rem);
+    height: 100%;
+    max-height: 100%;
   }
 }

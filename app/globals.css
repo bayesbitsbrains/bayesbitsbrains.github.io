@@ -38,7 +38,7 @@
   /* --max-width: 800px; */
   --menu-text: #666666;
   /* --sidebar-width: 240px; */
-  --content-width: 44rem; /* Slightly wider for Merriweather */
+  --content-width: 48.4rem; /* 10% wider for monitors */
 
   /* Sidebar typography */
   --sidebar-font: var(--content-font);
@@ -370,6 +370,12 @@ div.widget-explanation {
 /* ImageGallery caption styling - make em tags non-italic within italic captions */
 .italic em {
   font-style: normal;
+}
+
+/* Make list items have the same font weight as paragraphs */
+.prose ul li,
+.prose ol li {
+  font-weight: 300 !important;
 }
 
 /* Table responsive styles */

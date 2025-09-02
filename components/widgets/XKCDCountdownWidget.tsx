@@ -412,8 +412,8 @@ const XKCDCountdownWidget: React.FC = () => {
 
       {/* Posterior probability that all wildcards are zero */}
       {wildcardCount > 0 && (
-        <div className="bg-blue-50 rounded-lg p-2 sm:p-4">
-          <p className="widget-explanation text-blue-800">
+        <div className="bg-white rounded-lg p-2 sm:p-4">
+          <p className="widget-explanation text-gray-800">
             <strong>Posterior probability that all hidden digits are 0:</strong>&nbsp;&nbsp;&nbsp;
             {(() => {
               const percentage = wildcardZeroProbability * 100;

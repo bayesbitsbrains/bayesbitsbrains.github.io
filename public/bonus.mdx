@@ -25,6 +25,35 @@ It's also the ultimate answer to how similar files are.
 
 More in the [Kolmogorov chapter](09-kolmogorov). 
 
+
+
+
+
+
+
+<Expand advanced={true} headline = "Clustering by relative Kolmogorov complexity" >
+
+Here's a fun application of Kolmogorov complexity. First, let's define _relative Kolmogorov complexity_ $K(x | y)$: This is the shortest program to print $x$, if the program can also access a string $y$. For example, there are short codes writing $\pi$, but if we choose $y$ as the Python library `sympy`, the relative complexity of $x = \pi$ becomes even shorter, as we can just run something like `print(sympy.N(sympy.pi, 1000000))`. 
+
+This can be used to measure how much two files $x_1, x_2$ are similar: we measure $K(x_1 \circ x_2)$ versus $K(x_1) + K(x_2)$ ($\circ$ means concatenation). In practice, we use something like ZIP instead, since we can't compute Kolmogorov complexity exactly. 
+
+I was curious to test how it works, the following widget tries to cluster wikipedia pages about three different topics using three algorithms. 
+
+- KL divergence between character frequencies: Remember, this corresponds to looking at one file, and building the best code based on its frequencies and using it for the other file. I compute in both ways and average to make it symmetric. 
+- ZIP divergence: ZIP algorithm builds a dictionary of common words and phrases as it scans through the text. But you can persuade it to build one static dictionary on one text and use it for the other texts. Analogously to KL divergence, ZIP divergence is how many more bits you spend if you use this static dictionary built on another file, versus normal ZIP algorithm. 
+- normalized compression distance: This is defined as $(K(x \circ y) - \min(K(x), K(y)))/ \max (K(x), K(y))$ - it's about comparing $K(x \circ y)$ with $K(x), K(y)$ as we discussed above. 
+
+Unfortunately, the third one did not work well for me, probably because concatenating files actually does not help in compression by ZIP almost at all. Not sure if I am stupid or if this method sucks. 🤷
+
+<ThreeCategoriesWidget />
+
+One thing I would like to point out on this is that relative entropy (=KL divergence) and relative Kolmogorov complexity are different "relativizations". On the one hand, KL divergence and ZIP divergence are about how _worse_ a code is if it expects different data. On the other hand, relative Kolmogorov is about how much _better_ the compression gets, if we can, but do not have to use some additional data. In short, $H(x, y) \ge H(x)$, but $K(x | y) \le K(x)$.  
+
+</Expand>
+
+
+
+
 ### [Multiplicative Weights Update](/mwu)
 
 Here's a riddle that's behind a ton of recent algorithms in CS and ML. Say you wanna get rich trading stocks. Lucky you—$n$ investors share their tips every day. Each day $t$, they give advice, and afterward you find out how they did. For investor $i$, you get $g_i^{(t)}$ - how many dollars she gained that day.

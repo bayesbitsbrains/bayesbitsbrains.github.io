@@ -145,7 +145,7 @@ const DistributionConstraintBuilder: React.FC<Props> = ({
       } else if (l.type === 'log') {
         return `${sign}${absValue} \\log x`;
       } else if (l.type === 'indicator') {
-        return `${sign}${absValue} \\mathbb{1}_{x>2/3}`;
+        return `${sign}${absValue} \\cdot \\boldsymbol{\\mathbb{1}}_{x>2/3}`;
       } else if (l.type === 'sin') {
         return `${sign}${absValue} \\sin(20x)`;
       }

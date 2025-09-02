@@ -236,6 +236,8 @@ export async function getMdxContent(path: string) {
       MLProblemExplorer: MLProblemExplorer,
       MLProblemExplorerSimple: MLProblemExplorerSimple,
       GaussianFitWidget: (await import("@/components/widgets/GaussianFitWidget")).default,
+      SolomonoffInductionWidget: (await import("@/components/widgets/SolomonoffInductionWidget")).default,
+      SolomonoffMiniWidget: (await import("@/components/widgets/SolomonoffInductionWidget")).SolomonoffMiniWidget,
       Math: NumberedMath,
       EqRef: EquationRef,
       Block: Block,

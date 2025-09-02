@@ -18,6 +18,11 @@ const ExpertRatingWidget: React.FC<Props> = ({
     [0.5, 0.5, 0.5, 0.5, 0.5],    // 👶
   ]);
   
+  // Track input field values separately to allow partial typing
+  const [inputValues, setInputValues] = useState<string[][]>(() =>
+    predictions.map(expertPreds => expertPreds.map(val => val.toFixed(2)))
+  );
+  
   const [groundTruth, setGroundTruth] = useState<number[]>([1, 1, 0, 1, 0]);
 
   const experts = [
@@ -69,15 +74,35 @@ const ExpertRatingWidget: React.FC<Props> = ({
     });
   }, [predictions, groundTruth]);
 
-  const updatePrediction = (expertIdx: number, questionIdx: number, value: string) => {
+  const updateInputValue = (expertIdx: number, questionIdx: number, value: string) => {
+    const newInputValues = [...inputValues];
+    newInputValues[expertIdx] = [...newInputValues[expertIdx]];
+    newInputValues[expertIdx][questionIdx] = value;
+    setInputValues(newInputValues);
+  };
+
+  const commitPrediction = (expertIdx: number, questionIdx: number, value: string) => {
     const numValue = parseFloat(value);
-    if (isNaN(numValue)) return;
+    if (isNaN(numValue)) {
+      // Reset to current prediction value if invalid
+      const newInputValues = [...inputValues];
+      newInputValues[expertIdx] = [...newInputValues[expertIdx]];
+      newInputValues[expertIdx][questionIdx] = predictions[expertIdx][questionIdx].toFixed(2);
+      setInputValues(newInputValues);
+      return;
+    }
     
     const clampedValue = Math.max(0, Math.min(1, numValue));
     const newPredictions = [...predictions];
     newPredictions[expertIdx] = [...newPredictions[expertIdx]];
     newPredictions[expertIdx][questionIdx] = clampedValue;
     setPredictions(newPredictions);
+    
+    // Update input value to match the clamped value
+    const newInputValues = [...inputValues];
+    newInputValues[expertIdx] = [...newInputValues[expertIdx]];
+    newInputValues[expertIdx][questionIdx] = clampedValue.toFixed(2);
+    setInputValues(newInputValues);
   };
 
   const updateGroundTruth = (questionIdx: number, value: string) => {
@@ -91,14 +116,18 @@ const ExpertRatingWidget: React.FC<Props> = ({
 
   const addQuestion = () => {
     const newPredictions = predictions.map(expertPreds => [...expertPreds, 0.5]);
+    const newInputValues = inputValues.map(expertInputs => [...expertInputs, "0.50"]);
     setPredictions(newPredictions);
+    setInputValues(newInputValues);
     setGroundTruth([...groundTruth, 1]);
   };
 
   const removeLastQuestion = () => {
     if (numQuestions > 1) {
       const newPredictions = predictions.map(expertPreds => expertPreds.slice(0, -1));
+      const newInputValues = inputValues.map(expertInputs => expertInputs.slice(0, -1));
       setPredictions(newPredictions);
+      setInputValues(newInputValues);
       setGroundTruth(groundTruth.slice(0, -1));
     }
   };
@@ -173,8 +202,15 @@ const ExpertRatingWidget: React.FC<Props> = ({
                         min="0"
                         max="1"
                         step="0.01"
-                        value={predictions[expertIdx][questionIdx].toFixed(2)}
-                        onChange={(e) => updatePrediction(expertIdx, questionIdx, e.target.value)}
+                        value={inputValues[expertIdx][questionIdx]}
+                        onChange={(e) => updateInputValue(expertIdx, questionIdx, e.target.value)}
+                        onBlur={(e) => commitPrediction(expertIdx, questionIdx, e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            commitPrediction(expertIdx, questionIdx, e.currentTarget.value);
+                            e.currentTarget.blur();
+                          }
+                        }}
                         className="w-full p-1 text-center border-none text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[28px] sm:min-h-[36px]"
                       />
                       {/* Range slider - visible on mobile */}
@@ -185,7 +221,11 @@ const ExpertRatingWidget: React.FC<Props> = ({
                           max="100"
                           step="1"
                           value={Math.round(predictions[expertIdx][questionIdx] * 100)}
-                          onChange={(e) => updatePrediction(expertIdx, questionIdx, (parseInt(e.target.value) / 100).toString())}
+                          onChange={(e) => {
+                            const value = (parseInt(e.target.value) / 100).toString();
+                            updateInputValue(expertIdx, questionIdx, value);
+                            commitPrediction(expertIdx, questionIdx, value);
+                          }}
                           className="w-full h-1 appearance-none bg-gray-200 rounded-lg cursor-pointer slider"
                           style={{
                             background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${predictions[expertIdx][questionIdx] * 100}%, #e5e7eb ${predictions[expertIdx][questionIdx] * 100}%, #e5e7eb 100%)`

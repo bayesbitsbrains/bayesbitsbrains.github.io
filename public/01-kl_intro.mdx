@@ -96,12 +96,11 @@ Notice that all the likelihoods (numbers in orange rows) are now negative number
 
 This is a logarithmic viewpoint on how surprised you are when something happens. Getting heads when you thought it was 1% likely? Super surprising ($\log 1/0.01 \approx 6.6 \textrm{bits}$). Getting heads on a fair coin? Meh ($\log 1/0.5 = 1 \textrm{bit}$).
 
-Notice how in the widget, I replaced ':' with 'vs'. This is because in the logarithmic world, it's no longer the ratio that's important, it's the difference. For example, on heads, $\textsf{fair}$ hypothesis is surprised by $1$ bit, while the $\textsf{biased}$ hypothesis is surprised by $2$ bits. The difference of the two surprises - 1 bit - is the most important takeaway from the flip. This difference measures the _bits of evidence_ that the flipped heads provide. We are essentially adding up this difference in the posterior log odds, and it ultimately translates into the posterior probability. 
+Notice how in the widget, I replaced ':' with 'vs'. This is because in the logarithmic world, it's no longer the _ratio_ that's important, it's the _difference_. For example, on heads, $\textsf{fair}$ hypothesis is surprised by $1$ bit, while the $\textsf{biased}$ hypothesis is surprised by $2$ bits. The difference of the two surprises - 1 bit - is the most important takeaway from the flip. This difference measures the _bits of evidence_ that the flipped heads provide. We are essentially adding up this difference in the posterior log odds, and it ultimately translates into the posterior probability. 
 
 ## Expected evidence <a id="expected-distinguishing-evidence"></a>
 
-Remember, whenever our detective flips heads, she is getting $2 - 1 = 1$ bit of evidence that the coin is fair. Whenever she flips tails, she's getting $1 - 0.58 = 0.42$ bits of evidence that the coin is biased. 
-
+Remember, whenever our detective flips heads, she is getting $\log \frac{1}{1/4} - \log \frac{1}{1/2} = 2 - 1 = 1$ bit of evidence that the coin is fair. Whenever she flips tails, she's getting $\log \frac{1}{1/2} - \log \frac{1}{3/4} \approx 1 - 0.58 = 0.42$ bits of evidence that the coin is biased. 
 This holds regardless of which one of the two hypothesis is true. Now, let's say the coin actually is biased. How fast will our Bayesian detective figure this out? 
 
 This all comes down to adding bits of evidence. We can calculate the average number of bits that she learns per flip:

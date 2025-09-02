@@ -112,6 +112,14 @@ const EvidenceAccumulationSimulator: React.FC<EvidenceAccumulationSimulatorProps
     setIsRunning(false);
   };
 
+  // Flip p and q values and reset
+  const flipPQAndReset = (): void => {
+    const tempTrueHeadsProb = trueHeadsProb;
+    setTrueHeadsProb(modelHeadsProb);
+    setModelHeadsProb(tempTrueHeadsProb);
+    resetSimulation();
+  };
+
   // Start/pause the simulation
   const toggleSimulation = () => {
     if (currentFlip >= numFlips) {
@@ -308,7 +316,7 @@ const EvidenceAccumulationSimulator: React.FC<EvidenceAccumulationSimulatorProps
                   )}}{${modelHeadsProb.toFixed(2)}}\\right) + ${(1 - trueHeadsProb).toFixed(2)}\\log_2\\left(\\frac{${(
                     1 - trueHeadsProb
                   ).toFixed(2)}}{${(1 - modelHeadsProb).toFixed(2)}}\\right) \\\\
-                  &= ${klDivergence.toFixed(4)}\\text{ bits per flip}
+                  &= ${klDivergence.toFixed(2)}\\text{ bits per flip}
                 \\end{align*}`}
               />
             </div>
@@ -374,6 +382,13 @@ const EvidenceAccumulationSimulator: React.FC<EvidenceAccumulationSimulatorProps
                 Reset
               </button>
 
+              <button
+                onClick={flipPQAndReset}
+                className={`${BUTTON_STYLES.base} ${BUTTON_STYLES.secondary} ml-4`}
+              >
+                Flip p and q
+              </button>
+
               {/*<div className="flex items-center ml-4">
                 <input
                   type="checkbox"
@@ -412,6 +427,12 @@ const EvidenceAccumulationSimulator: React.FC<EvidenceAccumulationSimulatorProps
                       disabled={!currentFlip}
                     >
                       Reset
+                    </button>
+                    <button
+                      onClick={flipPQAndReset}
+                      className="px-3 py-1 text-xs bg-gray-500 hover:bg-gray-600 text-white rounded"
+                    >
+                      Flip p and q
                     </button>
                   </>
                 )}
