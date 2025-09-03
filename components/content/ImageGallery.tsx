@@ -10,11 +10,13 @@ interface ImageItem {
 interface ImageGalleryProps {
   images: ImageItem[];
   caption?: string;
+  /** Default pixel height for each image tile (keeps aspect ratio). */
   height?: number;
+  /** Single image only: makes the container span the full width. */
   fullWidth?: boolean;
-  // Optional custom width (e.g., "75%" or "500px") for single-image galleries.
+  /** Single image only: explicit container width (e.g., "75%" or 500). */
   width?: string | number;
-  /** If true, caption will have minimal spacing (closer to image). */
+  /** If true, caption has minimal spacing. */
   compactCaption?: boolean;
 }
 
@@ -28,70 +30,64 @@ export default function ImageGallery({
   width,
   compactCaption = false,
 }: ImageGalleryProps) {
-  // Special handling for single image
-  if (images.length === 1) {
-    const image = images[0];
-    return (
-      <div className="my-6">
-        <div className="w-full flex justify-center">
-          <div className="inline-block rounded shadow-sm overflow-hidden bg-white" style={
-            width ? { width } : 
-            fullWidth ? { width: "100%" } : 
-            {}
-          }>
-            <ExpandableImage 
-              src={image.src} 
-              alt={image.alt} 
-              className="block w-auto h-auto" 
-              style={
-                !width && !fullWidth ? { maxHeight: `${height * 1.5}px`, maxWidth: "90%" } : {}
-              }
-            />
-          </div>
-        </div>
-        {/* Markdown caption below */}
-        <div
-          className={`text-center text-sm italic font-medium text-gray-700 max-w-2xl mx-auto min-h-[1.5em] ${compactCaption ? "mt-0 px-2 py-0" : "mt-0.5 px-4 py-0.5"}`}
-        >
-          {typeof caption === "string" ? <ReactMarkdown>{caption}</ReactMarkdown> : caption || null}
-        </div>
-      </div>
-    );
-  }
+  const isSingle = images.length === 1;
+
+  // For a single image we allow controlling the outer container width.
+  const singleContainerStyle: React.CSSProperties =
+    !isSingle
+      ? {}
+      : width != null
+      ? { width }
+      : fullWidth
+      ? { width: "100%" }
+      : {};
 
   return (
-    <div className="my-6">
-      {/* Images grid */}
-      <div className="w-full">
+    <figure className="my-6">
+      {/* Outer centering wrapper */}
+      <div className="w-full flex justify-center">
+        {/* Image strip (wraps for multiple images) */}
         <div
-          className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-4 place-items-center justify-center mx-auto"
-          style={{ width: "fit-content" }}
+          className={`flex ${isSingle ? "" : "flex-wrap gap-4"} justify-center`}
+          style={singleContainerStyle}
         >
-          {images.map((image, index) => (
+          {images.map((image, idx) => (
             <div
-              key={index}
+              key={`${image.src}-${idx}`}
+              className="flex items-center justify-center"
               style={{
+                // The tile's height is the control knob. Width is content-driven.
                 height: `${height}px`,
-                width: "100%",
-                maxWidth: `${height * 1.2}px`,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                flexShrink: 0,
+                // Keep tiles from growing too wide while still allowing responsiveness.
+                maxWidth: "100%",
               }}
-              className="rounded shadow-sm overflow-hidden mx-auto bg-white"
             >
-              <ExpandableImage src={image.src} alt={image.alt} className="w-full h-full object-contain block" />
+              <ExpandableImage
+                src={image.src}
+                alt={image.alt}
+                // Make the image fit the tile without cropping and without extra frames.
+                className="block max-h-full max-w-full object-contain"
+                // Ensure the img actually takes the tile's height and shrinks as needed.
+                style={{ height: "100%", width: "auto" }}
+              />
             </div>
           ))}
         </div>
       </div>
-      {/* Markdown caption below (always rendered) */}
-      <div
-        className={`text-center text-sm italic font-medium text-gray-700 max-w-2xl mx-auto min-h-[1.5em] ${compactCaption ? "mt-0 px-2 py-0" : "px-4 py-0.5 mt-0.5"}`}
+
+      {/* Caption */}
+      <figcaption
+        className={[
+          "text-center text-sm italic font-medium text-gray-700 max-w-2xl mx-auto min-h-[1.5em]",
+          compactCaption ? "mt-0 px-2 py-0" : "mt-0.5 px-4 py-0.5",
+        ].join(" ")}
       >
-        {typeof caption === "string" ? <ReactMarkdown>{caption}</ReactMarkdown> : caption || null}
-      </div>
-    </div>
+        {typeof caption === "string" ? (
+          <ReactMarkdown>{caption}</ReactMarkdown>
+        ) : (
+          caption || null
+        )}
+      </figcaption>
+    </figure>
   );
 }
