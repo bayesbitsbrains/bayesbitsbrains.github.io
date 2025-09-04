@@ -26,7 +26,7 @@ Every day, the S&P index price jumps around a bit. <Footnote>If you don't know w
 
 I grabbed some historical data, calculated the daily price changes, and normalized them. <Footnote>I.e., I am plotting the so-called log-return <Math math = "\ln P_t/P_{t-1} \approx 1 + \frac{P_t - P_{t-1}}{P_{t-1}}" /> for each consecutive daily prices $P_{t-1}, P_t$. </Footnote> I threw them in a histogram. The x-axis shows how big the change was (positive about half the time, negative the other half) and the y-axis shows how often that size change happens. Before I show you the plot, take a guess—what's it gonna look like? 
 
-<ImageGallery images={[{src: "00-introduction/shapes.png", alt: "shapes"}]} fullWidth={true} />
+<ImageGallery images={[{src: "00-introduction/shapes.png", alt: "shapes"}]} fullWidth={true} fit="width" />
 
 <MultipleChoiceQuestion
   options={["A", "B", "C"]}
@@ -63,7 +63,7 @@ Marcus Hutter, an AI researcher, started <a href="http://prize.hutter1.net/">thi
 It would be great to know the future—or at least know someone who does. So you've gathered some experts and come up with five questions (Q1 to Q5). You ask the experts to give you probabilities for all 5 questions.
 A year later, you know what actually happened. Time to find the best expert!  
 
-<ImageGallery images={[{src: "00-introduction/questions.png", alt: "questions"}]} width="150%" />
+<ImageGallery images={[{src: "00-introduction/questions.png", alt: "questions"}]} height={320} />
 
 The question is: who's the best here?
 
@@ -87,7 +87,7 @@ The question is: who's the best here?
 
 <RiddleStatement id="statistics">
 
-<ImageGallery images={[{src: "00-introduction/rod.png", alt: "rod"}]} width="200%" caption="Determining the length of the foot in [1522 Frankfurt](https://commons.wikimedia.org/wiki/File:Determination_of_the_rute_and_the_feet_in_Frankfurt.png)." />
+<ImageGallery images={[{src: "00-introduction/rod.png", alt: "rod"}]} height={320} caption="Determining the length of the foot in [1522 Frankfurt](https://commons.wikimedia.org/wiki/File:Determination_of_the_rute_and_the_feet_in_Frankfurt.png)." />
 
 Back in the day, people measured lengths in feet. Sure, we all kinda know how long a foot is, but eventually you need to nail it down precisely. One way is to grab 16 random people and average their foot lengths:
 <Math displayMode={true} math="\hat{\mu} = \frac{1}{16} (X_1 + \dots + X_{16})" />
@@ -135,7 +135,7 @@ Your LLM tries to guess this distribution with its own guess $q$. We need to mea
 
 <RiddleStatement id="xkcd">
 
-<ImageGallery images={[{src: "00-introduction/countdown.png", alt: "Are the odds in our favor?"}]} fullWidth={true} />
+<ImageGallery images={[{src: "00-introduction/countdown.png", alt: "Are the odds in our favor?"}]} fullWidth={true} fit="width" />
 
 So... are the odds in our favor?
 
@@ -144,7 +144,7 @@ So... are the odds in our favor?
   correctIndices={[1, 2]}
   explanation={<>
   <p>
-  The guy in the hat [in that joke](https://xkcd.com/1159/) seems to be confident that at least one digit behind the picture is not zero. If those digits are uniformly random, it's a safe assumption. However, we will justify a different probabilistic model and confirm our gut feeling: Given all the zeros we can see, it's actually very plausible that all other hidden digits are zeros too!
+  The guy in the hat <a href="https://xkcd.com/1159/" target="_blank" rel="noopener noreferrer">in that joke</a> seems to be confident that at least one digit behind the picture is not zero. If those digits are uniformly random, it's a safe assumption. However, we will justify a different probabilistic model and confirm our gut feeling: Given all the zeros we can see, it's actually very plausible that all other hidden digits are zeros too!
   </p>
 
   <p>More on that <a href="05-max_entropy#xkcd">later</a>; We will use the widget below to confirm that there's a huge difference between seeing "00002382" and just "2382".</p>

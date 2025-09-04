@@ -52,6 +52,7 @@ import EquationRef from "@/components/content/EquationRef";
 import { EquationProvider } from "@/components/content/EquationContext";
 import Block from "@/components/content/Block";
 import Expand from "@/components/content/Expand";
+import HistoryExpand from "@/components/content/HistoryExpand";
 import ExpandableImage from "@/components/content/ExpandableImage";
 import MandelbrotExplorer from "@/components/widgets/MandelbrotExplorer";
 import BuildYourOwnCodeWidget from "@/components/widgets/BuildYourOwnCodeWidget";
@@ -243,6 +244,7 @@ export async function getMdxContent(path: string) {
       Block: Block,
       Example: Block,
       Expand: Expand,
+      HistoryExpand: HistoryExpand,
       KeyTakeaway: KeyTakeaway,
       RiddleSolution: RiddleSolution,
       ImageGallery: ImageGallery,

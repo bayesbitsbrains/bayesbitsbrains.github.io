@@ -3,21 +3,6 @@
 In this final chapter, we will see how entropy connects to compression and what that tells us about large language models. 
 
 
-<Expand headline = "A bit of history">
-
-<ImageGallery 
-  images={[
-    { src: "/fig/Norbert_Wiener.png", alt: "Norbert Wiener" },
-    { src: "/fig/fano.jpg", alt: "Robert Fano" },
-    { src: "/fig/shannon.jpg", alt: "Claude Shannon" }
-  ]}
-  width="80%"
-  caption={"Norbert Wiener (left), Robert Fano (middle), Claude Shannon (right)"}
-/>
-
-Here's one of my favorite science stories. Norbert Wiener was a professor at MIT, known for roaming the corridors and stopping in offices of other researchers. Once, he stopped in the office of Robert Fano, said: "You know, information is entropy", and walked out. Fano started to think about what that meant and a few months later, on a train ride to a meeting, he finally worked it out. At that meeting, a guy named Claude Shannon presented an early version of what later became one of the most cited papers, ever - [The mathematical theory of communication](https://en.wikipedia.org/wiki/A_Mathematical_Theory_of_Communication). The topic of the paper was pretty much the same as what Fano worked out: What does the formula for entropy had to do with storing data on a computer. Shannon and Fano hit it off the next day and information theory was born. 
-</Expand>
-
 
 
 <KeyTakeaway>
@@ -37,24 +22,14 @@ While playing, notice that whenever you use a short code name to a letter, e.g. 
 <BuildYourOwnCodeWidget /> 
 
 
-
-.
-
-.
-
-SPOILER
-
-
-.
-
-.
-
+<Expand headline = "Solution">
 Here's the solution: <Math math = "\mathsf{A} \rightarrow \textsf{0}, \mathsf{C} \rightarrow \textsf{10}, \mathsf{G} \rightarrow \textsf{110}, \mathsf{T} \rightarrow \textsf{111} " />. 
 Since the letter frequencies in the text are <Math math = "\frac12, \frac14, \frac18, \frac18"/>, this encoding only uses 
 <Math displayMode={true} id = "code-example" math = "\frac12 \cdot 1 + \frac14 \cdot 2 + \frac18 \cdot 3 + \frac18 \cdot 3 = 1.75" />
 bits per letter.  
+</Expand>
 
-OK, using shorter codes for more frequent letters makes sense, but what's the best way to do this? Coding theory has the answer. Roughly speaking, it tells us to __try to give a letter with frequency $p_i$ a code-name of length $\log 1/p_i$__. 
+The upshot: it makese sense to use shorter codes for more frequent letters. But what's the best way to do this? Coding theory has the answer. Roughly speaking, it tells us to __try to give a letter with frequency $p_i$ a code-name of length $\log 1/p_i$__. 
 
 For example, looking at <EqRef id = "code-example"/>, you can rewrite the left-hand side as: 
 <Math displayMode={true} id = "code-example2" math = " \frac12 \cdot \log \frac{1}{1/2} + \frac14 \cdot \log \frac{1}{1/4} + \frac18 \cdot \log \frac{1}{1/8} + \frac18 \cdot \log\frac{1}{1/8}. " />
@@ -167,6 +142,23 @@ Here it is again, more concisely in a table:
     </tr>
   </tbody>
 </table>
+
+<HistoryExpand headline="You know, information is entropy">
+
+<ImageGallery 
+  images={[
+    { src: "/fig/Norbert_Wiener.png", alt: "Norbert Wiener" },
+    { src: "/fig/fano.jpg", alt: "Robert Fano" },
+    { src: "/fig/shannon.jpg", alt: "Claude Shannon" }
+  ]}
+  width="80%"
+  caption={"Norbert Wiener (left), Robert Fano (middle), Claude Shannon (right)"}
+/>
+
+Norbert Wiener was a professor at MIT, famous for roaming the corridors and dropping into other researchers' offices. Once, he stopped by Robert Fano's office, announced "You know, information is entropy," and walked out. Fano spent the next few months puzzling over what that meant. 
+
+On a train to an academic meeting, Fano finally worked it out. At that same meeting, a Bell Labs engineer named Claude Shannon presented an early version of what would become one of the most cited papers ever: [*A Mathematical Theory of Communication*](https://en.wikipedia.org/wiki/A_Mathematical_Theory_of_Communication). Shannon's topic was exactly what Fano had just figured out — how the entropy formula connects to storing and transmitting information. The two hit it off immediately, and information theory was born.<Footnote>Wiener himself had been circling similar ideas in his work on cybernetics, but it was Shannon (and Fano) who formalized the mathematical framework we use today.</Footnote>
+</HistoryExpand>
 
 
 ## LLM compression

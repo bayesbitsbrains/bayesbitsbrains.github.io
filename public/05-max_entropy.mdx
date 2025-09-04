@@ -24,7 +24,7 @@ Let's try again. I eat many more lunches, but this time I keep recording the ave
 
 We simply can't do this. In probability theory, we can condition on events like $X \le 30$, i.e., facts that are true for some values that $X$ can attain, but not others. But now we would like to condition on $E[X] = 15$ which is not an event, just a fact that's true for some _distributions_ over $X$, but not others. 
 
-The fun part is that we can use KL divergence to 'condition' on $E[X] = 15$. It turns out that the most reasonable way to account for the new information is to choose <Math math = "p_{\textrm{new}}" /> as the model minimizing KL divergence to $q$. That is, for the set $P$ of distributions $p$ with $E_p[X] = 15$, choose
+The cool part is that we can use KL divergence to 'condition' on $E[X] = 15$. It turns out that the most reasonable way to account for the new information is to choose <Math math = "p_{\textrm{new}}" /> as the model minimizing KL divergence to $q$. That is, for the set $P$ of distributions $p$ with $E_p[X] = 15$, choose
 <Math id="min-relative-entropy" displayMode={true} math = "p_{\textrm{new}} = \argmin_{p\in P} D(p, q)" />
 
 In the example, <Math math = "p_{\textrm{new}}" /> happens to look like exponential distribution: 
@@ -87,7 +87,7 @@ It would be highly interesting to understand what happens when we combine both p
 
 <Math displayMode={true} math="p_{\textrm{new}} = \argmin_{p \in P} D(p,q_{\textrm{uniform}}) = \argmin_{p \in P}  \sum_{i = 1}^k p_i \log \frac{p_i}{ 1/k}" />
 
-I'm a one-trick pony—whenever I see KL divergence, I split it into cross-entropy and entropy:
+Splitting KL divergence into cross-entropy and entropy has never let us down so far:
 
 <Math displayMode={true} math="D(p,q_\text{uniform}) = \underbrace{\sum_{i = 1}^k p_i\log \frac{1}{1/k}}_{\textrm{cross-entropy}} - \underbrace{\sum_{i = 1}^k p_i\log \frac{1}{p_i}}_{\textrm{entropy}}" />
 
@@ -122,10 +122,24 @@ So, after all this discussion, generalizing the minimum relative entropy princip
 But make no mistake: entropy is not differential entropy! The fact that we can use differential entropy in the max-entropy principle is a bit of a lucky coincidence. The key to not get confused is to understand that it is the _relative entropy_, i.e., KL divergence that generalizes to continuous distributions. Entropy is infinite. Thus, we can replace entropy with differential entropy in our maximum entropy principle _only because the underlying argument is ultimately about KL divergence to the uniform distribution_!    
 </Expand>
 
+<HistoryExpand headline="With great ignorance comes great entropy">
+<ImageGallery
+images={[
+{ src: "/fig/jaynes.jpg", alt: "E. T. Jaynes" },
+]}
+caption={"Edwin Jaynes"}
+/>
+
+In 1957, physicist [Edwin Jaynes](https://en.wikipedia.org/wiki/Edwin_Thompson_Jaynes) was working in statistical physics, where researchers constantly wrestle with probability distributions over particles' properties. Jaynes recognized a deeper philosophical problem lurking there: where do these probability distributions come from in the first place?
+
+This particularly troubled him as someone who championed using Bayes' rule for statistics. Bayes' rule elegantly tells us how to update from priors to posteriors when we learn new information, but it's seemingly silent about how to choose that initial prior. It's all about going from one distribution to another — but we have to start somewhere.
+
+That's why Jaynes developed the maximum entropy principle. Start with complete ignorance (the uniform distribution), then constrain it with whatever we actually know. The resulting distribution assumes nothing beyond our actual knowledge — it's the most honest prior we can choose.<Footnote>Jaynes would argue this wasn't just a useful trick but a fundamental principle of rational inference, akin to the rules of logic.</Footnote>
+</HistoryExpand>
 
 ## General form of maximum entropy distributions
 
-Let's now dive a bit deeper into maximum entropy. We'll try to understand what maximum entropy distributions actually look like. For example, we will see soon how does the maximum entropy distribution with $E[X] = 15$ looks like. 
+Let's now dive a bit deeper into the maximum entropy principle. We'll try to understand what maximum entropy distributions actually look like. For example, we will see soon how does the maximum entropy distribution with $E[X] = 15$ looks like. 
 
 Here's what I want you to focus on, though. Let's not worry about concrete numbers like 15 too much. To get the most out of the max-entropy principle, we have to think about the questions a bit more abstractly, more like: _If I fix the value of $E[X]$, what shape will the max-entropy distribution have?_ 
 
@@ -146,7 +160,7 @@ for some constants $\lambda_1, \dots, \lambda_m$.
 Note that this general recipe doesn't tell us the exact values of $\lambda_1, \dots, \lambda_m$. Those depend on the specific values of $\alpha_1, \dots, \alpha_m$, while the general shape remains the same regardless of the $\alpha$ values. But don't get too hung up on the $\alpha$s and $\lambda$s. The key takeaway is that __the maximum entropy distribution looks like an exponential, with the "stuff we care about" in the exponent.__
 
 <Expand headline = "Build your own distribution!">
-Try building your own maximum entropy distribution on the interval $[0,1]$ by playing with $\lambda$ values:
+You can build your own maximum entropy distribution on the interval $[0,1]$ by playing with $\lambda$ values:
 
 <DistributionConstraintBuilder />
 
@@ -377,11 +391,9 @@ Often, I like to think about the Gaussian as the simplest possible distribution 
 </Expand>
 
 
-We can now revisit our [financial mathematics riddle](00-riddles#financial-mathematics) from the intro. 
 
 <RiddleExplanation id="financial-mathematics">
-
-In that riddle, we look at daily changes in S&P index (normalized as a so-called log-return $\log S_{i+1}/S_{i}$ for all consecutive daily values $S_i, S_{i+1}$) and plot them in a histogram in the following widget
+We can now revisit our [financial mathematics riddle](00-riddles#financial-mathematics) from the intro. In that riddle, we look at daily changes in S&P index (normalized as a so-called log-return $\log S_{i+1}/S_{i}$ for all consecutive daily values $S_i, S_{i+1}$) and plot them in a histogram in the following widget
 
 <FinancialDistributionWidget showBTC={true} showSAP={true} />
 
@@ -436,11 +448,9 @@ These situations are typically modeled by *power-law distributions*, where $p(x)
 Whenever you use a power-law distribution, you're implicitly saying, "__The important thing to look at is not $X$, but $\log X$.__" In the case of cities, for example, it feels more sensible to classify them on a log-scale ($10^4$ – small, $10^5$ – medium, $10^6$ – large, $10^7$ – huge). This is much more natural than a normal scale ($10^5$ – small, $2 \cdot 10^5$ – medium, $3 \cdot 10^5$ – large, $4 \cdot 10^5$ – huge). 
 </Expand>
 
-And here's an application to our [XKCD riddle](00-riddles#xkcd):
 
 <RiddleExplanation id="xkcd">
-
-The joke is explained [here](https://www.explainxkcd.com/wiki/index.php/1159:_Countdown) but we're now ready to analyze even even more!
+Here's an application to our [XKCD riddle](00-riddles#xkcd). The joke is explained [here](https://www.explainxkcd.com/wiki/index.php/1159:_Countdown) but we're now ready to analyze further!
 
 [![Are the odds in our favor?](00-introduction/countdown.png)](https://xkcd.com/1159/)
 
@@ -471,13 +481,11 @@ But also notice is that the posterior distribution still looks uniform for numbe
 The point is that the max-entropy principle gives us a language to talk about different priors and what they stand for. If the very natural log-uniform prior says we are screwed with probability $> 0.999$, it's time to look behind the picture. 
 </RiddleExplanation>
 
-
-
-### Independence
-
-One final example I find cute. 
+---
 
 <Expand headline ="Independence is max entropy">
+Here's one more example I find very cute -- assuming independence is itself a special case of the maximum entropy principle. 
+
 An important property of entropy that [we mentioned earlier](03-entropy_properties#additivity) is its _subadditivity_: If you have a joint distribution $r$ with marginals $p,q$, then $H(r) \le H(p) + H(q)$. 
 
 The implication for the max-entropy principle is this: Imagine you're working with a joint distribution and you know its two marginals $p,q$. Then, the maximum entropy principle tells us that the max-entropy joint distribution with these two marginals is the independent, product distribution.
