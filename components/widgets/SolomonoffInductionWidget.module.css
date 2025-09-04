@@ -339,9 +339,9 @@
   }
 
   .coin {
-    width: 2rem;
-    height: 2rem;
-    font-size: 1rem;
+    width: 1.75rem;
+    height: 1.75rem;
+    font-size: 0.9rem;
   }
 
   .barChart {
@@ -364,6 +364,14 @@
   .logBarLabel {
     min-width: 80px;
     font-size: 0.8rem;
+  }
+
+  .logBarRow {
+    gap: 0;
+  }
+
+  .logBarWrapper {
+    margin-left: 0;
   }
 
   .posteriorHeader {

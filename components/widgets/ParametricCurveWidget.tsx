@@ -133,7 +133,7 @@ const ParametricCurveWidget: React.FC = () => {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 space-y-6">
+    <div className="bg-white rounded-lg shadow-lg p-3 sm:p-6 space-y-4 sm:space-y-6">
       <h3 className="text-xl font-semibold mb-4">Parametric Curve Explorer</h3>
       
       {/* Preset buttons */}
@@ -155,8 +155,14 @@ const ParametricCurveWidget: React.FC = () => {
       </div>
 
       {/* Curve visualization */}
-      <div className="border rounded p-4">
-        <svg width={width} height={height} className="w-full border" style={{ maxWidth: `${width}px` }}>
+      <div className="border rounded p-2 sm:p-4 overflow-hidden">
+        <svg 
+          width={width} 
+          height={height} 
+          viewBox={`0 0 ${width} ${height}`}
+          className="w-full h-auto border" 
+          preserveAspectRatio="xMidYMid meet"
+        >
           {/* Grid */}
           <defs>
             <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
@@ -201,7 +207,7 @@ const ParametricCurveWidget: React.FC = () => {
       </div>
 
       {/* Parameter controls */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
         {/* X parameters */}
         <div>
           <h4 className="text-lg font-semibold mb-3">X(t) Parameters</h4>
@@ -211,24 +217,26 @@ const ParametricCurveWidget: React.FC = () => {
               if (term === '—' || term === '0') return null;
               
               return (
-                <div key={idx} className="flex items-center gap-3">
-                  <label className="w-20 text-sm font-mono">{term}:</label>
-                  <input
-                    type="range"
-                    min="-100"
-                    max="100"
-                    step="0.1"
-                    value={param}
-                    onChange={(e) => updateXParam(idx, parseFloat(e.target.value))}
-                    className="flex-1"
-                  />
-                  <input
-                    type="number"
-                    value={param.toFixed(2)}
-                    onChange={(e) => updateXParam(idx, parseFloat(e.target.value) || 0)}
-                    className="w-20 px-2 py-1 border rounded text-sm"
-                    step="0.1"
-                  />
+                <div key={idx} className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                  <label className="text-sm font-mono min-w-0 sm:w-20">{term}:</label>
+                  <div className="flex items-center gap-2 flex-1">
+                    <input
+                      type="range"
+                      min="-100"
+                      max="100"
+                      step="0.1"
+                      value={param}
+                      onChange={(e) => updateXParam(idx, parseFloat(e.target.value))}
+                      className="flex-1 min-w-0"
+                    />
+                    <input
+                      type="number"
+                      value={param.toFixed(2)}
+                      onChange={(e) => updateXParam(idx, parseFloat(e.target.value) || 0)}
+                      className="w-16 sm:w-20 px-1 sm:px-2 py-1 border rounded text-sm"
+                      step="0.1"
+                    />
+                  </div>
                 </div>
               );
             })}
@@ -244,24 +252,26 @@ const ParametricCurveWidget: React.FC = () => {
               if (term === '—' || term === '0') return null;
               
               return (
-                <div key={idx} className="flex items-center gap-3">
-                  <label className="w-20 text-sm font-mono">{term}:</label>
-                  <input
-                    type="range"
-                    min="-100"
-                    max="100"
-                    step="0.1"
-                    value={param}
-                    onChange={(e) => updateYParam(idx, parseFloat(e.target.value))}
-                    className="flex-1"
-                  />
-                  <input
-                    type="number"
-                    value={param.toFixed(2)}
-                    onChange={(e) => updateYParam(idx, parseFloat(e.target.value) || 0)}
-                    className="w-20 px-2 py-1 border rounded text-sm"
-                    step="0.1"
-                  />
+                <div key={idx} className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                  <label className="text-sm font-mono min-w-0 sm:w-20">{term}:</label>
+                  <div className="flex items-center gap-2 flex-1">
+                    <input
+                      type="range"
+                      min="-100"
+                      max="100"
+                      step="0.1"
+                      value={param}
+                      onChange={(e) => updateYParam(idx, parseFloat(e.target.value))}
+                      className="flex-1 min-w-0"
+                    />
+                    <input
+                      type="number"
+                      value={param.toFixed(2)}
+                      onChange={(e) => updateYParam(idx, parseFloat(e.target.value) || 0)}
+                      className="w-16 sm:w-20 px-1 sm:px-2 py-1 border rounded text-sm"
+                      step="0.1"
+                    />
+                  </div>
                 </div>
               );
             })}
@@ -270,9 +280,9 @@ const ParametricCurveWidget: React.FC = () => {
       </div>
 
       {/* Equations display */}
-      <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded">
+      <div className="p-3 sm:p-4 bg-gray-50 rounded">
         <h4 className="text-md font-semibold mb-2">Current Equations</h4>
-        <div className="font-mono text-sm space-y-1">
+        <div className="font-mono text-xs sm:text-sm space-y-1 overflow-x-auto">
           <div>
             x(t) = {xParams.map((param, idx) => {
               const term = presets[currentPreset].xTerms[idx];

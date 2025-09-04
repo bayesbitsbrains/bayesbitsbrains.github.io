@@ -1,8 +1,8 @@
 # Kolmogorov Complexity
 
-In the [previous chapter](08-coding_theory), we saw how entropy tells us about compressing strings. If we treat letters independently, coding theory is especially powerful. But that's an assumption that good compression algorithms can't make. 
+In the [previous chapter](08-coding_theory), we saw what coding theory tells us about compressing strings. If we treat letters of the text independently, coding theory is especially powerful. But that's an assumption that good compression algorithms can't make. 
 
-Kolmogorov complexity is the ultimate limit for how much a file can be compressed. This makes it a very powerful theoretical concept to have in our dictionary!
+Kolmogorov complexity is a different approach to the same compressing question. It's the ultimate limit for how much a file can be compressed. This makes it a very powerful theoretical concept to have in our dictionary!
 
 
 {/*My favorite applications of Kolmogorov complexity are not practical ones, but a clean conceptual framework for discussing these ideas.*/} 
@@ -50,9 +50,9 @@ I encourage you to play with the following widget, especially making GPT-2 compr
 
 <CompressionWidget />
 
-The best algorithms in Hutter's competition have compressed by a factor of about 9x. But unfortunately, while the challenge is backed by a very deep understanding of the nature of intelligence, the precise parameters of the challenge makes it hard to win it with LLMs. 
+The [best algorithms](https://en.wikipedia.org/wiki/Hutter_Prize#Winners) in Hutter's competition have compressed by a factor of about 9x. 
 
-Here's the problem: the file to compress has only 1GB. Remember, our LLM-based compression algorithm is only good if we don't count the size of the LLM itself. But that's not allowed in the competition—we can't just say "decompress this file using GPT-2", we have to add the weights of GPT-2, too, and its size is gigabytes. So this approach would probably win the competition if we were trying to compress the whole Internet, but doesn't really work for the 1GB-challenge. 
+Unfortunately, while the challenge is backed by a very deep understanding of the nature of intelligence, the precise parameters of the challenge makes it hard to win it with LLMs. Here's the problem: the file to compress has only 1GB. Remember, our LLM-based compression algorithm is only good if we don't count the size of the LLM itself. But that's not allowed in the competition—a program "decompress the following bits using GPT-2" is not a valid solution; only the program "decompress the following bits using GPT-2; and here is the description of GPT-2" is a valid entry to Hutter's competition. Since the size of even just GPT-2 is in gigabytes, this approach looks kind of doomed.  would probably win the competition if we were trying to compress the whole Internet, but doesn't really work for the 1GB-challenge. 
 
 </RiddleExplanation>
 
@@ -76,7 +76,7 @@ An interpreter is a program that reads code written in some other language, and 
 
 In any reasonable programming language, you can write an interpreter for any other reasonable language in at most, say, 1MB. But this means that Kolmogorov complexity of any object is fixed 'up to 1MB': If you have a 100MB Python script that prints the file, then you have a 101MB C, Assembly, Java, ... script printing the same file—just write code in which the first 1 MB is an interpreter of Python tasked to execute the remaining 100MB. 
 
-So for large objects (like the 1GB Wikipedia file from Hutter's prize), there's nothing awkward in using Kolmogorov complexity. The flip side is that it's pretty meaningless to argue whether the Kolmogorov complexity of <Math math="\pi" /> is 200 or 300 bytes. That difference depends on the choice of programming language too much. 
+So for large objects (like the 1GB Wikipedia file from Hutter's prize), there's nothing awkward in using Kolmogorov complexity. The flip side is that it's borderline meaningless to argue whether the Kolmogorov complexity of <Math math="\pi" /> is 200 or 300 bytes. That difference depends on the choice of programming language too much. <Footnote>The fact that talking about small Kolmogorov complexities is fishy won't stop us doing that in a minute. </Footnote>
 
 </Expand>
 
@@ -117,25 +117,29 @@ We can now see where the problem lies. We made one tiny assumption: the existenc
 
 ## Kolmogorov vs entropy: <Math math="E[K(x)] \approx H(X)" /> 
 
-Both Kolmogorov complexity and entropy try to measure something very similar: complexity, information, compression limit. Naturally, they are closely connected. The connection goes like this: If you have a reasonable distribution (<Math math="X" />) over bit strings and you sample from it (<Math math="x" />), then the entropy of the distribution is roughly equal to the expected Kolmogorov complexity of the sample. I.e., <Math displayMode={false} math = "E[K(x)] \approx H(X)"/>. 
+Both Kolmogorov complexity and entropy try to measure something very similar: complexity, information, compression limit. Naturally, they are closely connected! It's a bit hard to see this on the first glance though: Entropy talks about probabilities, and their logarithms. Kolmogorov complexity talks about computer programs and their length. 
+
+The connection goes like this: If you have a reasonable distribution (<Math math="X" />) over bit strings and you sample from it (<Math math="x" />), then the entropy of the distribution is roughly equal to the expected Kolmogorov complexity of the sample. I.e., <Math displayMode={true} math = "E[K(x)] \approx H(X)."/>
 
 <Block headline = "Example: uniform distribution">
-Let's see why this is true on an example. Take a sequence of <Math math="n" /> fair coin flips. This is a uniform distribution over <Math math="2^n" /> binary strings of length <Math math="n" />. The entropy of this distribution is <Math math="n" />. Now let's examine the Kolmogorov complexity. 
+Flip a fair coin <Math math="n" /> times. The result is a uniform distribution over <Math math="2^n" /> binary strings of length <Math math="n" />. The entropy of this distribution is <Math math="n" />. Now let's examine the Kolmogorov complexity of a random $n$-bit string. 
 
-On one hand, the Kolmogorov complexity of any <Math math="n" />-bit string is at most <Math displayMode={true} math = "K(\underbrace{\textsf{01000\dots 010110}}_{\textrm{n bits}}) \le n + \textrm{something small}." /> That's because in any (reasonable) language, you can just print the string:
+On one hand, the Kolmogorov complexity of _any_ <Math math="n" />-bit string is at most <Math displayMode={true} math = "K(\underbrace{\textsf{01000\dots 010110}}_{\textrm{n bits}}) \le n + \textrm{something small}." /> That's because in any (reasonable) language, you can just print the string:
 
 ```
 print('01000...010110')
 ```
 
-But can the average Kolmogorov complexity be much smaller than <Math math="n" />? Notice that our uniform distribution contains many strings with very small Kolmogorov complexity, like the string <Math math="000\dots 0" />. The reason why those highly compressible strings don't really matter on average is [coding theory](/08-coding_theory). 
-We can construct a concrete code like this: for any string in our distribution, its code name is the shortest program that prints it.<Footnote>There is a subtlety here. Code has to be prefix-free: If <Math math="\mathsf{0}" /> is a code, then <Math math = "\mathsf{01}"/> can't be a code. So, to interpret a program as a code name, our programming language has to be prefix-free -- no program can be a prefix of another program. This can be done e.g. by appending a [null-character at the end of the string](https://en.wikipedia.org/wiki/Null-terminated_string), or writing its length at the beginning. </Footnote> The average length of this code is exactly <Math math="E[K(x)]" />. But [we have seen](/08-coding_theory#source-coding) that any code has its average length at least as big as the entropy. Hence, <Math math="E[K(x)] \ge H(X) = n" /> and we have the formula:
-<Math displayMode={true} math = "E[K(x)] \approx H(X)"/> 
+But can the Kolmogorov complexity of an $n$-bit string be much smaller than <Math math="n" />? Sure -- notice that our uniform distribution contains many strings with very small Kolmogorov complexity, like the string <Math math="000\dots 0" />. However, those highly compressible strings don't really matter on average, and the reason is [coding theory](/08-coding_theory). 
+
+Let's construct a concrete code that assigns a code name to each $n$-bit string in our distribution. For any string $x$, its code name is the shortest program that prints it.
+{/* <Footnote>There is a subtlety here that you will hardly appreciate. Any Code has to be prefix-free: If <Math math="\mathsf{0}" /> is a code, then <Math math = "\mathsf{01}"/> can't be a code. So, to interpret a program as a code name, our programming language has to be prefix-free -- no program can be a prefix of another program. This can be done e.g. by appending a [null-character at the end of the string](https://en.wikipedia.org/wiki/Null-terminated_string), or writing its length at the beginning. </Footnote> */}
+The average length of this code is exactly <Math math="E[K(x)]" />. But [we have seen](/08-coding_theory#source-coding) that any code has its average length at least as large as the entropy. Hence, <Math math="E[K(x)] \ge H(X) = n" />. We conclude that <Math displayMode={false} math = "E[K(x)] \approx H(X)"/>. 
 </Block>
 
-If you look at the above example, you can notice that we did not really use that the distribution is uniform, it works pretty much for any distribution.<Footnote>There is an annoying detail. The distribution _itself_ can be hard to describe in the sense of having large Kolmogorov complexity. See e.g. 14.3 in [Elements of Information theory](http://staff.ustc.edu.cn/~cgong821/Wiley.Interscience.Elements.of.Information.Theory.Jul.2006.eBook-DDU.pdf). </Footnote> I.e., you can think of the relation between the two as **The entropy of a distribution is the expected Kolmogorov complexity of a sample from it**. 
+If you look at the above example, you can notice that we did not really use that the distribution is uniform, it works pretty much for any distribution.<Footnote>There is an annoying detail. The distribution _itself_ can be hard to describe in the sense of having large Kolmogorov complexity. See e.g. 14.3 in [Elements of Information theory](http://staff.ustc.edu.cn/~cgong821/Wiley.Interscience.Elements.of.Information.Theory.Jul.2006.eBook-DDU.pdf). </Footnote> I.e., you can think of the relation between the two as **The entropy is the average Kolmogorov complexity**. 
 
-The case of a uniform distribution is the most interesting one: it tells us that most <Math math="n" />-bit strings can't really be compressed, since their Kolmogorov complexity is close to <Math math="n" />! In fact, <Math math="n" />-bit strings with Kolmogorov complexity <Math math="\ge n" /> are called _Kolmogorov random_, to highlight the insight that __bits are random if we can't compress them__. 
+The case of a uniform distribution is the most interesting one: it tells us that most <Math math="n" />-bit strings can't really be compressed, since their Kolmogorov complexity is close to <Math math="n" />. In fact, <Math math="n" />-bit strings with Kolmogorov complexity <Math math="\ge n" /> are called _Kolmogorov random_, to highlight the insight that __bits are random if we can't compress them__. 
 
 
 
@@ -145,21 +149,18 @@ The case of a uniform distribution is the most interesting one: it tells us that
     { src: "/fig/kolmogorov.jpg", alt: "Andrey Kolmogorov" },
   ]}
   width="80%"
-  caption={"Kolmogorov"}
+  caption={"Andrey Kolmogorov"}
 />
 
-Kolmogorov didn’t just lecture; he walked. Students remember “seminars” that were actually day‑long hikes—40 km around Bolshevo, the Klyaz’ma, later Komarovka—arguing mathematics the whole way and then ending with dinner at the dacha.
+Kolmogorov didn’t just lecture; he walked. Students remember “seminars” that were actually 40km day‑long hikes -- chatting about mathematics the whole way and then ending with dinner at the dacha.
 
-Before those walks made him legendary as a mentor, he had already made probability a rigorous part of mathematics. In 1933 he wrote down the measure‑theoretic axioms of probability, putting the subject on the same footing as analysis. The axioms tell you how probabilities must behave; but they don’t give that much of an intuition for what probability actually _is_, where it is coming from. 
+Before those walks made him legendary as a mentor, his results made him a legendary researcher. One of his famous contributions is his axiomatization of probability from the 1930's -- It was only then that probability became a rigorous part of mathematics, on the same footing as mathematical analysis. The axioms tell you how probabilities must behave; but they don’t give that much of an intuition for what probability actually _is_, where it is coming from, how to think about it. 
 
-In the 1960s, Kolmogorov turned to that question. His move was algorithmic: call an object simple if it has a short description; call it random when no description is much shorter than the object itself. In his shorthand: **random = incompressible**.
+In the 1960s, Kolmogorov turned to that question. His ingenius idea was to use the language of algorithms and computer science: Call an object simple if it has a short description (small Kolmogorov complexity); call it random when no description is much shorter than the object itself. In his shorthand: **random = incompressible**.
 
 
 <Expand advanced={true} headline = "What is randomness?"> 
 
-If there is a person we can call the 'father of probability theory', it would be [Pierre Laplace](https://en.wikipedia.org/wiki/Pierre-Simon_Laplace). Laplace lived around the year 1800. At that time, everybody, Laplace included, was amazed by how Newton seemingly solved physics (~1700) by postulating a few simple laws that seemed to describe pretty much all there is. In fact, Laplace himself is the author of [Laplace’s demon](https://en.wikipedia.org/wiki/Laplace%27s_demon) — a thought experiment based on the idea that if you knew all the info about the present state of the universe, you could deterministically simulate it and know all there is about the future. 
-
-Yet Laplace spent a lot of his time developing probability theory <Tooltip tooltip="![chesterton](/fig/chesterton2.jpg)">exactly</Tooltip> because he believed in the deterministic nature of the world. He understood that we can never know all there is to the world anyway. Hence, we need a language — probability — to talk about our epistemic uncertainty.  
 
 When [Solomonoff](https://en.wikipedia.org/wiki/Ray_Solomonoff) and [Kolmogorov](https://en.wikipedia.org/wiki/Andrey_Kolmogorov) developed Kolmogorov complexity,<Footnote>Even though 'Kolmogorov complexity' stuck, Solomonoff was first by a couple of years. We are talking ~1960s.</Footnote> they came from a similar angle. At the heart of the matter, probability is not about whether our world is governed by deterministic Newtonian laws, or what’s your favorite interpretation of quantum physics. It’s about modelling unpredictability. 
 
