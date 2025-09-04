@@ -279,37 +279,6 @@ const GPT2CompressionWidget: React.FC = () => {
             </div>
           </div>
 
-          {/* Controls */}
-          <div className="flex justify-center gap-2">
-            <button
-              onClick={goToBeginning}
-              disabled={currentStep === 0}
-              className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
-            >
-              Beginning
-            </button>
-            <button
-              onClick={prevStep}
-              disabled={currentStep === 0}
-              className="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
-            >
-              ← Step
-            </button>
-            <button
-              onClick={nextStep}
-              disabled={currentStep === compressionData.steps.length - 1}
-              className="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
-            >
-              Step →
-            </button>
-            <button
-              onClick={goToEnd}
-              disabled={currentStep === compressionData.steps.length - 1}
-              className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
-            >
-              End
-            </button>
-          </div>
 
           {/* Tokenization Display */}
           <div className="bg-white p-2 sm:p-4 rounded-lg border">
@@ -318,37 +287,22 @@ const GPT2CompressionWidget: React.FC = () => {
               {compressionData.tokens.map((token, index) => (
                 <span
                   key={index}
-                  className={`px-2 py-1 rounded text-sm font-mono border ${
+                  onClick={() => setCurrentStep(index)}
+                  className={`px-2 py-1 rounded text-sm font-mono border cursor-pointer transition-colors hover:opacity-75 ${
                     index <= currentStep
                       ? index === currentStep
                         ? 'bg-blue-200 border-blue-400'
                         : 'bg-green-100 border-green-300'
                       : 'bg-gray-100 border-gray-300'
                   }`}
+                  title={`Click to view prediction for token: "${token}"`}
                 >
                   {token.replace(/ /g, '·')}
                 </span>
               ))}
             </div>
-            
-            {/* Shannon Codes */}
-            <div className="border-t pt-3">
-              <h5 className="text-sm font-medium text-gray-700 mb-2">Shannon Codes:</h5>
-              <div className="flex flex-wrap gap-1 mb-2">
-                {compressionData.tokens.map((token, index) => (
-                  <div key={index} className="text-center">
-                    <div className={`px-3 py-2 rounded text-xs border min-w-[40px] ${
-                      index <= currentStep
-                        ? index === currentStep
-                          ? 'bg-blue-200 border-blue-400'
-                          : 'bg-green-100 border-green-300'
-                        : 'bg-gray-100 border-gray-300'
-                    }`}>
-                      {index <= currentStep ? `${compressionData.steps[index].shannon_code_length} bits` : '? bits'}
-                    </div>
-                  </div>
-                ))}
-              </div>
+            <div className="text-sm text-gray-500 mt-2">
+              Click on the token boxes above to reveal prediction details
             </div>
           </div>
 

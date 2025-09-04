@@ -22,12 +22,10 @@ While playing, notice that whenever you use a short code name to a letter, e.g. 
 <BuildYourOwnCodeWidget /> 
 
 
-<Expand headline = "Solution">
 Here's the solution: <Math math = "\mathsf{A} \rightarrow \textsf{0}, \mathsf{C} \rightarrow \textsf{10}, \mathsf{G} \rightarrow \textsf{110}, \mathsf{T} \rightarrow \textsf{111} " />. 
 Since the letter frequencies in the text are <Math math = "\frac12, \frac14, \frac18, \frac18"/>, this encoding only uses 
 <Math displayMode={true} id = "code-example" math = "\frac12 \cdot 1 + \frac14 \cdot 2 + \frac18 \cdot 3 + \frac18 \cdot 3 = 1.75" />
 bits per letter.  
-</Expand>
 
 The upshot: it makese sense to use shorter codes for more frequent letters. But what's the best way to do this? Coding theory has the answer. Roughly speaking, it tells us to __try to give a letter with frequency $p_i$ a code-name of length $\log 1/p_i$__. 
 
@@ -147,12 +145,12 @@ Here it is again, more concisely in a table:
 
 <ImageGallery 
   images={[
-    { src: "/fig/Norbert_Wiener.png", alt: "Norbert Wiener" },
     { src: "/fig/fano.jpg", alt: "Robert Fano" },
-    { src: "/fig/shannon.jpg", alt: "Claude Shannon" }
+    { src: "/fig/shannon.jpg", alt: "Claude Shannon" },
+    { src: "/fig/Norbert_Wiener.png", alt: "Norbert Wiener" }
   ]}
   width="80%"
-  caption={"Norbert Wiener (left), Robert Fano (middle), Claude Shannon (right)"}
+  caption={"Robert Fano (left), Claude Shannon (middle), Norbert Wiener (right)"}
 />
 
 Norbert Wiener was a professor at MIT, famous for roaming the corridors and dropping into other researchers' offices. Once, he stopped by Robert Fano's office, announced "You know, information is entropy," and walked out. Fano spent the next few months puzzling over what that meant. 
