@@ -607,6 +607,13 @@ export default function CompressionWidget() {
 
   const runUserTextCompression = async () => {
     const trimmedText = userText.trim();
+    if (!trimmedText || trimmedText.length > 10000) {
+      setError(trimmedText.length > 10000 ? "Text must be 10,000 characters or less" : "Please enter some text");
+      setUserResults(null);
+      return;
+    }
+    setError(null);
+    
     if (!trimmedText) {
       // Handle empty string case
       const results: CompressionResult[] = [
@@ -1019,16 +1026,17 @@ export default function CompressionWidget() {
             <textarea
               value={userText}
               onChange={(e) => setUserText(e.target.value)}
-              placeholder="Paste your text here to see how well different algorithms can compress it..."
+              placeholder="Paste your text here to see how well different algorithms can compress it... (max 10,000 characters)"
               className="w-full h-32 p-3 border border-gray-200 rounded-md text-sm font-mono resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              maxLength={10000}
             />
             <div className="flex items-center justify-between mt-3">
-              <div className="text-xs text-gray-500">
-                Length: {userText.length} characters
+              <div className={`text-xs ${userText.length > 10000 ? 'text-red-500' : 'text-gray-500'}`}>
+                Length: {userText.length}/10,000 characters
               </div>
               <button
                 onClick={runUserTextCompression}
-                disabled={!userText.trim() || isCompressing}
+                disabled={!userText.trim() || isCompressing || userText.length > 10000}
                 className="px-4 py-2 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px]"
               >
                 {isCompressing ? 'Compressing...' : 'Run Compression'}
