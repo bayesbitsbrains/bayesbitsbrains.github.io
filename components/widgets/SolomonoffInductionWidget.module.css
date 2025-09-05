@@ -394,3 +394,59 @@
     justify-content: center;
   }
 }
+
+/* === Phone optimizations (put at the end of the CSS) ===================== */
+@media (max-width: 480px) {
+  :root { --bleed: 0.25rem; } /* how much the bars section may "bleed" sideways */
+
+  /* Edge-to-edge feel: tighter outer spacing */
+  .container { padding: 0.25rem; }
+  .whiteBox { padding: 0.5rem; margin-bottom: 0.5rem; }
+  .sequenceContainer h3 { margin-bottom: 0.25rem; }
+
+  /* TEN DOTS: make grid use the whole row, shrink coins & gaps */
+  .coinGrid {
+    width: 100%;
+    max-width: none;                               /* override fit-content */
+    grid-template-columns: repeat(10, minmax(0, 1fr));
+    gap: 0.2rem;
+  }
+  .coin {
+    width: clamp(1.05rem, 7.2vw, 1.6rem);
+    height: clamp(1.05rem, 7.2vw, 1.6rem);
+    font-size: clamp(0.70rem, 3.4vw, 0.90rem);
+  }
+
+  /* BARS: put label on top so the bar can take the full width */
+  .logBars {
+    padding: 0.5rem;
+    margin-left: calc(-1 * var(--bleed));          /* small side bleed */
+    margin-right: calc(-1 * var(--bleed));
+  }
+  .logBarRow {
+    flex-direction: column;                        /* label above bar */
+    align-items: stretch;
+    gap: 0.25rem;
+    margin-bottom: 0.5rem;
+  }
+  .logBarLabel {
+    width: auto;                                   /* drop fixed label width */
+    min-width: 0;
+    margin: 0;
+    font-size: 0.85rem;
+  }
+  .logBarWrapper {
+    width: 100%;
+    margin-left: 0;
+    height: 28px;                                  /* a touch taller for readability */
+  }
+  .logBarValue {
+    right: 0.35rem;
+    font-size: 0.75rem;
+    max-width: calc(100% - 0.7rem);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  /* Keep the header compact */
+  .posteriorHeader { gap: 0.5rem; }
+}

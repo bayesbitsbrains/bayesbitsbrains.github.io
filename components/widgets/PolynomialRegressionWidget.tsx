@@ -172,35 +172,35 @@ const PolynomialRegressionWidget: React.FC = () => {
   })), [modelResults]);
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 space-y-6">
-      <h3 className="text-xl font-semibold mb-4">Polynomial Regression — AICc & BIC Model Selection</h3>
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3 sm:p-6 space-y-4 sm:space-y-6">
+      <h3 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-4">Polynomial Regression — AICc & BIC Model Selection</h3>
 
       {/* Controls */}
-      <div className="flex gap-4 flex-wrap items-center">
+      <div className="flex gap-2 sm:gap-4 flex-wrap items-center">
         <button onClick={handleReset}
-                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors">
+                className="px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base bg-red-500 text-white rounded hover:bg-red-600 transition-colors">
           RESET
         </button>
         <button onClick={handleRun}
                 disabled={points.length < 3 || isRunning}
-                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors disabled:bg-gray-400">
+                className="px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors disabled:bg-gray-400">
           {isRunning ? 'Running...' : 'Run'}
         </button>
-        {isCreatingData && <div className="widget-explanation">Click on the plot to add data points</div>}
-        {error && <div className="text-sm text-red-600">{error}</div>}
+        {isCreatingData && <div className="text-xs sm:text-sm text-gray-600">Click on the plot to add data points</div>}
+        {error && <div className="text-xs sm:text-sm text-red-600">{error}</div>}
       </div>
 
       {/* Scatter plot with optional fitted curve */}
-      <div className="border rounded p-4">
-        <h4 className="text-lg font-semibold mb-3">
+      <div className="border rounded p-2 sm:p-4 overflow-x-auto">
+        <h4 className="text-base sm:text-lg font-semibold mb-2 sm:mb-3">
           Data Points {points.length > 0 && `(${points.length} points)`}
         </h4>
         <svg
-          width={width}
-          height={height}
-          className="w-full cursor-crosshair"
-          style={{ maxWidth: `${width}px` }}
+          viewBox={`0 0 ${width} ${height}`}
+          className="w-full h-auto cursor-crosshair"
+          style={{ maxHeight: '400px' }}
           onClick={handleCanvasClick}
+          preserveAspectRatio="xMidYMid meet"
         >
           {/* Grid */}
           {[0, 1, 2, 3, 4, 5].map(val => (
@@ -294,8 +294,9 @@ const PolynomialRegressionWidget: React.FC = () => {
       {modelResults.length > 0 && (
         <>
           <div>
-            <h4 className="text-lg font-semibold mb-3">Model Comparison</h4>
-            <ResponsiveContainer width="100%" height={320}>
+            <h4 className="text-base sm:text-lg font-semibold mb-2 sm:mb-3">Model Comparison</h4>
+            <div className="overflow-x-auto">
+              <ResponsiveContainer width="100%" height={280} minWidth={300}>
               <LineChart
                 data={chartData}
                 margin={{ top: 20, right: 20, left: 60, bottom: 40 }}
@@ -320,9 +321,10 @@ const PolynomialRegressionWidget: React.FC = () => {
                 <Line type="monotone" dataKey="BIC" stroke="#10b981" strokeWidth={3}
                       name="BIC" dot={{ r: 5 }} activeDot={{ r: 7 }} />
               </LineChart>
-            </ResponsiveContainer>
+              </ResponsiveContainer>
+            </div>
 
-            <div className="mt-3 text-sm flex gap-6">
+            <div className="mt-2 sm:mt-3 text-xs sm:text-sm flex flex-col sm:flex-row gap-2 sm:gap-6">
               {bestAICc && (
                 <div>Best by <strong>AICc</strong>: degree <strong>{bestAICc.degree}</strong></div>
               )}
