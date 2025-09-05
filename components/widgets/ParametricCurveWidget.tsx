@@ -9,13 +9,15 @@ interface CurvePreset {
   yParams: number[];
   xTerms: string[];
   yTerms: string[];
-  evaluateX: (t: number, params: number[]) => number;
+  evaluateX: (t: number, params: number[], wiggle?: number) => number;
   evaluateY: (t: number, params: number[]) => number;
+  hasWiggle?: boolean;
 }
 
 const ParametricCurveWidget: React.FC = () => {
   // Current preset index
   const [currentPreset, setCurrentPreset] = useState(0);
+  const [wiggleParam, setWiggleParam] = useState(40);
   
   const presets: CurvePreset[] = [
     {
@@ -25,8 +27,14 @@ const ParametricCurveWidget: React.FC = () => {
       yParams: [50, 18, -12, 14],
       xTerms: ['cos(t)', 'sin(t)', 'sin(2t)', 'sin(3t)'],
       yTerms: ['sin(t)', 'sin(2t)', 'cos(3t)', 'cos(5t)'],
-      evaluateX: (t, p) => p[0] * Math.cos(t) + p[1] * Math.sin(t) + p[2] * Math.sin(2*t) + p[3] * Math.sin(3*t),
-      evaluateY: (t, p) => p[0] * Math.sin(t) + p[1] * Math.sin(2*t) + p[2] * Math.cos(3*t) + p[3] * Math.cos(5*t)
+      evaluateX: (t, p, wiggle = 0) => {
+        const base = p[0] * Math.cos(t) + p[1] * Math.sin(t) + p[2] * Math.sin(2*t) + p[3] * Math.sin(3*t);
+        // Add trunk wiggle effect - affects points around t ≈ π (trunk area)
+        const trunkInfluence = Math.exp(-Math.pow((t - Math.PI) / 0.5, 2));
+        return base + wiggle * trunkInfluence * Math.sin(5 * t);
+      },
+      evaluateY: (t, p) => p[0] * Math.sin(t) + p[1] * Math.sin(2*t) + p[2] * Math.cos(3*t) + p[3] * Math.cos(5*t),
+      hasWiggle: true
     },
     {
       name: "Heart",
@@ -70,7 +78,7 @@ const ParametricCurveWidget: React.FC = () => {
     for (let i = 0; i <= numPoints; i++) {
       const t = (i / numPoints) * 2 * Math.PI;
       
-      const x = preset.evaluateX(t, xParams);
+      const x = preset.evaluateX(t, xParams, preset.hasWiggle ? wiggleParam : undefined);
       const y = preset.evaluateY(t, yParams);
       
       points.push({ x, y });
@@ -117,6 +125,7 @@ const ParametricCurveWidget: React.FC = () => {
     setCurrentPreset(presetIndex);
     setXParams([...preset.xParams]);
     setYParams([...preset.yParams]);
+    setWiggleParam(40);
   };
 
   // Update parameter
@@ -205,6 +214,39 @@ const ParametricCurveWidget: React.FC = () => {
           )}
         </svg>
       </div>
+
+      {/* Wiggle control for elephant */}
+      {presets[currentPreset].hasWiggle && (
+        <div className="p-3 sm:p-4 bg-blue-50 rounded">
+          <h4 className="text-lg font-semibold mb-3">🐘 Trunk Wiggle</h4>
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+            <label className="text-sm font-medium min-w-0 sm:w-32">Wiggle intensity:</label>
+            <div className="flex items-center gap-2 flex-1">
+              <input
+                type="range"
+                min="0"
+                max="80"
+                step="1"
+                value={wiggleParam}
+                onChange={(e) => setWiggleParam(parseFloat(e.target.value))}
+                className="flex-1 min-w-0"
+              />
+              <input
+                type="number"
+                value={wiggleParam.toFixed(0)}
+                onChange={(e) => setWiggleParam(parseFloat(e.target.value) || 0)}
+                className="w-16 sm:w-20 px-1 sm:px-2 py-1 border rounded text-sm"
+                step="1"
+                min="0"
+                max="80"
+              />
+            </div>
+          </div>
+          <p className="text-xs text-gray-600 mt-2">
+            Equations from <a href="https://publications.mpi-cbg.de/Mayer_2010_4314.pdf" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline">this paper</a> by Mayer, Khairy & Howard (2010)
+          </p>
+        </div>
+      )}
 
       {/* Parameter controls */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
@@ -299,6 +341,11 @@ const ParametricCurveWidget: React.FC = () => {
               return `${sign}${param.toFixed(2)}${term}`;
             }).filter(s => s).join('')}
           </div>
+          {presets[currentPreset].hasWiggle && (
+            <div className="text-xs text-gray-600 mt-2">
+              + trunk wiggle effect (intensity: {wiggleParam})
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -397,8 +397,6 @@
 
 /* === Phone optimizations (put at the end of the CSS) ===================== */
 @media (max-width: 480px) {
-  :root { --bleed: 0.25rem; } /* how much the bars section may "bleed" sideways */
-
   /* Edge-to-edge feel: tighter outer spacing */
   .container { padding: 0.25rem; }
   .whiteBox { padding: 0.5rem; margin-bottom: 0.5rem; }
@@ -420,8 +418,8 @@
   /* BARS: put label on top so the bar can take the full width */
   .logBars {
     padding: 0.5rem;
-    margin-left: calc(-1 * var(--bleed));          /* small side bleed */
-    margin-right: calc(-1 * var(--bleed));
+    margin-left: -0.25rem;                         /* small side bleed */
+    margin-right: -0.25rem;
   }
   .logBarRow {
     flex-direction: column;                        /* label above bar */

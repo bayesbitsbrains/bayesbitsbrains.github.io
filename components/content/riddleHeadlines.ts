@@ -1,5 +1,5 @@
 export const RIDDLE_HEADLINES: Record<string, string> = {
-  intelligence: "🧠 Intelligence test",
+  intelligence: "🧠 AI Intelligence Test",
   predictions: "🔮 Who's less wrong?",
   "financial-mathematics": "📈 Modelling returns",
   wikipedia: "🌐 How much information is on Wikipedia?",

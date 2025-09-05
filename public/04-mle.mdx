@@ -128,22 +128,37 @@ where the sum goes over all pairs (snippet, letter) in our dataset. This is a mo
 and using that <Math math = "p_{\textrm{emp}}(\textrm{letter} | \textrm{snippet}) = 1"/> for the actual letter, and zero otherwise, we get: 
 <Math displayMode={true} math = "D(p, q) = \sum_{\textrm{snippet}}  \frac{1}{n} \cdot \log \frac{1}{q_{LLM}(\textrm{actual letter} | \textrm{snippet})}"/>
 
-The final formula is called the cross-entropy loss and it is as simple as it gets: To train a neural net, you look at the distribution it outputs on each snippet, take the probability <Math math = "q_{LLM}(\textrm{actual letter} | \textrm{snippet})" /> that the net assigns to the actual letter following the snippet, and compute the surprisal (i.e., $q \rightarrow \log 1/q$). You just keep summing surprisals for the snippets in your dataset. The average surprisal is the loss function that we are trying to push down during LLM training. 
+The final formula is called the cross-entropy loss and it is as simple as it gets: To train a neural net, you look at the distribution it outputs on each snippet, take the probability <Math math = "q_{LLM}(\textrm{actual letter} | \textrm{snippet})" /> that the net assigns to the actual letter following the snippet, and compute the surprisal (i.e., $q \rightarrow \log 1/q$). You just keep summing surprisals for the snippets in your dataset. The average surprisal is the loss function that we are trying to push down during LLM training. <Footnote>In the game, I made the following simplification, both for you and AIs. Instead of asking you to predict the whole distribution for the next letter, and then computing your cross-entropy score, I computed your score as $\log k$, where $k$ is the number of guesses until the correct letter. We can view this as an 'optimistic' bound on what your true cross-entropy score would be. If you guessed the correct letter after $k$ trials, surely you would give that letter probability at most $1/k$ if I asked you for the whole distribution! </Footnote>
 
 So, no wonder that Llama 4 has probably beaten you in the game - __being good at the game is its entire shtick__! All of the knowledge / intelligence in the [base model](https://toloka.ai/blog/base-llm-vs-instruction-tuned-llm/) happened to accumulate inside because it helps the model to be good at this game. 
 
 In fact, this is a point I wanted to make when selecting three examples snippets for the table above. Since the text snippets I collected were cut at a random place, many of them are cut in the middle of some obvious English word, so they just test whether you know English. But, from time to time, guessing the next letter gets pretty hard, hence being _really really_ good at the game requires knowledge / intelligence. 
 
 Here's more about the three examples snippets: In the first snippet, you have to know that Lincoln national cemetery is in $\textsf{Elwood}$. The next word in the second widget is $\textsf{Achilles}$. To guess that, you have to know Greek mythology. Llama guesses 't', because of $\textsf{Thetys}$ - the wife of Peleus referenced in the text by 'her'. Finally, the last snippet continues <Math math = "\textsf{virtue to selfishness. }" /> Predicting the next letter well requires knowing Rand's philosophy (though distinguishing between <Math math = "\textsf{virtue to selfishness}"/> and <Math math = "\textsf{vice to victimhood}"/> remains a hard call). 
+</RiddleExplanation>
 
-Finally, here's a bit of historical trivia: Our letter prediction game comes from Claude Shannon, the father of information theory. He made the same experiment a few years after his invention (late 1940's). He found that people can compress English text to about 1 bit per letter. <Footnote>Both Shannon and I made the following simplification. Instead of asking you to predict the whole distribution for the next letter, I computed your score as $\log k$, where $k$ is the number of guesses until the correct letter. We can view this as an 'optimistic' bound on what your true cross-entropy score would be. If you guessed the correct letter after $k$ trials, surely you would give that letter probability at most $1/k$ if I asked you for the whole distribution! </Footnote>
+<HistoryExpand headline = "Shannon's game">
 
-1 bit per letter is also roughly the score of LLMs, though old models like GPT-2 are somewhat worse and the new ones like Llama-4 used in the widget are better. As far as I can say, Claude Shannon's experiment was the first usage of the next-token prediction, 60+ years before it became cool!
+<ImageGallery
+images={[
+{ src: "/fig/shannon.jpg", alt: "Claude Shannon" },
+]}
+caption={"Claude Shannon"}
+/>
+
+[Claude Shannon](https://en.wikipedia.org/wiki/Claude_Shannon) invented information theory in 1948 (more on that in the final chapters). A few years later, he ran an experiment that pioneered the task LLMs train on today: letter prediction.
+
+Shannon showed people a snippet of English text and had them guess the next letter. He tested this on his wife Betty and colleagues at Bell Labs. 
 
 <ImageGallery images={[{src: "04-mle/twitter_volcano.png", alt: "volcano"}]} caption="From [xkcd](https://what-if.xkcd.com/34/)" width="60%" />
 
+The result? Humans predicted English text with about 1 bit of uncertainty per letter — far better than the ~4.7 bits for random letters. English, it turns out, is about 75% redundant.
 
-</RiddleExplanation>
+Shannon was measuring cross-entropy 60 years before it became the standard loss function for neural networks. Early LLMs matched Shannon's human subjects at roughly 1 bit per letter. Modern ones have surpassed us.
+
+With his friend [Marvin Minsky](https://en.wikipedia.org/wiki/Marvin_Minsky) (famous AI pioneer), Shannon also tackled AI safety — specifically, the [off-switch problem](https://en.wikipedia.org/wiki/AI_capability_control#Difficulties). How do you ensure a machine can be turned off, even if it tries to prevent that? [Shannon's solution](https://kk.org/thetechnium/the-unspeakable/) to this problem is arguably still the state of the art, as of 2025.
+</HistoryExpand>
+
 
 Let's also see how we can use cross-entropy score to grade experts from our [prediction riddle](00-riddles#predictions). 
 
@@ -151,7 +166,8 @@ Let's also see how we can use cross-entropy score to grade experts from our [pre
 
 Recall the riddle: We asked experts to predict future events—how do we score them?
 
-<ImageGallery images={[{src: "00-introduction/questions.png", alt: "questions"}]} width="75%" />
+
+<ImageGallery images={[{src: "00-introduction/questions.png", alt: "questions"}]} height={320} />
 
 
 ### Ideal KL score
