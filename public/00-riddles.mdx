@@ -34,8 +34,11 @@ I grabbed some historical data, calculated the daily price changes, and normaliz
   feedbackType="all-show"
   explanation={<>This is hard to say, try it below yourself. I fitted the data by two curves - Gaussian distribution (looks like the shape in C), and Laplace distribution (looks like the shape in B). 
   <FinancialDistributionWidget showBTC={false} showSAP={true} />
-  It seems that as the time goes on, the distribution is more and more pointy. Why? We will discuss this example in the <a href = "05-max_entropy">chapter about the max-entropy principle</a> which is extremely useful whenever we want to model some kind of data. <br/><br/></>}
+   It seems that as the time goes on, the distribution is more and more pointy. 
+  Why?</> }
 />
+
+{/*We will discuss this example in the <a href = "05-max_entropy">chapter about the max-entropy principle</a> which is extremely useful whenever we want to model some kind of data. <br/><br/></> */}
 
 </RiddleStatement>
 
@@ -147,9 +150,9 @@ So... are the odds in our favor?
   The guy in the hat <a href="https://xkcd.com/1159/" target="_blank" rel="noopener noreferrer">in that joke</a> seems to be confident that at least one digit behind the picture is not zero. If those digits are uniformly random, it's a safe assumption. However, we will justify a different probabilistic model and confirm our gut feeling: Given all the zeros we can see, it's actually very plausible that all other hidden digits are zeros too!
   </p>
 
-  <p>More on that <a href="05-max_entropy#xkcd">later</a>; We will use the widget below to confirm that there's a huge difference between seeing "00002382" and just "2382".</p>
+  {/* <p>More on that <a href="05-max_entropy#xkcd">later</a>; We will use the widget below to confirm that there's a huge difference between seeing "00002382" and just "2382".</p>
 
-  <XKCDCountdownWidget />
+  <XKCDCountdownWidget /> */}
   </>}
 /> 
 </RiddleStatement>

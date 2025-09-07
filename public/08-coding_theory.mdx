@@ -189,47 +189,56 @@ This is a complementary intuition to our intuition that being good in the text-p
 
 
 
+<HistoryExpand headline = "Chinese room">
 
-<Expand advanced={true} headline = "Chinese room">
+<ImageGallery
+images={[
+{ src: "/fig/searle.jpg", alt: "John Searle" },
+{ src: "/fig/sutskever.jpg", alt: "Ilya Sutskever" },
+{ src: "/fig/turing.jpg", alt: "Alan Turing" }
+]}
+caption={"John Searle (left), Ilya Sutskever (middle), Alan Turing (right)"}
+/>
 
-One of the most important ideas of AI is what's known as [Turing test](https://en.wikipedia.org/wiki/Turing_test):
-Imagine that you can chat for a few minutes with an entity that is either a human, or an AI impersonating a human. If you can't reliably tell the two cases apart, Turing claims that we should concede that the AI is intelligent.  <Footnote> This was considered the holy grail of AI but, somehow, people stopped talking about it after GPT-4-level models. </Footnote>
+One of the most important ideas in AI is the [Turing test](https://en.wikipedia.org/wiki/Turing_test): You chat with an entity that's either human or an AI impersonating a human. If you can't reliably tell them apart, Turing suggested we've answered the question "Can machines think?" — at least operationally.<Footnote>The Turing test was considered the holy grail of AI, but somehow people stopped talking about it after GPT-4-level models.</Footnote> In essence: if it behaves intelligently, we should treat it as intelligent. Most AI researchers adopted some variant of this view.
 
-Turing test motivated various AI chatting systems that tried to pass weak versions of it. One of the famous ones is ELIZA, a simple chatbot that consists of a long list of rules like in the picture below. 
+Turing test also motivated various chatbots that tried to pass weak versions of it. One famous example is ELIZA, a 1960s program whose codebase consists of pattern-response templates like those below.
 
 <ImageGallery 
   images={[
     { src: "/fig/eliza.png", alt: "ELIZA" },
   ]}
-  caption={`User: You are too quiet.  \n
-ELIZA: Does it please you to believe I am too quiet?`}
+  caption={`ELIZA's code`}
   width="80%" captionAlignLeft={true}
 />
 
-Chatbots like ELIZA are built from long lists of common phrases, desperately trying to mimick human conversation for as long as possible. If you keep adding IFs and ELSEs, perhaps you can fool some people in conversations lasting a few minutes. 
+For example, when line 234 activates, ELIZA responds like this:
 
-But if you look at ELIZA's code, you can't shake off the feeling that something is very off here. Intelligence is not supposed to look like this! 
+<Quote className="text-left">
+__User__: You are too quiet. 
 
-This was the motivation of a philosopher called [John Searle](https://en.wikipedia.org/wiki/John_Searle) when he proposed a thought experiment called [the Chinese room](https://en.wikipedia.org/wiki/Chinese_room).<Footnote>There are more ways to interpret what his experiment is getting at, I will interpret it as being about intelligence. </Footnote> 
-
-In Searle's thought experiment, he basically imagines a Turing test for speaking Chinese: We have a judge who should judge whether her counterpart (here it's a person) in the conversation knows Chinese. She sends a text message to the other person, who replies back. Unbeknownst to her, the other participant of the conversation does not know any Chinese at all. But he has a great conversation book: This book stores the list of all Chinese conversations, and for each it says what the right reply is - think of the book as ELIZA on steroids. 
-
-The person with the book are successfully fooling our judge, but neither the person, nor the list of phrases seem to be very intelligent! So what's left of Turing test then, asks Searle? 
-
-I think we now have good enough understanding and language to talk about what's happening here. 
-First, let's focus on the rule book from the thought experiment. The problem with it is that it has to be incredibly large! Let's say that there are 1000 questions that a typical person can ask you about as the first question. Then, your rule book has to have 1000 items for a conversation long enough for 1 question, $1000^2$ if there's time to ask two questions and so on. In 5 minutes, you can then ask enough questions to make the rulebook collapse to a black hole!<Footnote>See [this book](https://www.amazon.com/Quantum-Computing-since-Democritus-Aaronson/dp/0521199565) by Scott Aaronson for more discussion. </Footnote>
-
-So the rulebook, as Searle defined it, is not in any way close to any real algorithm that'll ever exist. Any actual algorithm that passes the Turing test thus necessarily has to involve compression: It has to be able to compress the enormous possibility space of human conversations into something manageable. 
-
-That's exactly what's missing in ELIZA. The program is not able to compress reasonable English text in the same way that LLMs can. If we double the number of rules in the ELIZA program, perhaps our [parrot](https://en.wikipedia.org/wiki/Stochastic_parrot) will be able to fool a few more people in a short Turing test, but we are not going to get better at the important benchmark: compression. Equivalently, the program won't get much better in predicting how the actual human conversations look like. 
-
-This is of course very different for current AIs. As we now understand, they are literally trained to __predict__ human conversations and writings. Or, equivalently, they are trying to __compress__ them. This is the crucial difference from the fakers like ELIZA which forces these systems to gain intelligence / understanding. Ilya Sutskever [said it best](https://www.dwarkesh.com/p/ilya-sutskever):
-
-<Quote>
-Predicting the next token well means that you understand the underlying reality that led to the creation of that token.
+__ELIZA__: Does it please you to believe I am too quiet?
 </Quote>
 
-</Expand>
+Chatbots like ELIZA stitch together common phrases, desperately trying to mimic human conversation. Keep adding IFs and ELSEs, and perhaps you fool someone for a few minutes.
+But looking at ELIZA's code, something feels deeply wrong. Intelligence shouldn't look like this!
+
+
+This bothered philosopher [John Searle](https://en.wikipedia.org/wiki/John_Searle), who proposed the [Chinese room](https://en.wikipedia.org/wiki/Chinese_room) thought experiment<Footnote>There are multiple interpretations of his experiment; I'm focusing on what it says about intelligence.</Footnote> in 1980: Picture yourself locked in a room with boxes of Chinese characters and a complete rulebook. Chinese speakers slide questions under the door. You mechanically follow the rules, shuffling symbols, sliding back perfect Chinese responses. From outside, you seem fluent. But inside? Neither you nor the rulebook seem intelligent.
+
+Searle's point: that's what computers do. Even if an AI perfectly minimizes cross-entropy and predicts every token — it's still just shuffling symbols without understanding. The person with the rulebook passes Turing's test, yet clearly isn't intelligent. So, what's left of the test, then? 
+
+But let's examine the rulebook more carefully. The problem: it must be impossibly large! Say there are 1000 possible first questions. Your rulebook needs 1000 entries for one-question conversations, $1000^2$ for two questions, and so on. Naively, the size of the rulebook would have to grow exponentially with the length of the conversattion.<Footnote>See [this book](https://www.amazon.com/Quantum-Computing-since-Democritus-Aaronson/dp/0521199565) by Scott Aaronson for more discussion.</Footnote> So Searle's rulebook can't exist in our universe. Any real algorithm passing the Turing test must _compress_ the enormous possibility space of human conversations into something manageable.
+
+That's exactly what ELIZA lacks. It can't compress English text the way LLMs do. Double ELIZA's rules, and our [parrot](https://en.wikipedia.org/wiki/Stochastic_parrot) might fool a few more people briefly. But, you can't build a compression algorithm out of ELIZA. It's just not good at predicting real human conversations.
+
+Current AIs are fundamentally different. They're trained to __predict__ human text. Equivalently, they __compress__ it. This crucial difference from fakers like ELIZA forces these systems toward actual understanding. Ilya Sutskever compressed this idea perfectly:
+
+<Quote>
+Predicting the next token well means that you understand the underlying reality that led to the creation of that token.<Footnote>[link](https://www.dwarkesh.com/p/ilya-sutskever)</Footnote>
+</Quote>
+
+</HistoryExpand>
 
 
 ## What's next? 
