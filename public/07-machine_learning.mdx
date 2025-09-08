@@ -18,36 +18,19 @@ I want to convey how it all __makes sense__. Starting with some simplistic visua
 
 <MLProblemExplorer />
 
-Let's talk about our [statistics riddle](00-riddles#statistics). 
+---
 
 <RiddleExplanation id = "statistics">
-I love how in mathematics, we typically have clear answers. We all agree on how to add numbers, compute areas under curves, and how to handle probabilities. 
-
-This logical flow of most of mathematics is what makes the statistics so hard to love. Come on, there's not even a single obviously right way of estimating the sample variance of bunch of numbers. Sure, the formula should look roughly like this: 
+I love how mathematics typically has clear answers. We all agree on how to add numbers, compute areas under curves, and handle probabilities. This clarity is exactly what makes statistics<Footnote>I mean frequentist statistics [discussed earlier](04-mle#fisher). </Footnote> so frustrating. There's not even a single obviously right way to estimate the sample variance of a bunch of numbers! Sure, the formula should look roughly like this: 
 <Math displayMode={true} math="\hat{\sigma}^2 = \frac{1}{n} \sum_{i=1}^{n} (X_i - \hat{\mu})^2" />
-and this is what we derived by MLE in the above widget, but there are competing approaches. 
+Indeed, this is what we derived using maximum entropy and MLE in the widget above. But there are competing approaches. 
 
-For example, if $n = 1$, our formula always says zero. But the underlying probabilistic process that generated the data likely has nonzero variance, and we still always answer 0! Our estimate is _thus_ <a href="https://en.wikipedia.org/wiki/Bias_of_an_estimator">biased</a>, we know that it tends to be smaller than the true variance. If we want to make it unbiased, we have to compute it like this: <Math math="\hat{\sigma}^2 = \frac{1}{n-1} \sum_{i=1}^{n} (X_i - \hat{\mu})^2" />. And the formula <Math math="\hat{\sigma}^2 = \frac{1}{n+1} \sum_{i=1}^{n} (X_i - \hat{\mu})^2" /> can also be justified by <a href="https://en.wikipedia.org/wiki/Mean_squared_error">the mean squared error</a> minimization. 
+Consider what happens when $n = 1$: our formula always gives zero. But the underlying process that generated the data likely has nonnegative variance — yet we always answer 0! Our estimate is [biased](https://en.wikipedia.org/wiki/Bias_of_an_estimator); it systematically underestimates the true variance. To make it unbiased, we'd need: <Math math="\hat{\sigma}^2 = \frac{1}{n-1} \sum_{i=1}^{n} (X_i - \hat{\mu})^2" />. Meanwhile, the formula <Math math="\hat{\sigma}^2 = \frac{1}{n+1} \sum_{i=1}^{n} (X_i - \hat{\mu})^2" /> minimizes [mean squared error](https://en.wikipedia.org/wiki/Mean_squared_error) to the true variance. 
 
-Out of these approaches, it's MLE that's the most flexible, and most widely used in machine learning (as we have seen). I hope that this text gives some intuition for why! MLE isn't an ad hoc formula, it's ultimately about the good old Bayesian detective, trying to separate the truth from fiction. MLE says that a model is as good as it is hard to separate it from the truth by Bayes' rule. 
+Among these approaches, MLE is the most flexible and widely used in machine learning (as we've seen). I hope this text gives some intuition why: MLE isn't just an ad hoc formula. It's ultimately about our Bayesian detective trying to separate truth from fiction. 
+{/* MLE says a model is good when it's hard to distinguish from the truth using Bayes' rule. */}
 
-
-<Expand advanced = {true} headline = "Bayesian statistics">
-
-Often it helps to distinguish two ways of doing statistics. What we called 'statistics' is often called  _frequentist_ statistics, and the other approach is called _Bayesian_ statistics. While frequentist statistics tries to go for worst-case guarantees (your estimate is reasonable always), Bayesian-statistics flow is about converting priors to posteriors. Here are some details.  
-
-[Bayesian statistics](https://en.wikipedia.org/wiki/Bayesian_statistics) is a way of doing statistics based on our Bayesian detective from [the first chapter](00-riddles), without any compromises. Here's the basic flow: The detective starts with a prior $p_1, \dots, p_n$ over competing hypotheses. Then, she gathers evidence and for each hypothesis computes its likelihood $\ell_i$ - the probability of seeing the evidence under the $i$-th hypothesis. Then, she applies Bayes' rule to compute the posterior. I.e., she computes the products $p_1\ell_1, \dots, p_n \ell_n$ and normalize it to sum up to one, the result is $p_1', \dots, p_n'$. 
-
-There are all kind of theorems that actually suggest that this is the __right__ way to think about statistics. The only downside to this framework is practical: A Bayesian detective has to start with a prior distribution $p_1, \dots, p_n$, but where to take one? Also, getting the whole posterior distribution $p_1', \dots, p_n'$ is great, but often we just want a simple formula that computes a single number as an answer. 
-
-If we assume that we have tons of data that provides a great deal of evidence, we can simplify this detective process. First, instead of reporting the whole posterior distribution $p_1', \dots, p_n'$, we will report just the hypothesis $i$ with the largest $p'_i$ -- hopefully, the posterior probability of other hypotheses is going to be very small anyway in light of all the evidence. This principle is called [maximum a posteriori estimation](https://en.wikipedia.org/wiki/Maximum_a_posteriori_estimation). 
-
-Also, if there's so much evidence, the prior $p_1, \dots, p_n$ is likely not going to matter much. Let's see this with an example. Think of flipping a coin that is either fair ($p$), or 25/75 biased ($q$). The KL divergences between the two hypotheses are $D(p,q) \approx 0.21$ and $D(q,p) \approx 0.19$. That is, each flip, we are expecting to get around 0.2 bits of evidence for the correct hypothesis; or about $0.2n$ bits if we flip $n$ times. Whether we started with prior $1:2$ or $2:1$ is pretty irrelevant, that's just one bit of evidence that we start with before gathering evidence. I.e., the "weight" of this prior is about the same as the expected "weight" of the evidence of 5 flips. So, having good prior is like having to flip the coin $n-5$ times instead of $n$ times. In many situations, this improvement is not worth the hassle. In that case, we may simplify the Bayesian statistics all the way down to simply reporting the hypothesis $i$ with the largest $\ell_i$ - this is exactly the maximum likelihood approach. 
-
-I like this view on maximum likelihood as "poor man's Bayesian statistics" to appreciate where it's coming from. Perhaps this is also the reason why maximum likelihood approach is so useful in machine learning! It also helps to appreciate the flip side -- if you want to estimate the variance and $n = 3$, perhaps you shouldn't worry too much about using a formula with $\frac{1}{2}, \frac{1}{3}$ or $\frac{1}{4}$. The justifications for why we can simplify Bayes' rule to MLE are anyway breaking down, so we should rather carefully apply the fully Bayesian approach.    
-</Expand>
 </RiddleExplanation>
-
 
 If all the above applications are a bit too easy, here's a more complicated one - setting up the loss of a particular neural network architecture for working with images, called variational autoencoders. 
 

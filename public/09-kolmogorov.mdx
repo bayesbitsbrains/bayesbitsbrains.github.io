@@ -291,14 +291,14 @@ images={[
 ]}
 caption={"John von Neumann (left), elephant (right)"}
 />
-[John von Neumann](https://en.wikipedia.org/wiki/John_von_Neumann) stood at the creation of the computer, game theory, and the atomic bomb. These achievements sometimes overshadow his work on math memes. My favorite is his [elephant quip](https://en.wikipedia.org/wiki/Von_Neumann%27s_elephant):
+[John von Neumann](https://en.wikipedia.org/wiki/John_von_Neumann) stood at the creation of the computer, game theory, and the atomic bomb. These achievements sometimes overshadow his work on math memes. My favorite is his elegant [elephant quip](https://en.wikipedia.org/wiki/Von_Neumann%27s_elephant):
 
 <Quote> 
 With four parameters I can fit an elephant, and with five I can make him wiggle his trunk.
 </Quote>
-Von Neumann understood something crucial about [overfitting](https://en.wikipedia.org/wiki/Overfitting). Give a model enough free parameters — enough knobs to turn — and it can fit almost any data. The widget below proves his point: just 8 numbers -- or 4 complex parameters, if you squint -- draw you an elephant. One more parameter wiggles the trunk!
+Von Neumann understood something crucial about [overfitting](https://en.wikipedia.org/wiki/Overfitting). Give a model enough free parameters — enough knobs to turn — and it can fit almost any data. This is why Solomonoff's prior penalizes complexity so harshly. A model that perfectly fits your data means nothing if it has tons of moving parts. 
 
-This is why Solomonoff's prior penalizes complexity so harshly. A model that perfectly fits your data means nothing if it has tons of moving parts. 
+The widget below shows the two best elephants I know of. If you can do better (nice picture or less parameters), let me know! 
 
 <ParametricCurveWidget />
 </HistoryExpand>
@@ -335,7 +335,7 @@ But we know what that formula means! $K(q)$ is how many bits of memory we need t
 
 That is, using Solomonoff prior means that we are simply supposed to **prefer the models that compress the data the most**. This is also called optimizing [Minimum description length](https://en.wikipedia.org/wiki/Minimum_description_length) (MDL). 
 
-<HistoryExpand headline = "Philosophy speedrun">
+<HistoryExpand headline = "Philosophy is solved.">
 
 <ImageGallery 
   images={[
@@ -357,7 +357,7 @@ Here's why: Our Bayesian detective starts with all hypotheses weighted by their 
 
 So Solomonoff induction keeps all compatible hypotheses in play (Epicurus' principle) while preferring the simple ones (Occam's razor). Both ideas, unified.
 
-Philosophy's greatest achievement is becoming a victim of its own success — solving problems so thoroughly that the solutions no longer feel like philosophy. That's what happened here, if you ask me. We have a mathematical framework that says it all: start with the complexity-based prior, update using Bayes' theorem. The justification isn't metaphysical hand-waving but rigorous mathematical theorems and machine learning applications. The grand philosophical principles become boring consequences of the math.
+Philosophy's greatest achievement is becoming a victim of its own success — solving problems so thoroughly that the solutions no longer feel like philosophy. That's what happened here, if you ask me. We have a mathematical framework that says it all: start with the complexity-based prior, update using Bayes' theorem. The justification isn't metaphysical hand-waving but rigorous mathematical theorems and practical applications. The grand philosophical principles become boring consequences of the math.
 </HistoryExpand>
 
 

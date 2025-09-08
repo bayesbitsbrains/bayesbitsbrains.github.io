@@ -288,8 +288,49 @@ So, the fact that minimizing cross-entropy is equivalent to maximizing the overa
 
 In the context of statistics, it's more common to talk about maximum likelihood principle (and instead of cross-entropy, you may hear about the [log-likelihood](https://www.statlect.com/glossary/log-likelihood)). In the context of machine learning, it's more common to talk about cross-entropy / KL divergence (and instead of likelihoods, you may hear about  [perplexity](https://en.wikipedia.org/wiki/Perplexity)). 
 
-There's a single versatile principle that underlies all the examples. Algebraically, we can think of it as: __If you have to choose a model for $p$, try $q$ with the smallest $D(p,q)$.__ But ultimately, it's more useful if you can, in your head, compile this principle down to Bayes' rule: __A good model is hard to distinguish from the truth by a Bayesian detective.__ <Footnote>This way, you can then generalize the principle from the context of standard (frequentist) statistics to the context of Bayesian statistics. In this branch of statistics, we would assume that we also have some prior distribution over different models $q \in Q$. This makes the math much cleaner (at the expense of having to specify this prior). Then, maximum likelihood principle gets replaced by the analogous [Maximum a posteriori](https://en.wikipedia.org/wiki/Maximum_a_posteriori_estimation) principle. 
-In a sense, maximum likelihood is just a poor man's maximum a posteriori principle in which we crossed our fingers and assumed that the prior knowledge about different models $q$ got negligible due to a large number of data points. </Footnote>
+There's a single versatile principle that underlies all the examples. Algebraically, we can think of it as: __If you have to choose a model for $p$, try $q$ with the smallest $D(p,q)$.__ But ultimately, it's more useful if you can, in your head, compile this principle down to Bayes' rule: __A good model is hard to distinguish from the truth by a Bayesian detective.__ 
+
+{/* <Footnote>This way, you can then generalize the principle from the context of standard (frequentist) statistics to the context of Bayesian statistics. In this branch of statistics, we would assume that we also have some prior distribution over different models $q \in Q$. This makes the math much cleaner (at the expense of having to specify this prior). Then, maximum likelihood principle gets replaced by the analogous [Maximum a posteriori](https://en.wikipedia.org/wiki/Maximum_a_posteriori_estimation) principle. 
+In a sense, maximum likelihood is just a poor man's maximum a posteriori principle in which we crossed our fingers and assumed that the prior knowledge about different models $q$ got negligible due to a large number of data points. </Footnote> */}
+
+<HistoryExpand headline="Fisher information" id = "fisher">
+<ImageGallery
+images={[
+{ src: "/fig/fisher.jpg", alt: "Ronald Fisher" },
+]}
+caption={"Ronald Fisher"}
+/>
+
+Ronald Fisher is often considered the most important statistician of the 20th century. He gave us maximum likelihood estimation, [sufficient statistics](https://en.wikipedia.org/wiki/Sufficient_statistic), popularized [randomized controlled trials](https://en.wikipedia.org/wiki/Randomized_controlled_trial), and much more.
+
+One of his inventions, [Fisher information](https://en.wikipedia.org/wiki/Fisher_information), measures how much data tells us about unknown parameters. In modern terms, it's the local KL divergence between nearby distributions. Fisher was using information-theoretic ideas decades before Shannon formalized them!
+
+Fisher would probably hate this website. Not just because he had famously strong opinions about everything, but because our opening story is that of a Bayesian detective updating her priors. That's the opposite of Fisher's vision for statistics. His viewpoint is often summarized as "let the data speak for itself"<Footnote>He probably never said it quite this way, but he'd have approved.</Footnote> — no priors, no subjective beliefs, just hard data.
+
+This split created two camps: Fisher's [_frequentist_ statistics](https://en.wikipedia.org/wiki/Frequentist_inference) (objective, prior-free, using stuff like maximum likelihood) versus [_Bayesian_ statistics](https://en.wikipedia.org/wiki/Bayesian_statistics) (subjective, prior-dependent, using Bayes' rule all the time). 
+
+It is an important mathematical tradition that young statisticians must choose one of these camps, work only within it, and are forbidden to speak to the other group — basically Alliance versus Horde in World of Warcraft.
+
+<Expand advanced={true} id ="bayes-statistics" headline="More on Bayesian vs frequentist statistics">
+Here's how Bayesian statistics works: The statistician (detective) starts with prior probabilities $p_1, \dots, p_n$ over competing hypotheses. She gathers evidence and computes each hypothesis's likelihood $\ell_i$ — the probability of seeing that evidence if hypothesis $i$ were true. Then she multiplies to get $p_1\ell_1, \dots, p_n \ell_n$, normalizes them to sum to one, and voilà: posterior distribution $p_1', \dots, p_n'$.
+
+Bayesian statistics is really as simple as that -- just keep applying Bayes' rule; all the rest is commentary. The framework is extremely elegant, but wouldn't it be nice if we could: 1) get a single answer instead of working with distributions, and 2) skip the priors entirely?
+
+With enough data, both become possible.
+
+For the first problem, just pick the hypothesis with the highest posterior probability $p'_i$. Once you have enough evidence, one hypothesis usually dominates anyway. This is called [maximum a posteriori estimation](https://en.wikipedia.org/wiki/Maximum_a_posteriori_estimation) — still within Bayesian camp, but simpler.
+
+For the second problem, notice that priors matter less with more data. Consider a coin that's either fair (50/50) or biased (25/75). The KL divergences between the two distributions are both about 0.2 bits per flip. So after $n$ flips, we expect roughly $0.2n$ bits of evidence for the truth.
+
+Starting with prior odds like 1:2 only shifts things by 1 bit from 1:1 — equivalent to ~5 coin flips. With hundreds of flips, who cares about 5? In that regime, we can ignore priors and just pick the hypothesis with the highest likelihood $\ell_i$ — the maximum likelihood approach. Since that works without reliance on priors, we are now in the realm of frequentist statistics. 
+
+I sometimes view the maximum likelihood principle as "poor man's Bayesian statistics". It shows how one can come up with it and explains the flip side — if you want to estimate variance from $n=3$ samples, maybe don't obsess over whether to divide by 2, 3, or 4 like in [our riddle](00-riddles/statistics). Your "objective" approach is already on shaky ground with so little data.
+
+I still haven't figured out how to think of the Bayesian vs frequentist split. On one hand, many modern applications happily mix both approaches, so perhaps they're just two sides of the same coin. Or maybe not. Frequentist statistics really does think differently — it's about __worst-case guarantees__ that always hold, while Bayesian statistics is about __beliefs__ and how to update them.
+
+</Expand>
+
+</HistoryExpand>
 
 
 ## What's next? <a id="next-steps"></a>

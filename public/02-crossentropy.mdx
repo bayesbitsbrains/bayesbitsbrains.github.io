@@ -61,6 +61,28 @@ Entropy can also get way bigger than 1 bit. Rolling a die has entropy $\log_2(6)
 
 <EntropyWidget numCategories={6} title="Entropy of die-rolling" />
 
+<HistoryExpand headline = "S = k log W">
+
+<ImageGallery
+images={[
+{ src: "/fig/boltzmann.jpg", alt: "Ludwig Boltzmann" }
+]}
+caption={"Ludwig Boltzmann"}
+/>
+
+
+{/* ,
+{ src: "/fig/boltzmann2.jpg", alt: "grave" } */}
+
+[Ludwig Boltzmann](https://en.wikipedia.org/wiki/Ludwig_Boltzmann) invented the statistical notion of entropy in the 1870s, decades before Shannon adapted it for information theory in late 1940's (more on that later). 
+
+While physicists already knew about thermodynamic entropy (heat divided by temperature), Boltzmann's genius was realizing it was fundamentally about counting possibilities. His famous formula, carved on his gravestone in Vienna, reads: $S = k \log W$.
+
+Here, $S$ is entropy, $k$ is a constant, and $W$ is the number of possible microstates. Sound familiar? This is exactly what we've been computing — if you have $W$ equally likely states, the entropy is $\log W$. Boltzmann was calculating <Math math="H(X) = \log n" /> for a uniform distribution over $n$ states before it was cool, just with different notation and units.
+
+The connection between statistical physics and information theory runs deep. It lets us port physical intuitions to computer science — for instance, in machine learning we often say we're "running an LLM with a given temperature," using the physics terminology directly. We'll see more on that [later on](05-max_entropy#softmax).
+</HistoryExpand>
+
 <Expand headline = "Example: correct horse battery staple">
 Here's an example. Let's say there are about <Math math="2^{11}" /> English words that can be described as 'common'. If you generate uniformly four such common words and make your password the concatenation of them, the total entropy of your password is thus going to be $44$ bits. That's because entropy is a special case of cross-entropy and is thus additive. 
 
