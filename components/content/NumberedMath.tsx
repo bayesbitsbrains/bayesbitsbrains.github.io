@@ -64,16 +64,16 @@ const NumberedMath: React.FC<NumberedMathProps> = ({
   // For display mode equations (numbered or not), add horizontal scrolling
   if (displayMode) {
     if (id && equationNumber !== null) {
-      // Numbered equation with scroll
+      // Numbered equation with scroll - use span with block display to avoid div in p error
       return (
-        <div style={{ 
+        <span style={{ 
           display: 'flex', 
           justifyContent: 'space-between', 
           alignItems: 'center',
           width: '100%',
           margin: '1rem 0'
         }}>
-          <div 
+          <span 
             className="katex-display-wrapper"
             style={{
               flex: 1,
@@ -84,7 +84,7 @@ const NumberedMath: React.FC<NumberedMathProps> = ({
             }}
           >
             <span ref={containerRef} style={{ display: 'inline-block' }} />
-          </div>
+          </span>
           <span style={{ 
             fontSize: '1rem', 
             color: '#666',
@@ -94,14 +94,15 @@ const NumberedMath: React.FC<NumberedMathProps> = ({
           }}>
             ({equationNumber})
           </span>
-        </div>
+        </span>
       );
     } else {
-      // Unnumbered display equation with scroll
+      // Unnumbered display equation with scroll - use span with block display to avoid div in p error
       return (
-        <div 
+        <span 
           className="katex-display-wrapper"
           style={{
+            display: 'block',
             overflowX: 'auto',
             overflowY: 'hidden',
             WebkitOverflowScrolling: 'touch',
@@ -111,7 +112,7 @@ const NumberedMath: React.FC<NumberedMathProps> = ({
           }}
         >
           <span ref={containerRef} style={{ display: 'inline-block' }} />
-        </div>
+        </span>
       );
     }
   }

@@ -146,15 +146,13 @@ images={[
 caption={"Claude Shannon"}
 />
 
-[Claude Shannon](https://en.wikipedia.org/wiki/Claude_Shannon) invented information theory in 1948 (more on that in the final chapters). A few years later, he ran an experiment that pioneered the task LLMs train on today: letter prediction.
+[Claude Shannon](https://en.wikipedia.org/wiki/Claude_Shannon) invented information theory in 1948 (more on that in the final chapters). A few years later, he ran an experiment that ended up as the task LLMs train on today: letter prediction.
 
 Shannon showed people a snippet of English text and had them guess the next letter. He tested this on his wife Betty and colleagues at Bell Labs. 
 
 <ImageGallery images={[{src: "04-mle/twitter_volcano.png", alt: "volcano"}]} caption="From [xkcd](https://what-if.xkcd.com/34/)" width="60%" />
 
-The result? Humans predicted English text with about 1 bit of uncertainty per letter — far better than the ~4.7 bits for random letters. English, it turns out, is about 75% redundant.
-
-Shannon was measuring cross-entropy 60 years before it became the standard loss function for neural networks. Early LLMs matched Shannon's human subjects at roughly 1 bit per letter. Modern ones have surpassed us.
+The result? Humans predicted English text with about 1 bit of uncertainty per letter. We have, it seems, about the same intelligence as GPT-3 or GPT-4. 
 
 With his friend [Marvin Minsky](https://en.wikipedia.org/wiki/Marvin_Minsky) (famous AI pioneer), Shannon also tackled AI safety — specifically, the [off-switch problem](https://en.wikipedia.org/wiki/AI_capability_control#Difficulties). How do you ensure a machine can be turned off, even if it tries to prevent that? [Shannon's solution](https://kk.org/thetechnium/the-unspeakable/) to this problem is arguably still the state of the art, as of 2025.
 </HistoryExpand>
@@ -309,7 +307,7 @@ Fisher would probably hate this website. Not just because he had famously strong
 
 This split created two camps: Fisher's [_frequentist_ statistics](https://en.wikipedia.org/wiki/Frequentist_inference) (objective, prior-free, using stuff like maximum likelihood) versus [_Bayesian_ statistics](https://en.wikipedia.org/wiki/Bayesian_statistics) (subjective, prior-dependent, using Bayes' rule all the time). 
 
-It is an important mathematical tradition that young statisticians must choose one of these camps, work only within it, and are forbidden to speak to the other group — basically Alliance versus Horde in World of Warcraft.
+It is an important mathematical tradition that young statisticians must choose one of these camps early on, work only within it, and are forbidden to speak to the other group — basically Alliance versus Horde in World of Warcraft.
 
 <Expand advanced={true} id ="bayes-statistics" headline="More on Bayesian vs frequentist statistics">
 Here's how Bayesian statistics works: The statistician (detective) starts with prior probabilities $p_1, \dots, p_n$ over competing hypotheses. She gathers evidence and computes each hypothesis's likelihood $\ell_i$ — the probability of seeing that evidence if hypothesis $i$ were true. Then she multiplies to get $p_1\ell_1, \dots, p_n \ell_n$, normalizes them to sum to one, and voilà: posterior distribution $p_1', \dots, p_n'$.

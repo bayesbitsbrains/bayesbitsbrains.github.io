@@ -26,7 +26,7 @@ interface ImageGalleryProps {
   tileWidth?: number | string;
 }
 
-const DEFAULT_HEIGHT = 160;
+const DEFAULT_HEIGHT = 200; // Increased by 25% from 160px
 
 export default function ImageGallery({
   images,
