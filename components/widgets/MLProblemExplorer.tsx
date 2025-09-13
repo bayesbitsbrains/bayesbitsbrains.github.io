@@ -189,7 +189,7 @@ const content = {
         </p>
         <p>
           What I want to emphasize is how our only initial assumption about the data was simply, &quot;we have a bunch
-          of numbers, and we care about their mean and variance.&quot; Our hard work on trying to understand Bayes' rule, KL divergence, and entropy is paying off! The problem of finding the right formulas is actually pretty hard and we reduced it to running math autopilot.
+          of numbers, and we care about their mean and variance.&quot; Our hard work on trying to understand Bayes&apos; rule, KL divergence, and entropy is paying off! The problem of finding the right formulas is actually pretty hard and we reduced it to running math autopilot.
         </p>
       </div>
     ),
