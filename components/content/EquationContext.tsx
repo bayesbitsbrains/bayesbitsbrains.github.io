@@ -28,10 +28,17 @@ export function EquationProvider({ children }: EquationProviderProps) {
   }, [equations]);
 
   const registerEquation = useCallback((id: string) => {
+    // Check current state to prevent race conditions
     if (!equations[id]) {
       const number = nextNumberRef.current;
       nextNumberRef.current += 1;
-      setEquations(prev => ({ ...prev, [id]: number }));
+      setEquations(prev => {
+        // Double-check in the state updater to prevent duplicates
+        if (prev[id]) {
+          return prev;
+        }
+        return { ...prev, [id]: number };
+      });
       return number;
     }
     return equations[id];

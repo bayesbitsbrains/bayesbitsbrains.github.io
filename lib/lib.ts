@@ -8,6 +8,7 @@ import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import rehypeHighlight from "rehype-highlight";
+import { KATEX_MACROS } from "./katex-macros";
 import { Cite, References } from "@/components/content/Citations";
 import { Footnote } from "@/components/content/Footnotes";
 import { Footnotes } from "@/components/content/Footnotes";
@@ -265,13 +266,10 @@ export async function getMdxContent(path: string) {
           [
             rehypeKatex,
             {
-              macros: {
-                "\\R": "\\mathbb{R}",
-                "\\eps": "\\varepsilon",
-              },
+              macros: KATEX_MACROS,
               trust: true,
             },
-          ], // KaTeX for math rendering
+          ], // KaTeX for inline $...$ and display $$...$$ math
           rehypeHighlight, // Syntax highlighting
         ],
         development: true,

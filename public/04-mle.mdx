@@ -45,7 +45,7 @@ It may seem a bit underwhelming that we did all of this math just to compute the
 
 
 
-## Why KL? <a id="mle"></a>
+## Why KL? <a id="kl"></a>
 
 I claim that minimizing KL to find a model $q$ of data $p$ is a pretty good approach in general. Why?  
 
@@ -79,7 +79,7 @@ Minimizing cross-entropy is a super-important approach in statistics and machine
 
 */}
 
-<Math id="cross-loss" displayMode={true} math = "q_{\textrm{new}} = \argmin_{q\in Q} D(p, q)  = \argmin_{q\in Q} H(p, q) =  \argmin_{q\in Q} \sum_x p(x) \cdot \log \frac{1}{q(x)}" />
+<Math id="cross-loss-kl" displayMode={true} math = "q_{\textrm{new}} = \argmin_{q\in Q} D(p, q)  = \argmin_{q\in Q} H(p, q) =  \argmin_{q\in Q} \sum_x p(x) \cdot \log \frac{1}{q(x)}" />
 
 In machine learning, we typically say that we find models of data _by minimizing the cross-entropy_. This is equivalent to minimizing KL divergence. It's good to know both -- Cross-entropy has a bit simpler formula, but KL divergence is a bit more fundamental which sometimes helps.<Footnote>See e.g. [training variational autoencoders](07-machine_learning#vae) later on, or [this blog post](https://blog.alexalemi.com/kl-is-all-you-need.html). </Footnote>
 

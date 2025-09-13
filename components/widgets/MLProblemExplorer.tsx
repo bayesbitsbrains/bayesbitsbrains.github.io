@@ -142,11 +142,11 @@ const content = {
         <p>
           First, we transform the general idea that mean and variance are important into a concrete probabilistic model.
           The maximum entropy principle suggests modeling the data as independent samples drawn from{" "}
-          <a href="04-max_entropy#normal">the Gaussian distribution</a>.
+          <a href="/05-max_entropy#normal">the Gaussian distribution</a>.
         </p>
         <p>
           Once we have a set of possible models—all Gaussian distributions—we can select the best one using{" "}
-          <a href="03-minimizing#mle">the maximum likelihood principle</a>.
+          <a href="/04-mle#mle">the maximum likelihood principle</a>.
         </p>
         <p>
           We want to find <NumberedMath math="\hat\mu, \hat\sigma^2" /> that maximize
@@ -154,12 +154,12 @@ const content = {
         <div className="my-4 text-center">
           <NumberedMath
             displayMode={true}
-            math="\hat\mu, \hat\sigma^2 = \argmin_{\mu, \sigma^2} \prod_{i = 1}^N \frac{1}{\sqrt{2\pi\sigma^2}} e^{-\frac{(x_i-\mu)^2}{2\sigma^2}}"
+            math="\hat\mu, \hat\sigma^2 = \argmax_{\mu, \sigma^2} \prod_{i = 1}^N \frac{1}{\sqrt{2\pi\sigma^2}} e^{-\frac{(x_i-\mu)^2}{2\sigma^2}}"
           />
         </div>
         <p>
           It&apos;s typically easier to write down the logarithm of the likelihood function. As{" "}
-          <a href="04-mle">we discussed</a>, we can call it cross-entropy minimization or log-likelihood maximization.
+          <a href="/04-mle">we discussed</a>, we can call it cross-entropy minimization or log-likelihood maximization.
           In any case, the problem simplifies to this:
         </p>
         <NumberedMath
@@ -173,24 +173,23 @@ const content = {
         </p>
         <NumberedMath
           displayMode={true}
-          math="\frac{\partial \mathcal{L}}{\partial \mu} = \frac{1}{\sigma^2} \sum_{i = 1}^n 2(X_i - \mu) "
+          math="\frac{\partial \mathcal{L}}{\partial \mu} = \frac{1}{\sigma^2} \sum_{i = 1}^n 2(X_i - \mu). "
         />
         <p>
           Setting <NumberedMath math="\frac{\partial \mathcal{L}}{\partial \mu} = 0" /> leads to{" "}
-          <NumberedMath math="\hat\mu = \frac{1}{n} \sum_{i=1}^n X_i" />. Similarly,
+          <NumberedMath math="\hat\mu = \frac{1}{n} \sum_{i=1}^n X_i." /> Similarly,
         </p>
         <NumberedMath
           displayMode={true}
-          math="\frac{\partial \mathcal{L}}{\partial \sigma} = n/\sigma - \sum_{i = 1}^n \frac{(X_i-\mu)^2}{\sigma^3}"
+          math="\frac{\partial \mathcal{L}}{\partial \sigma} = n/\sigma - \sum_{i = 1}^n \frac{(X_i-\mu)^2}{\sigma^3}."
         />
         <p>
           Setting <NumberedMath math="\frac{\partial \mathcal{L}}{\partial \sigma} = 0" /> then leads to{" "}
-          <NumberedMath math="\hat\sigma^2 = \frac{1}{n} \sum_{i = 1}^n (X_i - \mu)^2" />.
+          <NumberedMath math="\hat\sigma^2 = \frac{1}{n} \sum_{i = 1}^n (X_i - \mu)^2." />
         </p>
         <p>
           What I want to emphasize is how our only initial assumption about the data was simply, &quot;we have a bunch
-          of numbers, and we care about their mean and variance.&quot; The KL divergence framework that reduced the rest of the problem to
-          running the math autopilot.
+          of numbers, and we care about their mean and variance.&quot; Our hard work on trying to understand Bayes' rule, KL divergence, and entropy is paying off! The problem of finding the right formulas is actually pretty hard and we reduced it to running math autopilot.
         </p>
       </div>
     ),

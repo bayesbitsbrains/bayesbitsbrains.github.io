@@ -4,8 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import katex from "katex";
 import "katex/dist/katex.min.css";
 import { useEquationContext } from "./EquationContext";
-
-const default_macros: Record<string, string> = { "\\R": "\\mathbb{R}", "\\eps": "\\varepsilon" };
+import { KATEX_MACROS } from "@/lib/katex-macros";
 
 interface NumberedMathProps {
   math: string;
@@ -19,7 +18,7 @@ const NumberedMath: React.FC<NumberedMathProps> = ({
   math,
   displayMode = false,
   throwOnError = false,
-  macros = default_macros,
+  macros = KATEX_MACROS,
   id,
 }) => {
   const containerRef = useRef<HTMLSpanElement>(null);
@@ -42,6 +41,8 @@ const NumberedMath: React.FC<NumberedMathProps> = ({
   useEffect(() => {
     if (containerRef.current) {
       try {
+        // Clear the container before rendering to prevent duplicate content
+        containerRef.current.innerHTML = '';
         katex.render(math, containerRef.current, {
           throwOnError,
           displayMode,
@@ -61,60 +62,40 @@ const NumberedMath: React.FC<NumberedMathProps> = ({
     }
   }, [math, displayMode, throwOnError, macros, equationNumber]);
 
-  // For display mode equations (numbered or not), add horizontal scrolling
+  // For display mode equations (numbered or not), keep a stable layout to avoid duplicate renders
   if (displayMode) {
-    if (id && equationNumber !== null) {
-      // Numbered equation with scroll - use span with block display to avoid div in p error
-      return (
-        <span style={{ 
-          display: 'flex', 
-          justifyContent: 'space-between', 
-          alignItems: 'center',
-          width: '100%',
-          margin: '1rem 0'
-        }}>
-          <span 
-            className="katex-display-wrapper"
-            style={{
-              flex: 1,
-              overflowX: 'auto',
-              overflowY: 'hidden',
-              WebkitOverflowScrolling: 'touch',
-              textAlign: 'center'
-            }}
-          >
-            <span ref={containerRef} style={{ display: 'inline-block' }} />
-          </span>
-          <span style={{ 
-            fontSize: '1rem', 
-            color: '#666',
-            marginLeft: '2rem',
-            fontFamily: 'inherit',
-            flexShrink: 0
-          }}>
-            ({equationNumber})
-          </span>
-        </span>
-      );
-    } else {
-      // Unnumbered display equation with scroll - use span with block display to avoid div in p error
-      return (
+    const showNumber = Boolean(id) && equationNumber !== null;
+    return (
+      <span style={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center',
+        width: '100%',
+        margin: '1rem 0'
+      }}>
         <span 
           className="katex-display-wrapper"
           style={{
-            display: 'block',
+            flex: 1,
             overflowX: 'auto',
             overflowY: 'hidden',
             WebkitOverflowScrolling: 'touch',
-            width: '100%',
-            margin: '1rem 0',
             textAlign: 'center'
           }}
         >
           <span ref={containerRef} style={{ display: 'inline-block' }} />
         </span>
-      );
-    }
+        <span style={{ 
+          fontSize: '1rem', 
+          color: '#666',
+          marginLeft: '2rem',
+          fontFamily: 'inherit',
+          flexShrink: 0
+        }} hidden={!showNumber} aria-hidden={!showNumber}>
+          {showNumber ? `(${equationNumber})` : null}
+        </span>
+      </span>
+    );
   }
 
   // For inline equations, use the simple version

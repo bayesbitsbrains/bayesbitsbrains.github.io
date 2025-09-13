@@ -58,9 +58,9 @@ Unfortunately, while the challenge is backed by a very deep understanding of the
 
 ## Definition of Kolmogorov complexity
 
-Kolmogorov complexity is a great concept that helps me think clearly about all kinds of things. The unfortunate part is that it takes a bit of time to get over some subtleties. The two main ones: How do we define it formally, and how do we compute it? 
+Kolmogorov complexity is a great concept that helps me think clearly about all kinds of things. The unfortunate part is that it takes a bit of time to get accustomed to it, and to understand some subtleties. The two main ones: How do we define it formally, and how do we compute it? 
 
-<Expand headline = "Choosing the language">
+<Expand headline = "Choosing the programming language">
 
 Kolmogorov complexity of <Math math="x" /> is the length of the shortest program that prints <Math math="x" /> (and then terminates). 
 
@@ -76,33 +76,33 @@ An interpreter is a program that reads code written in some other language, and 
 
 In any reasonable programming language, you can write an interpreter for any other reasonable language in at most, say, 1MB. But this means that Kolmogorov complexity of any object is fixed 'up to 1MB': If you have a 100MB Python script that prints the file, then you have a 101MB C, Assembly, Java, ... script printing the same file—just write code in which the first 1 MB is an interpreter of Python tasked to execute the remaining 100MB. 
 
-So for large objects (like the 1GB Wikipedia file from Hutter's prize), there's nothing awkward in using Kolmogorov complexity. The flip side is that it's borderline meaningless to argue whether the Kolmogorov complexity of <Math math="\pi" /> is 200 or 300 bytes. That difference depends on the choice of programming language too much. <Footnote>The fact that talking about small Kolmogorov complexities is fishy won't stop us doing that in a minute. </Footnote>
+So for large objects (like the 1GB Wikipedia file from Hutter's prize), there's nothing awkward in using Kolmogorov complexity. The flip side is that it's borderline meaningless to argue whether the Kolmogorov complexity of <Math math="\pi" /> is 10 or 100 bytes. That difference depends on the choice of programming language too much. <Footnote>The fact that talking about small Kolmogorov complexities is fishy won't stop us doing that in a minute. </Footnote>
 
 </Expand>
 
 <Expand headline = "How do we compute it? ">
 The short answer: we don't—in fact, I am very, very certain that the answer to Hutter's challenge will never be known. 
 
-The problem is that the shortest program printing 1GB of Wikipedia is going to be an absolute mess: If we ran it, it would start doing some absolutely incomprehensible stuff -- allocating tons of memory, rewriting it again and again,... until it would finally stop with the right output.<Footnote>Not really, the algorithm would finish a long time after the heat death of our universe. </Footnote>
+The problem is that the shortest program printing 1GB of Wikipedia is very likely an absolute mess: If we ran it, it would start doing some absolutely incomprehensible stuff -- allocating tons of memory, rewriting it again and again,... until it would finally stop with the right output. 
 
-More precisely, there are two issues. First, the number of potential candidate solutions to the challenge is exponentially large: Even if the answer to Hutter's riddle is just 10MB, we would still have to check <Math math="2^{10\,000\,000}" /> programs. 
+More precisely, there are two issues in computing the Kolmogorov complexity of $x$. First, the number of potential candidate solutions to the challenge is exponentially large: Even if the answer to Hutter's riddle is just 10 million bits, we would still have to check <Math math="2^{10\,000\,000}" /> programs. 
 
 Second—and worse—checking whether a given program solves Hutter's challenge is incredibly tough: we can't do better than run that program and hope that it terminates at some point. But even programs that do terminate can do so only after [some incredibly large number of steps](https://www.quantamagazine.org/busy-beaver-hunters-reach-numbers-that-overwhelm-ordinary-math-20250822/). 
 
 The problem of computing Kolmogorov complexity is so badly hard that we literally call it uncomputable. 
 
 <Expand advanced={true} headline = "Berry's paradox and uncomputability">
-Here's a fun paradox known as [Berry's paradox](https://en.wikipedia.org/wiki/Berry_paradox). Consider the expression:
+There is literally no algorithm that computes Kolmogorov complexity of a given input string. To see why, let's think about a fun paradox known as [Berry's paradox](https://en.wikipedia.org/wiki/Berry_paradox). Consider the expression:
 
 <Quote>
 Let <Math math="n^*" /> be the smallest positive integer not definable in less than one hundred letters.
 </Quote>
 
-Presumably, there are only so many numbers you can define with sixty letters, so there should be the smallest 'undefinable' one—<Math math="n^*" />. But wait a minute, <Math math="n^*" /> is 'defined' by the sentence above! <Footnote>I often hear the following, more cheeky variant of Berry's paradox: I claim that all positive integers are interesting. Why? Well, consider the smallest noninteresting number. But this is a very interesting property! </Footnote>
+Presumably, there are at most $26^{100}$ numbers we can define with one hundred letters, so there should be the smallest 'undefinable' one—<Math math="n^*" />. But wait a minute, <Math math="n^*" /> is 'defined' by the sentence above! <Footnote>I often hear the following, more cheeky variant of Berry's paradox: I claim that all positive integers are interesting. Why? Well, consider the smallest noninteresting number. But this is a very interesting property! </Footnote>
 
 What should we make of this? To understand a paradox properly, we have to slow down as much as possible and rephrase it as precisely as possible. Here, Kolmogorov complexity is the right language to do so. 
 
-Here's the rephrasing. If you write positive integers in binary, you can see that talking about them is pretty much the same as talking about all binary strings. So let's talk about strings, not numbers. To formalize the part 'definable in less than a hundred letters', let's replace <Math math="60" /> by some number <Math math="C" /> and consider all those binary strings such that their Kolmogorov complexity is at most <Math math="C" />. In fact, let's call this set of strings <Math math="\text{Berry}(C)" />. 
+Here's the rephrasing. If you write positive integers in binary, you can see that talking about them is pretty much the same as talking about all binary strings. So let's talk about strings, not numbers. To formalize the part 'definable in less than a hundred letters', let's replace <Math math="100" /> by some number <Math math="C" /> and consider all those binary strings such that their Kolmogorov complexity is at most <Math math="C" />. I.e., a short program printing the number is its "short definition". Let's call this set of strings <Math math="\text{Berry}(C)" />. 
 
 Now, let's assume that there is an algorithm <Math math="A" /> that gets a string <Math math="x" /> as input and outputs its Kolmogorov complexity <Math math="K(x)" />. We can use <Math math="A" /> to perform the devilish plan of Berry: Imagine the lexicographically smallest string <Math math="x^*" /> that has <Math math="K(x^*) > C" />. This <Math math="x^*" /> is analogous to the integer <Math math="n^*" /> from the original paradox.<Footnote>Or the smallest boring integer from the joke. </Footnote>
 
@@ -333,7 +333,9 @@ First, remember: under Solomonoff prior, a hypothesis $q$ has prior $2^{-K(q)}$ 
 
 But we know what that formula means! $K(q)$ is how many bits of memory we need to store the model $q$, and $n \cdot H(p,q)$ is how many bits of memory we need to store $p$, once we know $q$. <Footnote>Cf. our discussion on the Wikipedia riddle where we compared different compression algorithms ($q$) by how well they compress Wikipedia ($p$), where the length of the compressed file is $K(q) + H(p,q)$. Except for LLMs, the compression algorithms were so simple that $K(q)$ did not play much of a role, so we mostly just compared cross-entropies. </Footnote>
 
-That is, using Solomonoff prior means that we are simply supposed to **prefer the models that compress the data the most**. This is also called optimizing [Minimum description length](https://en.wikipedia.org/wiki/Minimum_description_length) (MDL). 
+That is, using Solomonoff prior means that we are simply supposed to **prefer the models that compress the data the most**. This is also called the [Minimum description length](https://en.wikipedia.org/wiki/Minimum_description_length) principle. 
+
+
 
 <HistoryExpand headline = "At last, philosophy is solved.">
 
@@ -342,7 +344,7 @@ That is, using Solomonoff prior means that we are simply supposed to **prefer th
     { src: "/fig/epikuros.jpg", alt: "Epicurus" },
     { src: "/fig/William_of_Ockham.png", alt: "William of Ockham" }
   ]}
-  caption={` Epicurus (left), William of Ockham (middle)`}
+  caption={` Epicurus (left), William of Ockham (right)`}
 />
 
 There's a long tradition of philosophers wrestling with the abstract problem of how we arrive at correct knowledge — [epistemology](https://en.wikipedia.org/wiki/Epistemology).

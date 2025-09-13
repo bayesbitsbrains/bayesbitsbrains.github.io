@@ -4,8 +4,7 @@
 import React, { useEffect, useRef } from "react";
 import katex from "katex";
 import "katex/dist/katex.min.css"; // Make sure this path is correct
-
-const default_macros: Record<string, string> = { "\\R": "\\mathbb{R}", "\\eps": "\\varepsilon" }; // Default macros (conforms to Record<string, string>)
+import { KATEX_MACROS } from "@/lib/katex-macros";
 
 interface KatexMathProps {
   math: string;
@@ -18,7 +17,7 @@ const KatexMath: React.FC<KatexMathProps> = ({
   math,
   displayMode = false,
   throwOnError = false,
-  macros = default_macros,
+  macros = KATEX_MACROS,
 }) => {
   const containerRef = useRef<HTMLSpanElement>(null);
 
