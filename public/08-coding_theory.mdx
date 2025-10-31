@@ -226,21 +226,22 @@ But looking at ELIZA's code, something feels deeply wrong. Intelligence shouldn'
 
 This bothered philosopher [John Searle](https://en.wikipedia.org/wiki/John_Searle), who proposed the [Chinese room](https://en.wikipedia.org/wiki/Chinese_room) thought experiment<Footnote>There are multiple interpretations of his experiment; I'm focusing on what it says about intelligence.</Footnote> in 1980: Picture yourself locked in a room with boxes of Chinese characters and a complete rulebook. Chinese speakers slide questions under the door. You mechanically follow the rules, shuffling symbols, sliding back perfect Chinese responses. From outside, you seem fluent. But inside? Neither you nor the rulebook seem intelligent.
 
-Searle's point: that's what computers do. Even if an AI perfectly minimizes cross-entropy and predicts every token — it's still just shuffling symbols without understanding. The person with the rulebook passes Turing's test, yet clearly isn't intelligent. So, what's left of the test, then? 
+Searle's point: that's what computers do. Even if an AI perfectly minimizes cross-entropy and predicts every token — it's still just shuffling symbols without understanding. So, what's left of the test, then? 
 
-But let's examine the rulebook more carefully. The problem: it must be impossibly large! Say there are 1000 possible first questions. Your rulebook needs 1000 entries for one-question conversations, $1000^2$ for two questions, and so on. Naively, the size of the rulebook would have to grow exponentially with the length of the conversattion.<Footnote>See [this book](https://www.amazon.com/Quantum-Computing-since-Democritus-Aaronson/dp/0521199565) by Scott Aaronson for more discussion.</Footnote> So Searle's rulebook can't exist in our universe. Any real algorithm passing the Turing test must _compress_ the enormous possibility space of human conversations into something manageable.
+But let's examine the rulebook more carefully. The problem with it is that it must be impossibly large! Say there are always 1000 possible questions with which we can continue a conversation. Our rulebook then needs 1000 entries to fake one-question conversations, $1000^2$ to fake two-question conversations, and so on. Naively, the size of the rulebook would have to grow exponentially with the length of the conversattion.<Footnote>See [this book](https://www.amazon.com/Quantum-Computing-since-Democritus-Aaronson/dp/0521199565) by Scott Aaronson for more discussion.</Footnote> So Searle's rulebook, the way he imagined it, can't exist in our universe. Any real algorithm passing the Turing test must _compress_ the enormous possibility space of human conversations into something manageable.
 
-That's exactly what ELIZA lacks. It can't compress English text the way LLMs do. Double ELIZA's rules, and our [parrot](https://en.wikipedia.org/wiki/Stochastic_parrot) might fool a few more people briefly. But, you can't build a compression algorithm out of ELIZA. It's just not good at predicting real human conversations.
+That's exactly what ELIZA lacks. It can't compress long English texts the way LLMs do. If we double ELIZA's rules (which is pretty much what later chatbots attempted to do), our [parrot](https://en.wikipedia.org/wiki/Stochastic_parrot) might fool people for conversations lasting maybe one more question. But this does not scale to long texts; we can't build a compression algorithm out of ELIZA. 
 
-Current AIs are fundamentally different. They're trained to __predict__ human text. Equivalently, they __compress__ it. This crucial difference from fakers like ELIZA forces these systems toward actual understanding. Ilya Sutskever compressed this idea perfectly:
+Current AIs are fundamentally different. They're trained to __predict__ long human text. Equivalently, they __compress__ it. Here's my favorite quote of Ilya Sutskever:
 
 <Quote>
 Predicting the next token well means that you understand the underlying reality that led to the creation of that token.<Footnote>[link](https://www.dwarkesh.com/p/ilya-sutskever)</Footnote>
 </Quote>
 
+I.e., the current systems are forced to really _understand_ the world internally, in a way that's quite similar to how we understand it. 
 </HistoryExpand>
 
 
 ## What's next? 
 
-You are done, congrats! If you liked the mini-course, continue to the [Graveyard](bonus) that contains bonus chapters that I dropped from the main flow. Check out the [resources](resources), too. I will be grateful if you leave feedback [here](https://forms.gle/wXShyQRsGWtb8afd6). 
+One more chapter about [Kolmogorov complexity](09-kolmogorov). 
